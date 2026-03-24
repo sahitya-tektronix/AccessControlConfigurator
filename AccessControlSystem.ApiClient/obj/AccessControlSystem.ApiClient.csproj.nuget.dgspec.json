@@ -58,9 +58,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "ADGV": {
+              "target": "Package",
+              "version": "[0.1.0.10, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.4, )"
+            },
+            "System.Linq.Dynamic.Core": {
+              "target": "Package",
+              "version": "[1.7.1, )"
             }
           },
           "imports": [
@@ -129,6 +137,16 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "ADGV": {
+              "target": "Package",
+              "version": "[0.1.0.10, )"
+            },
+            "System.Linq.Dynamic.Core": {
+              "target": "Package",
+              "version": "[1.7.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -195,6 +213,16 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "ADGV": {
+              "target": "Package",
+              "version": "[0.1.0.10, )"
+            },
+            "System.Linq.Dynamic.Core": {
+              "target": "Package",
+              "version": "[1.7.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

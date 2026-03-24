@@ -6,4 +6,8 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="ADGV" Version="0.1.0.10" />
+	  <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.1" />
+	</ItemGroup>
 </Project>

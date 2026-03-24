@@ -2,6 +2,27 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "ADGV/0.1.0.10": {
+        "type": "package",
+        "compile": {
+          "lib/net40/AdvancedDataGridView.dll": {
+            "related": ".XML"
+          }
+        },
+        "runtime": {
+          "lib/net40/AdvancedDataGridView.dll": {
+            "related": ".XML"
+          }
+        },
+        "resource": {
+          "lib/net40/fr/AdvancedDataGridView.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/net40/ru/AdvancedDataGridView.resources.dll": {
+            "locale": "ru"
+          }
+        }
+      },
       "Newtonsoft.Json/13.0.4": {
         "type": "package",
         "compile": {
@@ -15,9 +36,26 @@
           }
         }
       },
+      "System.Linq.Dynamic.Core/1.7.1": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/System.Linq.Dynamic.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/System.Linq.Dynamic.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "AccessControlSystem.Core/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "ADGV": "0.1.0.10",
+          "System.Linq.Dynamic.Core": "1.7.1"
+        },
         "compile": {
           "bin/placeholder/AccessControlSystem.Core.dll": {}
         },
@@ -28,6 +66,10 @@
       "AccessControlSystem.Models/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "ADGV": "0.1.0.10",
+          "System.Linq.Dynamic.Core": "1.7.1"
+        },
         "compile": {
           "bin/placeholder/AccessControlSystem.Models.dll": {}
         },
@@ -38,6 +80,22 @@
     }
   },
   "libraries": {
+    "ADGV/0.1.0.10": {
+      "sha512": "leJ7YvECR+X/Sx5TS4Y5QETpRL4V08DMuje28PxHmAt9s+oVfEfmjVKzDZLkVfHZGcXJBMFjVRYeN3dfFl+s9A==",
+      "type": "package",
+      "path": "adgv/0.1.0.10",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "adgv.0.1.0.10.nupkg.sha512",
+        "adgv.nuspec",
+        "lib/net40/AdvancedDataGridView.XML",
+        "lib/net40/AdvancedDataGridView.dll",
+        "lib/net40/fr/AdvancedDataGridView.resources.dll",
+        "lib/net40/ru/AdvancedDataGridView.resources.dll",
+        "readme.txt"
+      ]
+    },
     "Newtonsoft.Json/13.0.4": {
       "sha512": "pdgNNMai3zv51W5aq268sujXUyx7SNdE2bj1wZcWjAQrKMFZV260lbqYop1d2GM67JI1huLRwxo9ZqnfF/lC6A==",
       "type": "package",
@@ -68,6 +126,71 @@
         "packageIcon.png"
       ]
     },
+    "System.Linq.Dynamic.Core/1.7.1": {
+      "sha512": "qlgku/j9r0fei52yxR5ho9nC/fWGZuaELqPkZmJm24QZbBW4cL3sVWri1dZ0cKgARD7cgFKBdRqzxYoIG5Q0Cg==",
+      "type": "package",
+      "path": "system.linq.dynamic.core/1.7.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "PackageReadme.md",
+        "lib/net10.0/System.Linq.Dynamic.Core.dll",
+        "lib/net10.0/System.Linq.Dynamic.Core.pdb",
+        "lib/net10.0/System.Linq.Dynamic.Core.xml",
+        "lib/net35/System.Linq.Dynamic.Core.dll",
+        "lib/net35/System.Linq.Dynamic.Core.pdb",
+        "lib/net35/System.Linq.Dynamic.Core.xml",
+        "lib/net40/System.Linq.Dynamic.Core.dll",
+        "lib/net40/System.Linq.Dynamic.Core.pdb",
+        "lib/net40/System.Linq.Dynamic.Core.xml",
+        "lib/net45/System.Linq.Dynamic.Core.dll",
+        "lib/net45/System.Linq.Dynamic.Core.pdb",
+        "lib/net45/System.Linq.Dynamic.Core.xml",
+        "lib/net452/System.Linq.Dynamic.Core.dll",
+        "lib/net452/System.Linq.Dynamic.Core.pdb",
+        "lib/net452/System.Linq.Dynamic.Core.xml",
+        "lib/net46/System.Linq.Dynamic.Core.dll",
+        "lib/net46/System.Linq.Dynamic.Core.pdb",
+        "lib/net46/System.Linq.Dynamic.Core.xml",
+        "lib/net5.0/System.Linq.Dynamic.Core.dll",
+        "lib/net5.0/System.Linq.Dynamic.Core.pdb",
+        "lib/net5.0/System.Linq.Dynamic.Core.xml",
+        "lib/net6.0/System.Linq.Dynamic.Core.dll",
+        "lib/net6.0/System.Linq.Dynamic.Core.pdb",
+        "lib/net6.0/System.Linq.Dynamic.Core.xml",
+        "lib/net7.0/System.Linq.Dynamic.Core.dll",
+        "lib/net7.0/System.Linq.Dynamic.Core.pdb",
+        "lib/net7.0/System.Linq.Dynamic.Core.xml",
+        "lib/net8.0/System.Linq.Dynamic.Core.dll",
+        "lib/net8.0/System.Linq.Dynamic.Core.pdb",
+        "lib/net8.0/System.Linq.Dynamic.Core.xml",
+        "lib/net9.0/System.Linq.Dynamic.Core.dll",
+        "lib/net9.0/System.Linq.Dynamic.Core.pdb",
+        "lib/net9.0/System.Linq.Dynamic.Core.xml",
+        "lib/netcoreapp2.1/System.Linq.Dynamic.Core.dll",
+        "lib/netcoreapp2.1/System.Linq.Dynamic.Core.pdb",
+        "lib/netcoreapp2.1/System.Linq.Dynamic.Core.xml",
+        "lib/netcoreapp3.1/System.Linq.Dynamic.Core.dll",
+        "lib/netcoreapp3.1/System.Linq.Dynamic.Core.pdb",
+        "lib/netcoreapp3.1/System.Linq.Dynamic.Core.xml",
+        "lib/netstandard1.3/System.Linq.Dynamic.Core.dll",
+        "lib/netstandard1.3/System.Linq.Dynamic.Core.pdb",
+        "lib/netstandard1.3/System.Linq.Dynamic.Core.xml",
+        "lib/netstandard2.0/System.Linq.Dynamic.Core.dll",
+        "lib/netstandard2.0/System.Linq.Dynamic.Core.pdb",
+        "lib/netstandard2.0/System.Linq.Dynamic.Core.xml",
+        "lib/netstandard2.1/System.Linq.Dynamic.Core.dll",
+        "lib/netstandard2.1/System.Linq.Dynamic.Core.pdb",
+        "lib/netstandard2.1/System.Linq.Dynamic.Core.xml",
+        "lib/uap10.0.10240/System.Linq.Dynamic.Core.dll",
+        "lib/uap10.0.10240/System.Linq.Dynamic.Core.pdb",
+        "lib/uap10.0.10240/System.Linq.Dynamic.Core.pri",
+        "lib/uap10.0.10240/System.Linq.Dynamic.Core.xml",
+        "logo.png",
+        "system.linq.dynamic.core.1.7.1.nupkg.sha512",
+        "system.linq.dynamic.core.nuspec"
+      ]
+    },
     "AccessControlSystem.Core/1.0.0": {
       "type": "project",
       "path": "../AccessControlSystem.Core/AccessControlSystem.Core.csproj",
@@ -81,9 +204,11 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "ADGV >= 0.1.0.10",
       "AccessControlSystem.Core >= 1.0.0",
       "AccessControlSystem.Models >= 1.0.0",
-      "Newtonsoft.Json >= 13.0.4"
+      "Newtonsoft.Json >= 13.0.4",
+      "System.Linq.Dynamic.Core >= 1.7.1"
     ]
   },
   "packageFolders": {
@@ -144,9 +269,17 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "ADGV": {
+            "target": "Package",
+            "version": "[0.1.0.10, )"
+          },
           "Newtonsoft.Json": {
             "target": "Package",
             "version": "[13.0.4, )"
+          },
+          "System.Linq.Dynamic.Core": {
+            "target": "Package",
+            "version": "[1.7.1, )"
           }
         },
         "imports": [
@@ -168,5 +301,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'ADGV 0.1.0.10' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
+      "libraryId": "ADGV",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
