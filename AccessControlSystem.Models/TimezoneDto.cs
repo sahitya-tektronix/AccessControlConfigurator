@@ -8,6 +8,8 @@ namespace AccessControlSystem.Models
 {
     public class TimezoneDto
     {
+    
+
         public int id { get; set; }
         public int code { get; set; }
         public string name { get; set; }

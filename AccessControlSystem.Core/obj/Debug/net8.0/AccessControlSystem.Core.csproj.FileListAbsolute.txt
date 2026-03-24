@@ -31,3 +31,15 @@ C:\Users\Zitanium Laptop\Desktop\Project\real Project\AccessControlSystem.Core\o
 C:\Users\Zitanium Laptop\Desktop\Project\real Project\AccessControlSystem.Core\obj\Debug\net8.0\refint\AccessControlSystem.Core.dll
 C:\Users\Zitanium Laptop\Desktop\Project\real Project\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.pdb
 C:\Users\Zitanium Laptop\Desktop\Project\real Project\AccessControlSystem.Core\obj\Debug\net8.0\ref\AccessControlSystem.Core.dll
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\bin\Debug\net8.0\AccessControlSystem.Core.deps.json
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\bin\Debug\net8.0\AccessControlSystem.Core.dll
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\bin\Debug\net8.0\AccessControlSystem.Core.pdb
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.AssemblyInfoInputs.cache
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.AssemblyInfo.cs
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.csproj.CoreCompileInputs.cache
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.sourcelink.json
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.dll
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\refint\AccessControlSystem.Core.dll
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\AccessControlSystem.Core.pdb
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Core\obj\Debug\net8.0\ref\AccessControlSystem.Core.dll
