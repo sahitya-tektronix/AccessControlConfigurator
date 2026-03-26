@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AccessControlSystem.Models")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7eb60ebf6e7a418c5405bd5e080b373930558b22")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20215a7f2466f506b3ee5147091d5d89775ac763")]
 [assembly: System.Reflection.AssemblyProductAttribute("AccessControlSystem.Models")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AccessControlSystem.Models")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

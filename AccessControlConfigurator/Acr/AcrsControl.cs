@@ -1,0 +1,290 @@
+﻿using AccessControlConfigurator.Forms;
+using AccessControlSystem.Models;
+using AccessControlSystem.Models.Acr;
+using AccessControlSystem.Services;
+using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml;
+
+namespace AccessControlConfigurator
+{
+    public partial class AcrsControl : UserControl
+    {
+        private ApiService _api = new ApiService();
+        private List<AcrDto> _allData = new List<AcrDto>();
+
+
+        private ControllerDto _controller;
+        private BindingList<SioModel> _sioList;
+        private SioModel _selectedSio;
+
+        private List<AcrDto> acrData;
+
+        // ================= CONSTRUCTOR =================
+        public AcrsControl(
+            ControllerDto controller,
+            BindingList<SioModel> sioList,
+            SioModel selectedSio)
+        {
+            InitializeComponent();
+
+            _controller = controller;
+            _sioList = sioList;
+            _selectedSio = selectedSio;
+
+            LoadFilters(); // ✅ MUST
+
+            cmbControllerId.SelectedIndexChanged += (s, e) => ApplyFilters();
+            cmbSioNumber.SelectedIndexChanged += (s, e) => ApplyFilters();
+            cmbReader.SelectedIndexChanged += (s, e) => ApplyFilters();
+
+            dgvAcrs.CellBeginEdit += (s, e) => e.Cancel = true;
+            // Button style
+            btnSearch.FlatStyle = FlatStyle.Flat;
+            btnSearch.BackColor = Color.FromArgb(0, 120, 215);
+            btnSearch.ForeColor = Color.White;
+            btnSearch.Click += btnSearch_Click;
+            //txtSearch.TextChanged += txtSearch_TextChanged;
+
+
+
+            // ⌨️ Enter key search
+            txtSearch.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                    ApplySearch();
+           };
+            txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            dgvAcrs.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvAcrs.MultiSelect = false;
+            dgvAcrs.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
+            dgvAcrs.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgvAcrs.CellClick += (s, e) =>
+            {
+                if (e.RowIndex >= 0)
+                    dgvAcrs.Rows[e.RowIndex].Selected = true;
+            };
+            dgvAcrs.AllowUserToResizeColumns = false;
+            foreach (DataGridViewColumn col in dgvAcrs.Columns)
+            {
+                col.Resizable = DataGridViewTriState.False;
+            }
+
+        }
+
+        // ================= LOAD CONTROL =================
+        protected override async void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            await LoadAcrs();
+        }
+
+        // ================= LOAD DATA =================
+        private async Task LoadAcrs()
+        {
+            try
+            {
+                var data = await _api.GetAcrSearchAsync("");
+
+                if (data == null || data.Count == 0)
+                {
+                    dgvAcrs.Rows.Clear();
+                    return;
+                }
+
+                _allData = data;
+                acrData = data;
+
+                PopulateGrid(_allData);
+
+                LoadFilters(); // ✅ fill dropdowns
+
+                // ✅ default selection
+                cmbControllerId.SelectedIndex = 0;
+                cmbSioNumber.SelectedIndex = 0;
+                cmbReader.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        // ================= SEARCH =================
+        private void ApplySearch()
+        {
+            string searchText = txtSearch.Text?.Trim().ToLower();
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                PopulateGrid(acrData);
+                return;
+            }
+
+            var filtered = acrData.Where(a =>
+            {
+                // Normalize all fields
+                string id = a.id.ToString();
+                string name = (a.name ?? "").ToLower();
+                string controller = a.controllerID.ToString();
+                string sio = a.sioNumber.ToString();
+                string acr = a.acrNumber.ToString();
+                string reader = $"reader {a.readerNumber}".ToLower();
+                string readerNum = a.readerNumber.ToString();
+                string online = a.isOnline ? "online" : "offline";
+
+                // Match ANY field
+                return id.Contains(searchText) ||
+                       name.Contains(searchText) ||
+                       controller.Contains(searchText) ||
+                       sio.Contains(searchText) ||
+                       acr.Contains(searchText) ||
+                       reader.Contains(searchText) ||
+                       readerNum.Contains(searchText) ||
+                       online.Contains(searchText);
+            }).ToList();
+
+            PopulateGrid(filtered);
+        }
+
+        // ================= GRID =================
+        private void PopulateGrid(List<AcrDto> data)
+        {
+            dgvAcrs.Rows.Clear();
+
+            foreach (var a in data)
+            {
+                string onlineText = a.isOnline ? "Online" : "Offline";
+
+                int rowIndex = dgvAcrs.Rows.Add(
+                    a.id,
+                    a.name,
+                    a.controllerID,
+                    a.sioNumber,
+                    $"Reader {a.readerNumber}",
+                    a.acrNumber,
+                    onlineText
+                );
+
+                dgvAcrs.Rows[rowIndex].Cells[6].Style.ForeColor =
+                    a.isOnline ? Color.Green : Color.Red;
+            }
+        }
+
+        // ================= BUTTON EVENTS =================
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            ApplySearch();
+        }
+
+        private async void btnRefresh_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+            await LoadAcrs();
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            MainForm.Instance.LoadPage(new ControllersControl(), false);
+        }
+
+        private async void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (dgvAcrs.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Select ACR first");
+                return;
+            }
+
+            int acrId = Convert.ToInt32(
+                dgvAcrs.SelectedRows[0].Cells["ColId"].Value);
+
+            var li = acrData.FirstOrDefault(x => x.id == acrId);
+
+            if (li == null)
+            {
+                MessageBox.Show("Data not found");
+                return;
+            }
+
+            var form = new EditAcrForm(li);
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                await _api.UpdateAcrAsync(
+                    li.controllerID,
+                    li.sioNumber,
+                    li.id,
+                    form.AcrData);
+
+                await LoadAcrs();
+            }
+        }
+        //private void txtSearch_TextChanged(object sender, EventArgs e)
+        //{
+        //    ApplySearch();
+        //}
+
+        private void dgvAcrs_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+        }
+
+        private void LoadFilters()
+        {
+            if (_allData == null || _allData.Count == 0)
+                return;
+
+            // Controller
+            var controllers = _allData
+                .Select(x => x.controllerID.ToString())
+                .Distinct()
+                .ToList();
+
+            controllers.Insert(0, "All");
+            cmbControllerId.DataSource = controllers;
+
+            // SIO
+            var sioList = _allData
+                .Select(x => x.sioNumber.ToString())
+                .Distinct()
+                .ToList();
+
+            sioList.Insert(0, "All");
+            cmbSioNumber.DataSource = sioList;
+
+            // Reader
+            var readers = _allData
+                .Select(x => $"Reader {x.readerNumber}")
+                .Distinct()
+                .ToList();
+
+            readers.Insert(0, "All");
+            cmbReader.DataSource = readers;
+        }
+        private void ApplyFilters()
+        {
+            var filtered = _allData.AsEnumerable();
+
+            string controller = cmbControllerId.SelectedItem?.ToString();
+            string sio = cmbSioNumber.SelectedItem?.ToString();
+            string reader = cmbReader.SelectedItem?.ToString();
+
+            if (!string.IsNullOrEmpty(controller) && controller != "All")
+                filtered = filtered.Where(x => x.controllerID.ToString() == controller);
+
+            if (!string.IsNullOrEmpty(sio) && sio != "All")
+                filtered = filtered.Where(x => x.sioNumber.ToString() == sio);
+
+            if (!string.IsNullOrEmpty(reader) && reader != "All")
+                filtered = filtered.Where(x => $"Reader {x.readerNumber}" == reader);
+
+            PopulateGrid(filtered.ToList());
+        }
+    }
+}
