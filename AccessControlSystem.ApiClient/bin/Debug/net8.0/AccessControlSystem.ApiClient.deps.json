@@ -8,12 +8,30 @@
     ".NETCoreApp,Version=v8.0": {
       "AccessControlSystem.ApiClient/1.0.0": {
         "dependencies": {
+          "ADGV": "0.1.0.10",
           "AccessControlSystem.Core": "1.0.0",
           "AccessControlSystem.Models": "1.0.0",
-          "Newtonsoft.Json": "13.0.4"
+          "Newtonsoft.Json": "13.0.4",
+          "System.Linq.Dynamic.Core": "1.7.1"
         },
         "runtime": {
           "AccessControlSystem.ApiClient.dll": {}
+        }
+      },
+      "ADGV/0.1.0.10": {
+        "runtime": {
+          "lib/net40/AdvancedDataGridView.dll": {
+            "assemblyVersion": "0.1.0.10",
+            "fileVersion": "0.1.0.10"
+          }
+        },
+        "resources": {
+          "lib/net40/fr/AdvancedDataGridView.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/net40/ru/AdvancedDataGridView.resources.dll": {
+            "locale": "ru"
+          }
         }
       },
       "Newtonsoft.Json/13.0.4": {
@@ -24,7 +42,19 @@
           }
         }
       },
+      "System.Linq.Dynamic.Core/1.7.1": {
+        "runtime": {
+          "lib/net8.0/System.Linq.Dynamic.Core.dll": {
+            "assemblyVersion": "1.7.1.0",
+            "fileVersion": "1.7.1.0"
+          }
+        }
+      },
       "AccessControlSystem.Core/1.0.0": {
+        "dependencies": {
+          "ADGV": "0.1.0.10",
+          "System.Linq.Dynamic.Core": "1.7.1"
+        },
         "runtime": {
           "AccessControlSystem.Core.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -33,6 +63,10 @@
         }
       },
       "AccessControlSystem.Models/1.0.0": {
+        "dependencies": {
+          "ADGV": "0.1.0.10",
+          "System.Linq.Dynamic.Core": "1.7.1"
+        },
         "runtime": {
           "AccessControlSystem.Models.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -48,12 +82,26 @@
       "serviceable": false,
       "sha512": ""
     },
+    "ADGV/0.1.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-leJ7YvECR+X/Sx5TS4Y5QETpRL4V08DMuje28PxHmAt9s+oVfEfmjVKzDZLkVfHZGcXJBMFjVRYeN3dfFl+s9A==",
+      "path": "adgv/0.1.0.10",
+      "hashPath": "adgv.0.1.0.10.nupkg.sha512"
+    },
     "Newtonsoft.Json/13.0.4": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-pdgNNMai3zv51W5aq268sujXUyx7SNdE2bj1wZcWjAQrKMFZV260lbqYop1d2GM67JI1huLRwxo9ZqnfF/lC6A==",
       "path": "newtonsoft.json/13.0.4",
       "hashPath": "newtonsoft.json.13.0.4.nupkg.sha512"
+    },
+    "System.Linq.Dynamic.Core/1.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qlgku/j9r0fei52yxR5ho9nC/fWGZuaELqPkZmJm24QZbBW4cL3sVWri1dZ0cKgARD7cgFKBdRqzxYoIG5Q0Cg==",
+      "path": "system.linq.dynamic.core/1.7.1",
+      "hashPath": "system.linq.dynamic.core.1.7.1.nupkg.sha512"
     },
     "AccessControlSystem.Core/1.0.0": {
       "type": "project",

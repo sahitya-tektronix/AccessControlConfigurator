@@ -34,6 +34,7 @@ C:\Users\Zitanium Laptop\Desktop\Project\real Project\AccessControlSystem.Models
 C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Models\bin\Debug\net8.0\AccessControlSystem.Models.deps.json
 C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Models\bin\Debug\net8.0\AccessControlSystem.Models.dll
 C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Models\bin\Debug\net8.0\AccessControlSystem.Models.pdb
+C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Models\obj\Debug\net8.0\AccessControlSystem.Models.csproj.AssemblyReference.cache
 C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Models\obj\Debug\net8.0\AccessControlSystem.Models.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Models\obj\Debug\net8.0\AccessControlSystem.Models.AssemblyInfoInputs.cache
 C:\Users\Zitanium Laptop\Desktop\Project\AccessControlConfigurator\AccessControlSystem.Models\obj\Debug\net8.0\AccessControlSystem.Models.AssemblyInfo.cs

@@ -9,9 +9,6 @@ namespace AccessControlSystem.Models
 {
     public class DiscoverControllerDto
     {
-
-        public readonly object scpId;
-
         public int Id { get; set; }
 
         public string Name { get; set; } = "";
@@ -21,10 +18,11 @@ namespace AccessControlSystem.Models
         public bool IsOnline { get; set; }
         public bool IsEnabled { get; set; }
 
-        public string Status { get; set; }
+        public int Status { get; set; } // FIXED
 
-        public int ScpId { get; set; }
-      
+        public int ScpId { get; set; } // keep only if backend sends
+    
+
 
 
         public ControllerSyncState SyncState { get; set; }

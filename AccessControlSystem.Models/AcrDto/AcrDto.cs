@@ -39,5 +39,15 @@ namespace AccessControlSystem.Models.Acr
 
         public int acrId { get; set; }
         public int rex0Number { get; set; }
+
+      
+
+ 
+
+
+
+
+        // 🔥 Computed property for UI
+        public string ReaderName => $"Reader {readerNumber}";
     }
 }

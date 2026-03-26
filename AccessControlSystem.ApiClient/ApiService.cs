@@ -22,6 +22,8 @@ using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 
 
+
+
 namespace AccessControlSystem.Services
 {
     public class ApiService
@@ -227,7 +229,14 @@ namespace AccessControlSystem.Services
                 // many packets are heartbeat packets -> ignore
             }
         }
+        //Add Controllers
+        public async Task<(bool Success, string Error)> AddControllerAsync(AddUpdateControllerRequestDto dto)
+        {
+            var response = await _httpClient.PutAsJsonAsync("api/hid/AddController", dto);
+            var responseText = await response.Content.ReadAsStringAsync();
 
+            return (response.IsSuccessStatusCode, responseText);
+        }
         //need to change api
         public async Task<bool> ConfigureOnBoardAsync(int controllerId)
         {
@@ -237,16 +246,10 @@ namespace AccessControlSystem.Services
 
             return response.IsSuccessStatusCode;
         }
-        public async Task DeleteControllerAsync(int controllerId)
+        public async Task<bool> DeleteControllerAsync(int controllerId)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(BaseUrl);
-                var response = await client.DeleteAsync($"api/controllers/{controllerId}");
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("Unable to delete controller");
-            }
+            var response = await _httpClient.DeleteAsync($"api/hid/DeleteController/{controllerId}");
+            return response.IsSuccessStatusCode;
         }
         public async Task<List<SioModel>> GetSiosAsync(int controllerId)
         {
@@ -327,6 +330,13 @@ namespace AccessControlSystem.Services
             response.EnsureSuccessStatusCode();
 
         }
+        public async Task<(bool Success, string Error)> UpdateControllerAsync(int id, AddUpdateControllerRequestDto dto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/hid/UpdateController/{id}", dto);
+            var text = await response.Content.ReadAsStringAsync();
+
+            return (response.IsSuccessStatusCode, text);
+        }
         public async Task<List<DiscoverControllerDto>> DiscoverControllers()
         {
             string url = "api/hid/GetAllDiscoverdControllers";
@@ -340,7 +350,11 @@ namespace AccessControlSystem.Services
 
             return controllers ?? new List<DiscoverControllerDto>();
         }
-
+        public async Task<bool> EnableControllerAsync(int id)
+        {
+            var response = await _httpClient.PutAsync($"api/hid/EnableController/{id}", null);
+            return response.IsSuccessStatusCode;
+        }
         // ================= SYNC CONTROLLERS =================
         public async Task<bool> SyncControllersToHID()
         {
@@ -368,11 +382,41 @@ namespace AccessControlSystem.Services
                 if (!response.IsSuccessStatusCode)
                     return "Sync failed";
 
-                return await response.Content.ReadAsStringAsync();
+                // 🔥 FIX HERE
+                var result = await response.Content.ReadAsStringAsync();
+                return result.Trim('"');   // ✅ removes quotes
             }
             catch (Exception ex)
             {
                 return ex.Message;
+            }
+        }
+        public async Task<string> DeleteController(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/hid/DeleteController/{id}");
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+                return "success";
+
+            if (string.IsNullOrWhiteSpace(content))
+                return "Delete failed. No message from server.";
+
+            try
+            {
+                // ✅ Parse ProblemDetails JSON
+                var obj = Newtonsoft.Json.Linq.JObject.Parse(content);
+
+                // Priority: detail → title → fallback
+                return obj["detail"]?.ToString()
+                    ?? obj["title"]?.ToString()
+                    ?? content;
+            }
+            catch
+            {
+                // fallback if not JSON
+                return content.Trim('"');
             }
         }
 
@@ -634,12 +678,24 @@ namespace AccessControlSystem.Services
         }
 
 
-        public async Task<bool> UpdateCard(int id, UpdateCardDto card)
+        public async Task<(bool success, string error)> UpdateCard(int id, UpdateCardDto card)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/cards/{id}", card);
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/cards/{id}", card);
 
-           
-            return response.IsSuccessStatusCode;
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    return (false, error);
+                }
+
+                return (true, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.ToString());
+            }
         }
         public async Task<bool> DeleteCard(long cardNumber)
         {
@@ -695,22 +751,77 @@ namespace AccessControlSystem.Services
         }
         public async Task<bool> UpdateCardholder(int userId, UpdateCardholderRequest dto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/cardholders/update/{userId}", dto);
+            var response = await _httpClient.PutAsJsonAsync($"api/cardholders/{userId}/UpdateWithCard",  dto);
 
-            var result = await response.Content.ReadAsStringAsync();
+            var error = await response.Content.ReadAsStringAsync();
 
-            // 🔥 SHOW ACTUAL SERVER RESPONSE
             if (!response.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception(error);
+                // ✅ Build proper error message
+                string message = string.IsNullOrWhiteSpace(error)
+                    ? $"API Error: {response.StatusCode}"
+                    : error;
+
+                throw new Exception(message);
             }
 
             return true;
         }
+
+        public async Task<bool> DeleteCardholder(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/cardholders/{id}");
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                string message = string.IsNullOrWhiteSpace(result)
+                    ? $"API Error: {response.StatusCode}"
+                    : result;
+
+                throw new Exception(message);
+            }
+
+            return true;
+        }
+    
+
+     // GET ALL
+    public async Task<List<WiegandDto>> GetAllAsync()
+        {
+            return await _httpClient.GetFromJsonAsync<List<WiegandDto>>("wiegand-formats");
+        }
+
+        // GET BY ID
+        public async Task<WiegandDto> GetByIdAsync(int id)
+        {
+            return await _httpClient.GetFromJsonAsync<WiegandDto>($"wiegand-formats/{id}");
+        }
+
+        //// CREATE
+        //public async Task<bool> CreateAsync(CreateWiegandFormatRequest dto)
+        //{
+        //    var res = await _httpClient.PostAsJsonAsync("wiegand-formats", dto);
+        //    return res.IsSuccessStatusCode;
+        //}
+
+        //// UPDATE
+        //public async Task<bool> UpdateAsync(int id, UpdateWiegandFormatRequest dto)
+        //{
+        //    var res = await _httpClient.PutAsJsonAsync($"wiegand-formats/{id}", dto);
+        //    return res.IsSuccessStatusCode;
+        //}
+
+        // DELETE (if needed later)
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var res = await _httpClient.DeleteAsync($"wiegand-formats/{id}");
+            return res.IsSuccessStatusCode;
+        }
     }
-      
-    }
+
+}
 
     
 
