@@ -1,9 +1,10 @@
 ﻿using AccessControlSystem.Models;
 using AccessControlSystem.Services;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace AccessControlConfigurator
 {
@@ -62,6 +63,10 @@ namespace AccessControlConfigurator
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbNameFilter.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbNameFilter.SelectedIndexChanged += (s, e) => ApplySearch();
         }
 
         private async void TimeZonesControl_Load(object sender, EventArgs e)
@@ -80,6 +85,7 @@ namespace AccessControlConfigurator
                 dgvTimeZones.DataSource = timeZoneData;
 
                 FormatGridHeaders();
+                LoadNameFilter();
             }
             catch (Exception ex)
             {
@@ -187,7 +193,6 @@ namespace AccessControlConfigurator
 
 
 
-     
 
         private void btnback_Click(object sender, EventArgs e)
         {
@@ -209,25 +214,33 @@ namespace AccessControlConfigurator
 
         //    btn.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
         //}
+
         private void FormatGridHeaders()
         {
+            var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["id"] = "Timezone ID",
+                ["code"] = "Code",
+                ["name"] = "Name",
+                ["encScpTimezoneEx"] = "Encoded SCP TZ",
+                ["number"] = "Number",
+                ["mode"] = "Mode",
+                ["actTime"] = "Activation Time",
+                ["deactTime"] = "Deactivation Time",
+                ["intervals"] = "Intervals",
+                ["iDays"] = "Interval Days",
+                ["iStart"] = "Interval Start",
+                ["iEnd"] = "Interval End",
+                ["timeZoneId"] = "ID"
+            };
+
             foreach (DataGridViewColumn col in dgvTimeZones.Columns)
             {
-                string header = col.Name;
-
-                // Split camelCase → "actTime" → "act Time"
-                header = System.Text.RegularExpressions.Regex
-                    .Replace(header, "([a-z])([A-Z])", "$1 $2");
-
-                // Replace underscores → "time_zone" → "time zone"
-                header = header.Replace("_", " ");
-
-                // Capitalize → "act time" → "Act Time"
-                col.HeaderText = System.Globalization.CultureInfo.CurrentCulture.TextInfo
-                    .ToTitleCase(header);
+                var key = col.DataPropertyName ?? col.Name;
+                if (map.TryGetValue(key, out var header))
+                    col.HeaderText = header;
             }
 
-            // 🔥 Optional: Make header bold
             dgvTimeZones.ColumnHeadersDefaultCellStyle.Font =
                 new Font("Segoe UI", 10, FontStyle.Bold);
         }
@@ -237,12 +250,11 @@ namespace AccessControlConfigurator
 
             if (string.IsNullOrWhiteSpace(searchText))
             {
-                dgvTimeZones.DataSource = null;
-                dgvTimeZones.DataSource = timeZoneData;
+                ApplyNameFilter();
                 return;
             }
 
-            var filtered = timeZoneData.Where(t =>
+            var filtered = ApplyNameFilterInternal(timeZoneData).Where(t =>
             {
                 return
                     t.id.ToString().Contains(searchText) ||
@@ -262,7 +274,45 @@ namespace AccessControlConfigurator
 
             // ✅ No popup (professional UX)
             dgvTimeZones.DataSource = null;
+            dgvTimeZones.DataSource = filtered.ToList();
+            FormatGridHeaders();
+        }
+        private void LoadNameFilter()
+        {
+            if (timeZoneData == null || timeZoneData.Count == 0)
+                return;
+
+            var names = timeZoneData
+                .Select(t => t.name ?? string.Empty)
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(name => name)
+                .ToList();
+
+            names.Insert(0, "All");
+
+            cmbNameFilter.DataSource = null;
+            cmbNameFilter.DataSource = names;
+            cmbNameFilter.SelectedIndex = 0;
+        }
+        private void ApplyNameFilter()
+        {
+            var filtered = ApplyNameFilterInternal(timeZoneData).ToList();
+            dgvTimeZones.DataSource = null;
             dgvTimeZones.DataSource = filtered;
+            FormatGridHeaders();
+        }
+        private IEnumerable<TimezoneDto> ApplyNameFilterInternal(IEnumerable<TimezoneDto> source)
+        {
+            string selected = cmbNameFilter.SelectedItem?.ToString()?.Trim();
+            if (string.IsNullOrWhiteSpace(selected) ||
+                string.Equals(selected, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                return source ?? Enumerable.Empty<TimezoneDto>();
+            }
+
+            return (source ?? Enumerable.Empty<TimezoneDto>())
+                .Where(t => string.Equals((t.name ?? string.Empty).Trim(), selected, StringComparison.OrdinalIgnoreCase));
         }
         //private void TxtSearch_TextChanged(object sender, EventArgs e)
         //{

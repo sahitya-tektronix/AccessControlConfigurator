@@ -34,22 +34,23 @@ namespace AccessControlConfigurator
 
             // ✅ Convert UNIX → Local DateTime
             if (long.TryParse(card.startDateTime, out long startUnix))
-            {
                 dtStart.Value = DateTimeOffset.FromUnixTimeSeconds(startUnix).LocalDateTime;
-            }
 
             if (long.TryParse(card.endDateTime, out long endUnix))
-            {
                 dtEnd.Value = DateTimeOffset.FromUnixTimeSeconds(endUnix).LocalDateTime;
-            }
 
             // ✅ Ensure valid default
             if (dtEnd.Value <= dtStart.Value)
-            {
-                dtEnd.Value = dtStart.Value.AddDays(1);
-            }
+                dtEnd.Value = dtStart.Value.AddHours(1);
 
-            // ✅ Load dropdown
+            // ✅ Auto-fix End Date when Start changes
+            dtStart.ValueChanged += (s, e) =>
+            {
+                if (dtEnd.Value <= dtStart.Value)
+                    dtEnd.Value = dtStart.Value.AddHours(1);
+            };
+
+            // ✅ Load Access Levels
             _ = LoadAccessLevels(card.accessLevelId ?? 0);
         }
 
@@ -66,91 +67,113 @@ namespace AccessControlConfigurator
 
                 cbAccessLevel.SelectedValue = selectedId;
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Failed to load access levels", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        //UPDATE BUTTON
+        // ✅ UPDATE BUTTON
         private async void btnUpdate_Click(object sender, EventArgs e)
         {
             try
             {
-                //  Validate Card Number
+                // ✅ Card Number Validation
                 if (!long.TryParse(txtCardNumber.Text, out long cardNumber))
                 {
-                    MessageBox.Show("Invalid Card Number");
+                    MessageBox.Show("Please enter a valid Card Number", "Validation",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                //  Validate Access Level
+                // ✅ Access Level Validation
                 if (cbAccessLevel.SelectedValue == null)
                 {
-                    MessageBox.Show("Please select Access Level");
+                    MessageBox.Show("Please select Access Level", "Validation",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-
-                //  Validate Start Date (not past)
                 if (dtStart.Value.Date < DateTime.Now.Date)
                 {
-                    MessageBox.Show("Start Date cannot be in the past");
+                    MessageBox.Show("Start Date cannot be in the past",
+                        "Validation",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
                     return;
                 }
 
-                //  Validate End Date > Start Date
+                // ✅ End Date Validation
                 if (dtEnd.Value <= dtStart.Value)
                 {
-                    MessageBox.Show("End Date must be greater than Start Date");
+                    MessageBox.Show("End Date must be greater than Start Date", "Validation",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
+                // ✅ Prepare API request
                 var card = new UpdateCardDto
                 {
                     cardNumber = cardNumber,
                     accessLevelId = Convert.ToInt32(cbAccessLevel.SelectedValue),
 
-                    //  Exact API format
-                    //startDateTime = dtStart.Value.Date.ToString("yyyy-MM-ddT00:00:00Z"),
-                    //endDateTime = dtEnd.Value.Date.ToString("yyyy-MM-ddT00:00:00Z"),
+                    // ✅ Correct Date Format
+                    startDateTime = dtStart.Value.ToString("yyyy-MM-ddTHH:mm:sszzz"),
+                    endDateTime = dtEnd.Value.ToString("yyyy-MM-ddTHH:mm:sszzz"),
 
-                    startDateTime = ((DateTimeOffset)dtStart.Value).ToUnixTimeSeconds().ToString(),
-                    endDateTime = ((DateTimeOffset)dtEnd.Value).ToUnixTimeSeconds().ToString(),
-
-                    // Safe assign
-                    assignCardholder = int.TryParse(txtCardholder.Text, out var ch) ? ch : 5
+                    // ✅ NULL if empty
+                    assignCardholder = string.IsNullOrWhiteSpace(txtCardholder.Text)
+                        ? (int?)null
+                        : int.Parse(txtCardholder.Text)
                 };
 
                 var (success, error) = await _apiService.UpdateCard(cardId, card);
 
                 if (success)
                 {
-                    MessageBox.Show("Card Updated Successfully");
+                    MessageBox.Show("Card updated successfully", "Success",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show(
-                        string.IsNullOrWhiteSpace(error) ? "Update failed." : error,
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
+                    MessageBox.Show(GetUserFriendlyError(error), "Warning",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(
-                    ex.ToString(),   
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("Unexpected error occurred. Please try again.", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        //CANCEL BUTTON
+        // ✅ USER FRIENDLY ERROR HANDLER
+        private string GetUserFriendlyError(string error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+                return "Update failed. Please check your inputs.";
+
+            if (error.Contains("EndDateTime must be greater"))
+                return "End Date must be greater than Start Date";
+
+            if (error.Contains("invalid_card_time_range"))
+                return "Invalid date/time selection";
+
+            if (error.Contains("cardholder_not_found"))
+                return "Invalid Cardholder ID";
+
+            if (error.Contains("duplicate_card_number"))
+                return "Card number already exists";
+
+            if (error.Contains("card_not_found"))
+                return "Card not found";
+
+            return "Something went wrong. Please try again.";
+        }
+
+        // ✅ CANCEL BUTTON
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();

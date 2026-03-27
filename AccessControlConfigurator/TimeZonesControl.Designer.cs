@@ -8,6 +8,8 @@ namespace AccessControlConfigurator
         private System.ComponentModel.IContainer components = null;
 
         private Panel panelHeader;
+        private Panel panelFilter;
+
         private Panel panelContent;
 
         private Label lblTitle;
@@ -16,8 +18,13 @@ namespace AccessControlConfigurator
         private Button btnEdit;
         private Button btnDelete;
         private Button btnSync;
+        private Button btnApply;
+        private Button btnQuery;
+
         private Button btnRefresh;
         private Button btnback;
+        private Label lblNameFilter;
+        private ComboBox cmbNameFilter;
 
         private DataGridView dgvTimeZones;
 
@@ -45,9 +52,13 @@ namespace AccessControlConfigurator
             btnSync = new Button();
             btnRefresh = new Button();
             btnback = new Button();
+            panelFilter = new Panel();
+            lblNameFilter = new Label();
+            cmbNameFilter = new ComboBox();
             panelContent = new Panel();
             dgvTimeZones = new DataGridView();
             panelHeader.SuspendLayout();
+            panelFilter.SuspendLayout();
             panelContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTimeZones).BeginInit();
             SuspendLayout();
@@ -163,14 +174,42 @@ namespace AccessControlConfigurator
             btnback.Text = "Back";
             btnback.Click += btnback_Click;
             // 
+            // panelFilter
+            // 
+            panelFilter.BackColor = Color.White;
+            panelFilter.Controls.Add(lblNameFilter);
+            panelFilter.Controls.Add(cmbNameFilter);
+            panelFilter.Dock = DockStyle.Top;
+            panelFilter.Location = new Point(0, 45);
+            panelFilter.Name = "panelFilter";
+            panelFilter.Padding = new Padding(10, 4, 10, 4);
+            panelFilter.Size = new Size(1000, 36);
+            panelFilter.TabIndex = 2;
+            // 
+            // lblNameFilter
+            // 
+            lblNameFilter.AutoSize = true;
+            lblNameFilter.Location = new Point(691, 5);
+            lblNameFilter.Name = "lblNameFilter";
+            lblNameFilter.Size = new Size(49, 20);
+            lblNameFilter.TabIndex = 12;
+            lblNameFilter.Text = "Name";
+            // 
+            // cmbNameFilter
+            // 
+            cmbNameFilter.Location = new Point(747, 2);
+            cmbNameFilter.Name = "cmbNameFilter";
+            cmbNameFilter.Size = new Size(240, 28);
+            cmbNameFilter.TabIndex = 13;
+            // 
             // panelContent
             // 
             panelContent.Controls.Add(dgvTimeZones);
             panelContent.Dock = DockStyle.Fill;
-            panelContent.Location = new Point(0, 45);
+            panelContent.Location = new Point(0, 81);
             panelContent.Name = "panelContent";
             panelContent.Padding = new Padding(15, 10, 15, 10);
-            panelContent.Size = new Size(1000, 555);
+            panelContent.Size = new Size(1000, 519);
             panelContent.TabIndex = 0;
             // 
             // dgvTimeZones
@@ -210,17 +249,20 @@ namespace AccessControlConfigurator
             dgvTimeZones.RowHeadersWidth = 51;
             dgvTimeZones.RowTemplate.Height = 30;
             dgvTimeZones.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTimeZones.Size = new Size(970, 535);
+            dgvTimeZones.Size = new Size(970, 499);
             dgvTimeZones.TabIndex = 0;
             // 
             // TimeZonesControl
             // 
             Controls.Add(panelContent);
+            Controls.Add(panelFilter);
             Controls.Add(panelHeader);
             Name = "TimeZonesControl";
             Size = new Size(1000, 600);
             panelHeader.ResumeLayout(false);
             panelHeader.PerformLayout();
+            panelFilter.ResumeLayout(false);
+            panelFilter.PerformLayout();
             panelContent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTimeZones).EndInit();
             ResumeLayout(false);

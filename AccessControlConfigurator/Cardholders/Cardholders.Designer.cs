@@ -15,6 +15,10 @@ namespace AccessControlConfigurator.Controls
         private Button btnBack;
 
         private DataGridView dgvCardholders;
+        private Label lblNameFilter;
+        private TextBox txtNameFilter;
+        private Label lblEmailFilter;
+        private TextBox txtEmailFilter;
 
         protected override void Dispose(bool disposing)
         {
@@ -44,8 +48,14 @@ namespace AccessControlConfigurator.Controls
             txtSearch = new TextBox();
             btnSearch = new Button();
             topPanel = new Panel();
+            filterPanel = new Panel();
+            lblNameFilter = new Label();
+            txtNameFilter = new TextBox();
+            lblEmailFilter = new Label();
+            txtEmailFilter = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvCardholders).BeginInit();
             topPanel.SuspendLayout();
+            filterPanel.SuspendLayout();
             SuspendLayout();
             // 
             // lblTitle
@@ -109,15 +119,16 @@ namespace AccessControlConfigurator.Controls
             dgvCardholders.BackgroundColor = Color.White;
             dgvCardholders.BorderStyle = BorderStyle.None;
             dgvCardholders.ColumnHeadersHeight = 29;
+            dgvCardholders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvCardholders.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7 });
             dgvCardholders.Dock = DockStyle.Fill;
-            dgvCardholders.Location = new Point(0, 32);
+            dgvCardholders.Location = new Point(0, 72);
             dgvCardholders.MultiSelect = false;
             dgvCardholders.Name = "dgvCardholders";
             dgvCardholders.ReadOnly = true;
             dgvCardholders.RowHeadersWidth = 51;
             dgvCardholders.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCardholders.Size = new Size(960, 518);
+            dgvCardholders.Size = new Size(960, 478);
             dgvCardholders.TabIndex = 2;
             // 
             // dataGridViewTextBoxColumn1
@@ -173,7 +184,7 @@ namespace AccessControlConfigurator.Controls
             // lblSearchRight
             // 
             lblSearchRight.AutoSize = true;
-            lblSearchRight.Location = new Point(691, 9);
+            lblSearchRight.Location = new Point(686, 9);
             lblSearchRight.Name = "lblSearchRight";
             lblSearchRight.Size = new Size(53, 20);
             lblSearchRight.TabIndex = 10;
@@ -181,7 +192,7 @@ namespace AccessControlConfigurator.Controls
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(750, 5);
+            txtSearch.Location = new Point(749, 5);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search here";
             txtSearch.Size = new Size(137, 27);
@@ -189,7 +200,7 @@ namespace AccessControlConfigurator.Controls
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(893, 5);
+            btnSearch.Location = new Point(914, 5);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(36, 29);
             btnSearch.TabIndex = 12;
@@ -211,18 +222,69 @@ namespace AccessControlConfigurator.Controls
             topPanel.Dock = DockStyle.Top;
             topPanel.Location = new Point(0, 0);
             topPanel.Name = "topPanel";
-            topPanel.Size = new Size(960, 32);
+            topPanel.Size = new Size(960, 36);
             topPanel.TabIndex = 3;
+            // 
+            // filterPanel
+            // 
+            filterPanel.BackColor = Color.White;
+            filterPanel.Controls.Add(lblNameFilter);
+            filterPanel.Controls.Add(txtNameFilter);
+            filterPanel.Controls.Add(lblEmailFilter);
+            filterPanel.Controls.Add(txtEmailFilter);
+            filterPanel.Dock = DockStyle.Top;
+            filterPanel.Location = new Point(0, 36);
+            filterPanel.Name = "filterPanel";
+            filterPanel.Size = new Size(960, 36);
+            filterPanel.TabIndex = 4;
+            filterPanel.Paint += filterPanel_Paint;
+            // 
+            // lblNameFilter
+            // 
+            lblNameFilter.AutoSize = true;
+            lblNameFilter.Location = new Point(530, 8);
+            lblNameFilter.Name = "lblNameFilter";
+            lblNameFilter.Size = new Size(49, 20);
+            lblNameFilter.TabIndex = 13;
+            lblNameFilter.Text = "Name";
+            // 
+            // txtNameFilter
+            // 
+            txtNameFilter.Location = new Point(590, 4);
+            txtNameFilter.Name = "txtNameFilter";
+            txtNameFilter.PlaceholderText = "Filter name";
+            txtNameFilter.Size = new Size(140, 27);
+            txtNameFilter.TabIndex = 14;
+            // 
+            // lblEmailFilter
+            // 
+            lblEmailFilter.AutoSize = true;
+            lblEmailFilter.Location = new Point(740, 8);
+            lblEmailFilter.Name = "lblEmailFilter";
+            lblEmailFilter.Size = new Size(46, 20);
+            lblEmailFilter.TabIndex = 15;
+            lblEmailFilter.Text = "Email";
+            // 
+            // txtEmailFilter
+            // 
+            txtEmailFilter.Location = new Point(790, 4);
+            txtEmailFilter.Name = "txtEmailFilter";
+            txtEmailFilter.PlaceholderText = "Filter email";
+            txtEmailFilter.Size = new Size(160, 27);
+            txtEmailFilter.TabIndex = 16;
             // 
             // CardholdersControl
             // 
             Controls.Add(dgvCardholders);
+            Controls.Add(filterPanel);
             Controls.Add(topPanel);
             Name = "CardholdersControl";
             Size = new Size(960, 550);
             ((System.ComponentModel.ISupportInitialize)dgvCardholders).EndInit();
             topPanel.ResumeLayout(false);
             topPanel.PerformLayout();
+            filterPanel.ResumeLayout(false);
+            filterPanel.PerformLayout();
             ResumeLayout(false);
         }
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
@@ -236,5 +298,6 @@ namespace AccessControlConfigurator.Controls
         private TextBox txtSearch;
         private Button btnSearch;
         private Panel topPanel;
+        private Panel filterPanel;
     }
 }

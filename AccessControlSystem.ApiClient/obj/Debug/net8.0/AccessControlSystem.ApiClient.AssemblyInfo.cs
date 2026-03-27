@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AccessControlSystem.ApiClient")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+20215a7f2466f506b3ee5147091d5d89775ac763")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cfd9500803881d8bebeda179f16a7e351bb877b7")]
 [assembly: System.Reflection.AssemblyProductAttribute("AccessControlSystem.ApiClient")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AccessControlSystem.ApiClient")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

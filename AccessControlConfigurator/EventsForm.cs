@@ -1,9 +1,11 @@
 ﻿using AccessControlSystem.Services;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AccessControlConfigurator
@@ -11,7 +13,7 @@ namespace AccessControlConfigurator
     public partial class EventsControl : UserControl
     {
         private WebSocketService _ws;
-        private List<EventDto> _allData = new List<EventDto>();
+        private List<EventRow> _allData = new List<EventRow>();
 
         public EventsControl()
         {
@@ -29,6 +31,12 @@ namespace AccessControlConfigurator
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbEventTypeFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbScpFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbEventTypeFilter.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbScpFilter.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEventTypeFilter.SelectedIndexChanged += (s, e) => ApplyFilters();
+            cmbScpFilter.SelectedIndexChanged += (s, e) => ApplyFilters();
             //dgvEvents.DataSource = _allData;
 
 
@@ -126,7 +134,21 @@ namespace AccessControlConfigurator
                 description = rawMessage;
             }
 
-            AddRow(time, eventType, scp, door, status, commandTag, description, now);
+            var row = new EventRow
+            {
+                Time = time,
+                EventType = eventType,
+                Scp = scp,
+                Door = door,
+                Status = status,
+                CommandTag = commandTag,
+                Description = description,
+                Timestamp = now
+            };
+
+            _allData.Add(row);
+            LoadFilters();
+            ApplyFilters();
         }
 
         private void AddRow(string time, string eventType, string scp,
@@ -165,6 +187,40 @@ namespace AccessControlConfigurator
             if (dgvEvents.Rows.Count > 0)
                 dgvEvents.FirstDisplayedScrollingRowIndex = 0;
         }
+        private void BindGrid(IEnumerable<EventRow> data)
+        {
+            dgvEvents.Rows.Clear();
+
+            foreach (var row in data)
+            {
+                dgvEvents.Rows.Add(
+                    row.Time,
+                    row.EventType,
+                    row.Scp,
+                    row.Door,
+                    row.Status,
+                    row.CommandTag,
+                    row.Description,
+                    row.Timestamp);
+            }
+
+            dgvEvents.Sort(dgvEvents.Columns["timestamp"], ListSortDirection.Descending);
+
+            foreach (DataGridViewRow gridRow in dgvEvents.Rows)
+            {
+                string rowStatus = gridRow.Cells["status"].Value?.ToString();
+
+                if (rowStatus == "Online")
+                    gridRow.DefaultCellStyle.ForeColor = Color.Green;
+                else if (rowStatus == "Offline")
+                    gridRow.DefaultCellStyle.ForeColor = Color.Red;
+                else if (rowStatus == "OK")
+                    gridRow.DefaultCellStyle.ForeColor = Color.DarkBlue;
+            }
+
+            if (dgvEvents.Rows.Count > 0)
+                dgvEvents.FirstDisplayedScrollingRowIndex = 0;
+        }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
@@ -195,31 +251,52 @@ namespace AccessControlConfigurator
             if (result == DialogResult.Yes)
             {
                 dgvEvents.Rows.Clear();
+                _allData.Clear();
                 AddEvent("Events cleared");
             }
         }
-        private void ApplySearchFilter()
+        private void ApplyFilters()
         {
-            string searchText = txtSearch.Text.Trim().ToLower();
-
-            foreach (DataGridViewRow row in dgvEvents.Rows)
+            if (InvokeRequired)
             {
-                if (row.IsNewRow) continue;
-
-                bool match = false;
-
-                foreach (DataGridViewCell cell in row.Cells)
-                {
-                    if (cell.Value != null &&
-                        cell.Value.ToString().ToLower().Contains(searchText))
-                    {
-                        match = true;
-                        break;
-                    }
-                }
-
-                row.Visible = string.IsNullOrEmpty(searchText) || match;
+                Invoke(new Action(ApplyFilters));
+                return;
             }
+
+            IEnumerable<EventRow> filtered = _allData;
+
+            string eventType = cmbEventTypeFilter.SelectedItem?.ToString();
+            if (!string.IsNullOrWhiteSpace(eventType) &&
+                !string.Equals(eventType, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                filtered = filtered.Where(r =>
+                    string.Equals(r.EventType ?? string.Empty, eventType, StringComparison.OrdinalIgnoreCase));
+            }
+
+            string scp = cmbScpFilter.SelectedItem?.ToString();
+            if (!string.IsNullOrWhiteSpace(scp) &&
+                !string.Equals(scp, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                filtered = filtered.Where(r =>
+                    string.Equals(r.Scp ?? string.Empty, scp, StringComparison.OrdinalIgnoreCase));
+            }
+
+            string searchText = txtSearch.Text.Trim().ToLower();
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                filtered = filtered.Where(r =>
+                    string.Join(" ",
+                        r.Time,
+                        r.EventType,
+                        r.Scp,
+                        r.Door,
+                        r.Status,
+                        r.CommandTag,
+                        r.Description
+                    ).ToLower().Contains(searchText));
+            }
+
+            BindGrid(filtered);
         }
         //private void txtSearch_TextChanged(object sender, EventArgs e)
         //{
@@ -227,7 +304,7 @@ namespace AccessControlConfigurator
         //}
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            ApplySearchFilter();
+            ApplyFilters();
         }
         private void ClearSearch()
         {
@@ -256,13 +333,26 @@ namespace AccessControlConfigurator
             if (confirm != DialogResult.Yes)
                 return;
 
-            // 🔥 REMOVE FROM DATATABLE
-            var dt = dgvEvents.DataSource as DataTable;
+            var row = dgvEvents.SelectedRows[0];
+            string time = row.Cells["time"].Value?.ToString();
+            string eventType = row.Cells["eventType"].Value?.ToString();
+            string scp = row.Cells["scp"].Value?.ToString();
+            string status = row.Cells["status"].Value?.ToString();
+            string commandTag = row.Cells["commandTag"].Value?.ToString();
+            string description = row.Cells["description"].Value?.ToString();
 
-            if (dt != null)
-            {
-                dt.Rows.RemoveAt(dgvEvents.SelectedRows[0].Index);
-            }
+            var match = _allData.FirstOrDefault(r =>
+                r.Time == time &&
+                r.EventType == eventType &&
+                r.Scp == scp &&
+                r.Status == status &&
+                r.CommandTag == commandTag &&
+                r.Description == description);
+
+            if (match != null)
+                _allData.Remove(match);
+
+            ApplyFilters();
 
             MessageBox.Show("Event deleted successfully");
         }
@@ -288,6 +378,71 @@ namespace AccessControlConfigurator
         {
             MainForm main = new MainForm();
             main.Show();
+        }
+        private void LoadFilters()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(LoadFilters));
+                return;
+            }
+
+            var eventTypes = _allData
+                .Select(r => r.EventType ?? string.Empty)
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(v => v)
+                .ToList();
+
+            var scpIds = _allData
+                .Select(r => r.Scp ?? string.Empty)
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(v => v)
+                .ToList();
+
+            eventTypes.Insert(0, "All");
+            scpIds.Insert(0, "All");
+
+            string selectedEventType = cmbEventTypeFilter.SelectedItem?.ToString();
+            string selectedScp = cmbScpFilter.SelectedItem?.ToString();
+
+            cmbEventTypeFilter.DataSource = null;
+            cmbEventTypeFilter.DataSource = eventTypes;
+
+            cmbScpFilter.DataSource = null;
+            cmbScpFilter.DataSource = scpIds;
+
+            if (!string.IsNullOrWhiteSpace(selectedEventType) &&
+                eventTypes.Contains(selectedEventType))
+            {
+                cmbEventTypeFilter.SelectedItem = selectedEventType;
+            }
+            else
+            {
+                cmbEventTypeFilter.SelectedIndex = 0;
+            }
+
+            if (!string.IsNullOrWhiteSpace(selectedScp) &&
+                scpIds.Contains(selectedScp))
+            {
+                cmbScpFilter.SelectedItem = selectedScp;
+            }
+            else
+            {
+                cmbScpFilter.SelectedIndex = 0;
+            }
+        }
+        private class EventRow
+        {
+            public string Time { get; set; }
+            public string EventType { get; set; }
+            public string Scp { get; set; }
+            public string Door { get; set; }
+            public string Status { get; set; }
+            public string CommandTag { get; set; }
+            public string Description { get; set; }
+            public DateTime Timestamp { get; set; }
         }
     }
 }

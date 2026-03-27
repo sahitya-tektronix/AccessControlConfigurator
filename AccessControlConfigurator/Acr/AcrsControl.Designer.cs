@@ -33,179 +33,252 @@ namespace AccessControlConfigurator
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-
-            // ===== TITLE =====
             lblacr = new Label();
+            topPanel = new Panel();
+            btnEdit = new Button();
+            btnRefresh = new Button();
+            btnBack = new Button();
+            lblController = new Label();
+            cmbControllerId = new ComboBox();
+            lblSio = new Label();
+            cmbSioNumber = new ComboBox();
+            lblReader = new Label();
+            cmbReader = new ComboBox();
+            lblSearchRight = new Label();
+            txtSearch = new TextBox();
+            btnSearch = new Button();
+            dgvAcrs = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
+            topPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvAcrs).BeginInit();
+            SuspendLayout();
+            // 
+            // lblacr
+            // 
+            lblacr.BackColor = Color.FromArgb(245, 245, 245);
             lblacr.Dock = DockStyle.Top;
-            lblacr.Height = 40;
             lblacr.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            lblacr.Location = new Point(0, 0);
+            lblacr.Name = "lblacr";
+            lblacr.Padding = new Padding(10, 0, 0, 0);
+            lblacr.Size = new Size(1000, 40);
+            lblacr.TabIndex = 5;
             lblacr.Text = "ACRs (Doors)";
             lblacr.TextAlign = ContentAlignment.MiddleLeft;
-            lblacr.Padding = new Padding(10, 0, 0, 0);
-            lblacr.BackColor = Color.FromArgb(245, 245, 245);
-
-            // ===== TOP PANEL =====
-            Panel topPanel = new Panel();
-            topPanel.Dock = DockStyle.Top;
-            topPanel.Height = 45;
+            // 
+            // topPanel
+            // 
             topPanel.BackColor = Color.White;
-
-            // ===== BUTTONS =====
-            btnEdit = new Button();
-            btnEdit.Text = "Edit";
-            btnEdit.Size = new Size(80, 28);
-            btnEdit.Location = new Point(10, 8);
-            btnEdit.Click += btnEdit_Click;
-
-            btnRefresh = new Button();
-            btnRefresh.Text = "Refresh";
-            btnRefresh.Size = new Size(80, 28);
-            btnRefresh.Location = new Point(100, 8);
-            btnRefresh.Click += btnRefresh_Click;
-
-            btnBack = new Button();
-            btnBack.Text = "Back";
-            btnBack.Size = new Size(80, 28);
-            btnBack.Location = new Point(190, 8);
-            btnBack.Click += btnBack_Click;
-
-            // ===== FILTERS =====
-            lblController = new Label();
-            lblController.Text = "Controller";
-            lblController.Location = new Point(300, 12);
-            lblController.AutoSize = true;
-
-            cmbControllerId = new ComboBox();
-            cmbControllerId.Location = new Point(380, 8);
-            cmbControllerId.Size = new Size(70, 28);
-            cmbControllerId.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            lblSio = new Label();
-            lblSio.Text = "Sio";
-            lblSio.Location = new Point(460, 12);
-            lblSio.AutoSize = true;
-
-            cmbSioNumber = new ComboBox();
-            cmbSioNumber.Location = new Point(490, 8);
-            cmbSioNumber.Size = new Size(60, 28);
-            cmbSioNumber.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            lblReader = new Label();
-            lblReader.Text = "Reader";
-            lblReader.Location = new Point(560, 12);
-            lblReader.AutoSize = true;
-
-            cmbReader = new ComboBox();
-            cmbReader.Location = new Point(620, 8);
-            cmbReader.Size = new Size(90, 28);
-            cmbReader.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            // ===== SEARCH =====
-            lblSearchRight = new Label();
-            lblSearchRight.Text = "Search";
-            lblSearchRight.Location = new Point(720, 12);
-            lblSearchRight.AutoSize = true;
-
-            txtSearch = new TextBox();
-            txtSearch.Location = new Point(780, 8);
-            txtSearch.Size = new Size(160, 27);
-
-            btnSearch = new Button();
-            btnSearch.Text = "🔍";
-            btnSearch.Size = new Size(36, 27);
-            btnSearch.Location = new Point(950, 8);
-            btnSearch.Click += btnSearch_Click;
-
-            // ===== ADD CONTROLS TO PANEL =====
             topPanel.Controls.Add(btnEdit);
             topPanel.Controls.Add(btnRefresh);
             topPanel.Controls.Add(btnBack);
-
             topPanel.Controls.Add(lblController);
             topPanel.Controls.Add(cmbControllerId);
-
             topPanel.Controls.Add(lblSio);
             topPanel.Controls.Add(cmbSioNumber);
-
             topPanel.Controls.Add(lblReader);
             topPanel.Controls.Add(cmbReader);
-
-            topPanel.Controls.Add(lblSearchRight);
-            topPanel.Controls.Add(txtSearch);
-            topPanel.Controls.Add(btnSearch);
-
-            // ===== GRID =====
-            dgvAcrs = new DataGridView();
-            dgvAcrs.Dock = DockStyle.Fill;
+            topPanel.Dock = DockStyle.Top;
+            topPanel.Location = new Point(0, 40);
+            topPanel.Name = "topPanel";
+            topPanel.Size = new Size(1000, 45);
+            topPanel.TabIndex = 1;
+            // 
+            // btnEdit
+            // 
+            btnEdit.Location = new Point(10, 8);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(80, 28);
+            btnEdit.TabIndex = 0;
+            btnEdit.Text = "Edit";
+            btnEdit.Click += btnEdit_Click;
+            // 
+            // btnRefresh
+            // 
+            btnRefresh.Location = new Point(100, 8);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(80, 28);
+            btnRefresh.TabIndex = 1;
+            btnRefresh.Text = "Refresh";
+            btnRefresh.Click += btnRefresh_Click;
+            // 
+            // btnBack
+            // 
+            btnBack.Location = new Point(190, 8);
+            btnBack.Name = "btnBack";
+            btnBack.Size = new Size(80, 28);
+            btnBack.TabIndex = 2;
+            btnBack.Text = "Back";
+            btnBack.Click += btnBack_Click;
+            // 
+            // lblController
+            // 
+            lblController.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblController.AutoSize = true;
+            lblController.Location = new Point(520, 12);
+            lblController.Name = "lblController";
+            lblController.Size = new Size(75, 20);
+            lblController.TabIndex = 3;
+            lblController.Text = "Controller";
+            // 
+            // cmbControllerId
+            // 
+            cmbControllerId.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbControllerId.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbControllerId.Location = new Point(600, 8);
+            cmbControllerId.Name = "cmbControllerId";
+            cmbControllerId.Size = new Size(80, 28);
+            cmbControllerId.TabIndex = 4;
+            // 
+            // lblSio
+            // 
+            lblSio.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblSio.AutoSize = true;
+            lblSio.Location = new Point(700, 12);
+            lblSio.Name = "lblSio";
+            lblSio.Size = new Size(30, 20);
+            lblSio.TabIndex = 5;
+            lblSio.Text = "Sio";
+            // 
+            // cmbSioNumber
+            // 
+            cmbSioNumber.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbSioNumber.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSioNumber.Location = new Point(740, 8);
+            cmbSioNumber.Name = "cmbSioNumber";
+            cmbSioNumber.Size = new Size(70, 28);
+            cmbSioNumber.TabIndex = 6;
+            // 
+            // lblReader
+            // 
+            lblReader.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblReader.AutoSize = true;
+            lblReader.Location = new Point(830, 12);
+            lblReader.Name = "lblReader";
+            lblReader.Size = new Size(56, 20);
+            lblReader.TabIndex = 7;
+            lblReader.Text = "Reader";
+            // 
+            // cmbReader
+            // 
+            cmbReader.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbReader.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbReader.Location = new Point(890, 8);
+            cmbReader.Name = "cmbReader";
+            cmbReader.Size = new Size(100, 28);
+            cmbReader.TabIndex = 8;
+            // 
+            // lblSearchRight
+            // 
+            lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblSearchRight.AutoSize = true;
+            lblSearchRight.Location = new Point(650, 10);
+            lblSearchRight.Name = "lblSearchRight";
+            lblSearchRight.Size = new Size(53, 20);
+            lblSearchRight.TabIndex = 2;
+            lblSearchRight.Text = "Search";
+            // 
+            // txtSearch
+            // 
+            txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            txtSearch.Location = new Point(710, 8);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(200, 27);
+            txtSearch.TabIndex = 3;
+            // 
+            // btnSearch
+            // 
+            btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSearch.Location = new Point(920, 8);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(40, 27);
+            btnSearch.TabIndex = 4;
+            btnSearch.Text = "🔍";
+            btnSearch.Click += btnSearch_Click;
+            // 
+            // dgvAcrs
+            // 
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(245, 245, 245);
+            dgvAcrs.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dgvAcrs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAcrs.BackgroundColor = Color.White;
             dgvAcrs.BorderStyle = BorderStyle.None;
-            dgvAcrs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvAcrs.AllowUserToAddRows = false;
-            dgvAcrs.RowHeadersVisible = false;
-
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(245, 245, 245);
-            dgvAcrs.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
-
-            dataGridViewCellStyle3.BackColor = Color.FromArgb(240, 240, 240);
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dgvAcrs.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(240, 240, 240);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dgvAcrs.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvAcrs.ColumnHeadersHeight = 35;
-
-            dgvAcrs.Columns.Add("ColId", "ID");
-            dgvAcrs.Columns.Add("colName", "ACR Name");
-            dgvAcrs.Columns.Add("ColControllerId", "Controller Id");
-            dgvAcrs.Columns.Add("ColSioNumber", "Sio Number");
-            dgvAcrs.Columns.Add("colReader", "Reader Name");
-            dgvAcrs.Columns.Add("colAcrNumber", "ACR Number");
-            dgvAcrs.Columns.Add("colOnline", "Online");
-
+            dgvAcrs.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7 });
             dgvAcrs.Dock = DockStyle.Fill;
-
-            dgvAcrs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            dgvAcrs.AllowUserToResizeColumns = false;
-            dgvAcrs.AllowUserToResizeRows = false;
-
-            dgvAcrs.ColumnHeadersHeightSizeMode =
-                DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-
-            foreach (DataGridViewColumn col in dgvAcrs.Columns)
-            {
-                col.Resizable = DataGridViewTriState.False;
-            }
-
-
-
-
-            // Column ratios
-            dgvAcrs.Columns["ColId"].FillWeight = 50;
-            dgvAcrs.Columns["colName"].FillWeight = 150;
-            dgvAcrs.Columns["ColControllerId"].FillWeight = 120;
-            dgvAcrs.Columns["ColSioNumber"].FillWeight = 120;
-            dgvAcrs.Columns["colReader"].FillWeight = 120;
-            dgvAcrs.Columns["colAcrNumber"].FillWeight = 120;
-            dgvAcrs.Columns["colOnline"].FillWeight = 100;
-
-            dgvAcrs.Columns["ColId"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvAcrs.Columns["ColControllerId"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvAcrs.Columns["ColSioNumber"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvAcrs.Columns["colAcrNumber"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvAcrs.Columns["colOnline"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            dgvAcrs.EnableHeadersVisualStyles = false;
-            dgvAcrs.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-
-            dgvAcrs.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleLeft;
-
-            // ===== FINAL ADD ORDER (VERY IMPORTANT) =====
-            Controls.Add(dgvAcrs);   // bottom
-            Controls.Add(topPanel);  // toolbar
-            Controls.Add(lblacr);    // title
-
+            dgvAcrs.Location = new Point(0, 85);
+            dgvAcrs.Name = "dgvAcrs";
+            dgvAcrs.RowHeadersVisible = false;
+            dgvAcrs.RowHeadersWidth = 51;
+            dgvAcrs.Size = new Size(1000, 515);
+            dgvAcrs.TabIndex = 0;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.HeaderText = "ID";
+            dataGridViewTextBoxColumn1.MinimumWidth = 6;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.HeaderText = "ACR Name";
+            dataGridViewTextBoxColumn2.MinimumWidth = 6;
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            dataGridViewTextBoxColumn3.HeaderText = "Controller Id";
+            dataGridViewTextBoxColumn3.MinimumWidth = 6;
+            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            dataGridViewTextBoxColumn4.HeaderText = "Sio Number";
+            dataGridViewTextBoxColumn4.MinimumWidth = 6;
+            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            dataGridViewTextBoxColumn5.HeaderText = "Reader Name";
+            dataGridViewTextBoxColumn5.MinimumWidth = 6;
+            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            dataGridViewTextBoxColumn6.HeaderText = "ACR Number";
+            dataGridViewTextBoxColumn6.MinimumWidth = 6;
+            dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            dataGridViewTextBoxColumn7.HeaderText = "Online";
+            dataGridViewTextBoxColumn7.MinimumWidth = 6;
+            dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            // 
+            // AcrsControl
+            // 
+            Controls.Add(dgvAcrs);
+            Controls.Add(topPanel);
+            Controls.Add(lblSearchRight);
+            Controls.Add(txtSearch);
+            Controls.Add(btnSearch);
+            Controls.Add(lblacr);
+            Name = "AcrsControl";
             Size = new Size(1000, 600);
+            topPanel.ResumeLayout(false);
+            topPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvAcrs).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
         private Label lblSearchRight;
         private TextBox txtSearch;
@@ -218,5 +291,13 @@ namespace AccessControlConfigurator
         private DataGridViewTextBoxColumn colName;
         private DataGridViewTextBoxColumn ColId;
         private DataGridView dgvAcrs;
+        private Panel topPanel;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
     }
 }

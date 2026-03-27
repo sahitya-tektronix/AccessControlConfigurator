@@ -57,7 +57,7 @@ namespace AccessControlConfigurator
             {
                 if (e.KeyCode == Keys.Enter)
                     ApplySearch();
-           };
+            };
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -196,35 +196,51 @@ namespace AccessControlConfigurator
 
         private async void btnEdit_Click(object sender, EventArgs e)
         {
-            if (dgvAcrs.SelectedRows.Count == 0)
+            try
             {
-                MessageBox.Show("Select ACR first");
-                return;
+                // ✅ Check selection
+                if (dgvAcrs.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Select ACR first");
+                    return;
+                }
+
+                // ✅ Get ID from first column (SAFE & CORRECT)
+                int acrId = Convert.ToInt32(
+                    dgvAcrs.SelectedRows[0].Cells[0].Value);
+
+                // ✅ Find selected data
+                var li = acrData.FirstOrDefault(x => x.id == acrId);
+
+                if (li == null)
+                {
+                    MessageBox.Show("Data not found");
+                    return;
+                }
+
+                // ✅ Open edit form
+                var form = new EditAcrForm(li);
+
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    // ✅ Update API
+                    await _api.UpdateAcrAsync(
+                        li.controllerID,
+                        li.sioNumber,
+                        li.id,
+                        form.AcrData);
+
+                    // ✅ Refresh grid
+                    await LoadAcrs();
+
+                    MessageBox.Show("ACR updated successfully!");
+                }
             }
-
-            int acrId = Convert.ToInt32(
-                dgvAcrs.SelectedRows[0].Cells["ColId"].Value);
-
-            var li = acrData.FirstOrDefault(x => x.id == acrId);
-
-            if (li == null)
+            catch (Exception ex)
             {
-                MessageBox.Show("Data not found");
-                return;
+                MessageBox.Show("Error: " + ex.Message);
             }
-
-            var form = new EditAcrForm(li);
-
-            if (form.ShowDialog() == DialogResult.OK)
-            {
-                await _api.UpdateAcrAsync(
-                    li.controllerID,
-                    li.sioNumber,
-                    li.id,
-                    form.AcrData);
-
-                await LoadAcrs();
-            }
+        
         }
         //private void txtSearch_TextChanged(object sender, EventArgs e)
         //{
@@ -285,6 +301,11 @@ namespace AccessControlConfigurator
                 filtered = filtered.Where(x => $"Reader {x.readerNumber}" == reader);
 
             PopulateGrid(filtered.ToList());
+        }
+
+        private void cmbControllerId_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

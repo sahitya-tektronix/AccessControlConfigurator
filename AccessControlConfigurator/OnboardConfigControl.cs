@@ -96,7 +96,7 @@ namespace AccessControlConfigurator
                     if (leftAcrId == null)
                     {
                         chkEnableR1.Checked = true;
-                        txt1Rname.Text = item.defaultAcrName;
+                        txt1Rname.Text = item.name;
                         tb1Acr.Text = item.acrNumber.ToString();
 
                         cbRdir1.Text = item.readerType switch
@@ -112,7 +112,7 @@ namespace AccessControlConfigurator
                     else
                     {
                         chkEnableR2.Checked = true;
-                        txt2Rname.Text = item.defaultAcrName;
+                        txt2Rname.Text = item.name;
                         tb2Acr.Text = item.acrNumber.ToString();
 
                         cbRdir2.Text = item.readerType switch
@@ -295,9 +295,10 @@ namespace AccessControlConfigurator
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-
-            MainForm.Instance.LoadPage(new ControllersControl(), false);
-        
-    }
+            MainForm.Instance.LoadPage(
+                new EditControllerControl(_controller, _sioList),
+                false
+            );
+        }
     }
 }

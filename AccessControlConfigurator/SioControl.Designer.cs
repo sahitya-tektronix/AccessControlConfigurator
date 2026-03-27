@@ -155,6 +155,7 @@ namespace AccessControlSystem.Forms
             chkOnBoard.Size = new Size(104, 34);
             chkOnBoard.TabIndex = 1;
             chkOnBoard.Text = "OnBoard";
+           // chkOnBoard.CheckedChanged += chkOnBoard_CheckedChanged_1;
             // 
             // busesLayout
             // 

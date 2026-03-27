@@ -8,6 +8,8 @@ namespace AccessControlConfigurator
         private System.ComponentModel.IContainer components = null;
 
         private Panel panelHeader;
+        private Panel panelFilter;
+
         private Panel panelContent;
 
         private Label lblTitle;
@@ -18,6 +20,9 @@ namespace AccessControlConfigurator
         private Button btnSync;
         private Button btnRefresh;
         private Button btnBack;
+        private Label lblNameFilter;
+        private ComboBox cmbNameFilter;
+
 
         private DataGridView dgvAccessLevels;
 
@@ -31,10 +36,13 @@ namespace AccessControlConfigurator
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             panelHeader = new Panel();
+            btnSearch = new Button();
+            txtSearch = new TextBox();
+            lblSearchRight = new Label();
             lblTitle = new Label();
             btnAdd = new Button();
             btnEdit = new Button();
@@ -42,12 +50,13 @@ namespace AccessControlConfigurator
             btnSync = new Button();
             btnRefresh = new Button();
             btnBack = new Button();
+            panelFilter = new Panel();
+            lblNameFilter = new Label();
+            cmbNameFilter = new ComboBox();
             panelContent = new Panel();
             dgvAccessLevels = new DataGridView();
-            txtSearch = new TextBox();
-            lblSearchRight = new Label();
-            btnSearch = new Button();
             panelHeader.SuspendLayout();
+            panelFilter.SuspendLayout();
             panelContent.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAccessLevels).BeginInit();
             SuspendLayout();
@@ -71,6 +80,32 @@ namespace AccessControlConfigurator
             panelHeader.Padding = new Padding(10, 5, 10, 5);
             panelHeader.Size = new Size(1000, 45);
             panelHeader.TabIndex = 1;
+            // 
+            // btnSearch
+            // 
+            btnSearch.Location = new Point(961, 10);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(36, 29);
+            btnSearch.TabIndex = 9;
+            btnSearch.Text = "🔍";
+            btnSearch.UseVisualStyleBackColor = true;
+            // 
+            // txtSearch
+            // 
+            txtSearch.Location = new Point(818, 11);
+            txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Search here";
+            txtSearch.Size = new Size(137, 27);
+            txtSearch.TabIndex = 7;
+            // 
+            // lblSearchRight
+            // 
+            lblSearchRight.AutoSize = true;
+            lblSearchRight.Location = new Point(760, 14);
+            lblSearchRight.Name = "lblSearchRight";
+            lblSearchRight.Size = new Size(53, 20);
+            lblSearchRight.TabIndex = 8;
+            lblSearchRight.Text = "Search";
             // 
             // lblTitle
             // 
@@ -137,14 +172,42 @@ namespace AccessControlConfigurator
             btnBack.Text = "Back";
             btnBack.Click += btnBack_Click;
             // 
+            // panelFilter
+            // 
+            panelFilter.BackColor = Color.White;
+            panelFilter.Controls.Add(lblNameFilter);
+            panelFilter.Controls.Add(cmbNameFilter);
+            panelFilter.Dock = DockStyle.Top;
+            panelFilter.Location = new Point(0, 45);
+            panelFilter.Name = "panelFilter";
+            panelFilter.Padding = new Padding(10, 4, 10, 4);
+            panelFilter.Size = new Size(1000, 36);
+            panelFilter.TabIndex = 2;
+            // 
+            // lblNameFilter
+            // 
+            lblNameFilter.AutoSize = true;
+            lblNameFilter.Location = new Point(690, 9);
+            lblNameFilter.Name = "lblNameFilter";
+            lblNameFilter.Size = new Size(49, 20);
+            lblNameFilter.TabIndex = 10;
+            lblNameFilter.Text = "Name";
+            // 
+            // cmbNameFilter
+            // 
+            cmbNameFilter.Location = new Point(745, 6);
+            cmbNameFilter.Name = "cmbNameFilter";
+            cmbNameFilter.Size = new Size(240, 28);
+            cmbNameFilter.TabIndex = 11;
+            // 
             // panelContent
             // 
             panelContent.Controls.Add(dgvAccessLevels);
             panelContent.Dock = DockStyle.Fill;
-            panelContent.Location = new Point(0, 45);
+            panelContent.Location = new Point(0, 81);
             panelContent.Name = "panelContent";
             panelContent.Padding = new Padding(15, 10, 15, 10);
-            panelContent.Size = new Size(1000, 555);
+            panelContent.Size = new Size(1000, 519);
             panelContent.TabIndex = 0;
             // 
             // dgvAccessLevels
@@ -153,29 +216,29 @@ namespace AccessControlConfigurator
             dgvAccessLevels.AllowUserToDeleteRows = false;
             dgvAccessLevels.AllowUserToResizeColumns = false;
             dgvAccessLevels.AllowUserToResizeRows = false;
-            dataGridViewCellStyle4.BackColor = Color.FromArgb(248, 248, 248);
-            dgvAccessLevels.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 248, 248);
+            dgvAccessLevels.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvAccessLevels.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAccessLevels.BackgroundColor = Color.White;
             dgvAccessLevels.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = Color.FromArgb(240, 240, 240);
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dataGridViewCellStyle5.ForeColor = Color.Black;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            dgvAccessLevels.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(240, 240, 240);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvAccessLevels.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvAccessLevels.ColumnHeadersHeight = 35;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = SystemColors.Window;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle6.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle6.Padding = new Padding(5, 3, 5, 3);
-            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
-            dgvAccessLevels.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Window;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.Padding = new Padding(5, 3, 5, 3);
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            dgvAccessLevels.DefaultCellStyle = dataGridViewCellStyle3;
             dgvAccessLevels.Dock = DockStyle.Fill;
             dgvAccessLevels.EnableHeadersVisualStyles = false;
             dgvAccessLevels.Location = new Point(15, 10);
@@ -184,43 +247,20 @@ namespace AccessControlConfigurator
             dgvAccessLevels.RowHeadersWidth = 51;
             dgvAccessLevels.RowTemplate.Height = 30;
             dgvAccessLevels.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvAccessLevels.Size = new Size(970, 535);
+            dgvAccessLevels.Size = new Size(970, 499);
             dgvAccessLevels.TabIndex = 0;
-            // 
-            // txtSearch
-            // 
-            txtSearch.Location = new Point(764, 9);
-            txtSearch.Name = "txtSearch";
-            txtSearch.PlaceholderText = "Search here";
-            txtSearch.Size = new Size(137, 27);
-            txtSearch.TabIndex = 7;
-            // 
-            // lblSearchRight
-            // 
-            lblSearchRight.AutoSize = true;
-            lblSearchRight.Location = new Point(705, 12);
-            lblSearchRight.Name = "lblSearchRight";
-            lblSearchRight.Size = new Size(53, 20);
-            lblSearchRight.TabIndex = 8;
-            lblSearchRight.Text = "Search";
-            // 
-            // btnSearch
-            // 
-            btnSearch.Location = new Point(907, 8);
-            btnSearch.Name = "btnSearch";
-            btnSearch.Size = new Size(36, 29);
-            btnSearch.TabIndex = 9;
-            btnSearch.Text = "🔍";
-            btnSearch.UseVisualStyleBackColor = true;
             // 
             // AccessLevel
             // 
             Controls.Add(panelContent);
+            Controls.Add(panelFilter);
             Controls.Add(panelHeader);
             Name = "AccessLevel";
             Size = new Size(1000, 600);
             panelHeader.ResumeLayout(false);
             panelHeader.PerformLayout();
+            panelFilter.ResumeLayout(false);
+            panelFilter.PerformLayout();
             panelContent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvAccessLevels).EndInit();
             ResumeLayout(false);

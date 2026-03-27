@@ -17,7 +17,7 @@ namespace AccessControlConfigurator.Forms
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             contentPanel = new Panel();
             dgvControllers = new DataGridView();
             colId = new DataGridViewTextBoxColumn();
@@ -32,6 +32,7 @@ namespace AccessControlConfigurator.Forms
             colEdit = new DataGridViewButtonColumn();
             colDelete = new DataGridViewButtonColumn();
             topPanel = new Panel();
+            btnAdd = new Button();
             btnSearch = new Button();
             lblSearchRight = new Label();
             txtSearch = new TextBox();
@@ -41,7 +42,6 @@ namespace AccessControlConfigurator.Forms
             btnSync = new Button();
             btnDiscover = new Button();
             label1 = new Label();
-            btnAdd = new Button();
             contentPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvControllers).BeginInit();
             topPanel.SuspendLayout();
@@ -65,14 +65,14 @@ namespace AccessControlConfigurator.Forms
             dgvControllers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvControllers.BackgroundColor = Color.White;
             dgvControllers.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = Color.FromArgb(45, 62, 80);
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dgvControllers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(45, 62, 80);
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvControllers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvControllers.ColumnHeadersHeight = 29;
             dgvControllers.Columns.AddRange(new DataGridViewColumn[] { colId, colName, colMac, colIp, colOnline, colStatus, colLastSyncStart, colLastSyncEnd, colEnable, colEdit, colDelete });
             dgvControllers.Dock = DockStyle.Fill;
@@ -174,14 +174,24 @@ namespace AccessControlConfigurator.Forms
             topPanel.Size = new Size(1857, 70);
             topPanel.TabIndex = 1;
             // 
+            // btnAdd
+            // 
+            btnAdd.Location = new Point(163, 19);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(94, 35);
+            btnAdd.TabIndex = 9;
+            btnAdd.Text = "Add";
+            btnAdd.Click += btnAdd_Click;
+            // 
             // btnSearch
             // 
+            btnSearch.BackColor = SystemColors.Control;
             btnSearch.Location = new Point(1296, 25);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(36, 29);
             btnSearch.TabIndex = 8;
             btnSearch.Text = "🔍";
-            btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.UseVisualStyleBackColor = false;
             btnSearch.Click += btnSearch_Click;
             // 
             // lblSearchRight
@@ -263,16 +273,6 @@ namespace AccessControlConfigurator.Forms
             label1.Size = new Size(50, 20);
             label1.TabIndex = 4;
             label1.Text = "label1";
-            // 
-            // btnAdd
-            // 
-            btnAdd.Location = new Point(163, 19);
-            btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(94, 35);
-            btnAdd.TabIndex = 9;
-            btnAdd.Text = "Add";
-            //btnAdd.UseVisualStyleBackColor = true;
-            btnAdd.Click += btnAdd_Click;
             // 
             // ControllersControl
             // 

@@ -15,38 +15,9 @@ namespace AccessControlConfigurator.Controls
         public CardholdersControl()
         {
             InitializeComponent();
-
-            // ✅ FULL PAGE
-
-            // ✅ MARGIN (THIS REPLACES PANEL)
-            this.Padding = new Padding(15); // 🔥 space from all sides
-
-            // ✅ GRID SETTINGS
-            dgvCardholders.Dock = DockStyle.Fill;
-            dgvCardholders.BorderStyle = BorderStyle.None;
-            dgvCardholders.RowHeadersVisible = false;
-            dgvCardholders.AllowUserToAddRows = false;
-            dgvCardholders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            // ✅ HEADER STYLE
-            dgvCardholders.EnableHeadersVisualStyles = false;
-            dgvCardholders.ColumnHeadersHeight = 40;
-            dgvCardholders.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(0, 120, 215);
-            dgvCardholders.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvCardholders.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-
             _ = LoadCardholders();
-        
-        LoadCardholders();
-        
-
-        // 🔥 FORCE REFRESH
-        dgvCardholders.Refresh();
-            _ = LoadCardholders();
-
-           
-//dgvCardholders.Dock = DockStyle.Fill;
-         //   this.Controls.Add(dgvCardholders);
+            //dgvCardholders.Dock = DockStyle.Fill;
+            //this.Controls.Add(dgvCardholders);
 
             btnSearch.Click += btnSearch_Click;
             //txtSearch.TextChanged += txtSearch_TextChanged;
@@ -59,10 +30,25 @@ namespace AccessControlConfigurator.Controls
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            txtNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            txtEmailFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblEmailFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dgvCardholders.RowHeadersVisible = false;
             dgvCardholders.AllowUserToAddRows = false;
+            dgvCardholders.ColumnHeadersVisible = true;
+            dgvCardholders.ColumnHeadersHeight = 34;
+            dgvCardholders.ColumnHeadersHeightSizeMode =
+                DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvCardholders.EnableHeadersVisualStyles = false;
+            dgvCardholders.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
+            dgvCardholders.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+            dgvCardholders.ColumnHeadersDefaultCellStyle.Font =
+                new Font("Segoe UI", 9F, FontStyle.Bold);
 
             dgvCardholders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            txtNameFilter.TextChanged += (s, e) => ApplyFilters();
+            txtEmailFilter.TextChanged += (s, e) => ApplyFilters();
         }
 
         private async Task LoadCardholders()
@@ -97,6 +83,11 @@ namespace AccessControlConfigurator.Controls
                     c.isActive
                 );
             }
+        }
+
+        private static string BuildName(CardholderDto cardholder)
+        {
+            return $"{cardholder.firstName} {cardholder.lastName}".Trim();
         }
 
         private int GetSelectedId()
@@ -214,19 +205,33 @@ namespace AccessControlConfigurator.Controls
         //}
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            ApplySearch();
+            ApplyFilters();
         }
-        private void ApplySearch()
+        private void ApplyFilters()
         {
+            var filtered = _allCardholders.AsEnumerable();
+
+            string nameFilter = txtNameFilter.Text.Trim().ToLower();
+            if (!string.IsNullOrWhiteSpace(nameFilter))
+            {
+                filtered = filtered.Where(c => BuildName(c).ToLower().Contains(nameFilter));
+            }
+
+            string emailFilter = txtEmailFilter.Text.Trim().ToLower();
+            if (!string.IsNullOrWhiteSpace(emailFilter))
+            {
+                filtered = filtered.Where(c => (c.email ?? string.Empty).ToLower().Contains(emailFilter));
+            }
+
             string keyword = txtSearch.Text.Trim().ToLower();
 
             if (string.IsNullOrEmpty(keyword))
             {
-                BindGrid(_allCardholders);
+                BindGrid(filtered.ToList());
                 return;
             }
 
-            var filtered = _allCardholders.Where(c =>
+            var searched = filtered.Where(c =>
                 c.cardholderId.ToString().Contains(keyword) ||
                 (c.firstName != null && c.firstName.ToLower().Contains(keyword)) ||
                 (c.lastName != null && c.lastName.ToLower().Contains(keyword)) ||
@@ -236,18 +241,23 @@ namespace AccessControlConfigurator.Controls
                 c.isActive.ToString().ToLower().Contains(keyword)
             ).ToList();
 
-            BindGrid(filtered);
+            BindGrid(searched);
 
             // 🔥 OPTIONAL: No data message
-            if (filtered.Count == 0)
+            if (searched.Count == 0)
             {
                 //MessageBox.Show("No matching data");
             }
         }
-            private void txtSearch_Click(object sender, EventArgs e)
+        private void txtSearch_Click(object sender, EventArgs e)
         {
             txtSearch.Clear();
         }
+
+        private void filterPanel_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
-    
+
 }

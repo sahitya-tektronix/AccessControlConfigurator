@@ -23,16 +23,16 @@ namespace AccessControlConfigurator.Forms
             ApplyButtonStyles();
 
             btnSearch.Click += btnSearch_Click;
-           // txtSearch.TextChanged += txtSearch_TextChanged;
+            // txtSearch.TextChanged += txtSearch_TextChanged;
             // Button style
             btnSearch.FlatStyle = FlatStyle.Flat;
+            btnSearch.BackColor = Color.FromArgb(0, 120, 215); // ✅ Blue color
             btnSearch.ForeColor = Color.White;
-           
-            // Text color (match theme)
-            btnAdd.ForeColor = Color.FromArgb(45, 62, 80);
+            btnSearch.FlatAppearance.BorderSize = 0;
+            btnSearch.Cursor = Cursors.Hand;
 
-                // Border style
-                  btnAdd.FlatAppearance.BorderColor = Color.FromArgb(45, 62, 80);
+            // Border style
+            btnAdd.FlatAppearance.BorderColor = Color.FromArgb(45, 62, 80);
                  btnAdd.FlatAppearance.BorderSize = 1;
             
 
