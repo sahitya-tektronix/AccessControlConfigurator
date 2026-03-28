@@ -19,6 +19,7 @@ namespace AccessControlConfigurator
         public TimeZonesControl()
         {
             InitializeComponent();
+
             this.Load += TimeZonesControl_Load;
             dgvTimeZones.ReadOnly = true;
             dgvTimeZones.EditMode = DataGridViewEditMode.EditProgrammatically;
@@ -30,48 +31,40 @@ namespace AccessControlConfigurator
             //StyleButton(btnQuery);
             //StyleButton(btnRefresh);
             //StyleButton(btnback);
-
-            // Button style
+              // Button style
             btnSearch.FlatStyle = FlatStyle.Flat;
             btnSearch.BackColor = Color.FromArgb(0, 120, 215);
             btnSearch.ForeColor = Color.White;
 
             btnSearch.Click += (s, e) => ApplySearch();
 
-            //txtSearch.KeyDown += (s, e) =>
-            //{
-            //    if (e.KeyCode == Keys.Enter)
-            //        ApplySearch();
-            //};
-
-            // ✅ Timer setup
-            //searchTimer = new System.Windows.Forms.Timer();
-            //searchTimer.Interval = 300;
-
-            //searchTimer.Tick += (s, e) =>
-            //{
-            //    searchTimer.Stop();
-            //    ApplySearch();
-            //};
-
-            // ✅ Real-time search
-            //txtSearch.TextChanged += (s, e) =>
-            //{
-            //    searchTimer.Stop();
-            //    searchTimer.Start();
-            //};
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
             cmbNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             cmbNameFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbNameFilter.SelectedIndexChanged += (s, e) => ApplySearch();
+            Resize += (s, e) =>
+            {
+                AlignHeaderControls();
+                AlignFilterControls();
+            };
+
+            AlignHeaderControls();
+            AlignFilterControls();
+        }
+        private void FixHeaderStyle()
+        {
+            Helpers.GridStyleHelper.ApplyStandardStyle(dgvTimeZones);
         }
 
         private async void TimeZonesControl_Load(object sender, EventArgs e)
         {
             await LoadTimezones();
+            FixHeaderStyle();
         }
 
         private async Task LoadTimezones()
@@ -86,6 +79,8 @@ namespace AccessControlConfigurator
 
                 FormatGridHeaders();
                 LoadNameFilter();
+                AlignHeaderControls();
+                AlignFilterControls();
             }
             catch (Exception ex)
             {
@@ -222,28 +217,131 @@ namespace AccessControlConfigurator
                 ["id"] = "Timezone ID",
                 ["code"] = "Code",
                 ["name"] = "Name",
-                ["encScpTimezoneEx"] = "Encoded SCP TZ",
+                ["encscptimezoneex"] = "Encoded TZ",
                 ["number"] = "Number",
                 ["mode"] = "Mode",
-                ["actTime"] = "Activation Time",
-                ["deactTime"] = "Deactivation Time",
+                ["acttime"] = "Start Time",
+                ["deacttime"] = "End Time",
                 ["intervals"] = "Intervals",
-                ["iDays"] = "Interval Days",
-                ["iStart"] = "Interval Start",
-                ["iEnd"] = "Interval End",
-                ["timeZoneId"] = "ID"
+                ["idays"] = "Break Days",
+                ["istart"] = "Break Start",
+                ["iend"] = "Break End",
+                ["timezoneid"] = "Timezone Ref"
             };
 
             foreach (DataGridViewColumn col in dgvTimeZones.Columns)
             {
-                var key = col.DataPropertyName ?? col.Name;
-                if (map.TryGetValue(key, out var header))
-                    col.HeaderText = header;
+                string key = col.DataPropertyName?.ToLower() ?? col.Name.ToLower();
+
+                if (map.ContainsKey(key))
+                {
+                    col.HeaderText = map[key];
+                }
+
+                // ❌ REMOVE unwanted duplicate columns
+                if (string.Equals(key, "timezoneid", StringComparison.OrdinalIgnoreCase))
+                {
+                    col.Visible = false;
+                }
             }
 
-            dgvTimeZones.ColumnHeadersDefaultCellStyle.Font =
-                new Font("Segoe UI", 10, FontStyle.Bold);
+            SetColumnDisplayOrder();
+            ConfigureGridColumnWidths();
+            ConfigureGridAlignment();
+
+            dgvTimeZones.ColumnHeadersDefaultCellStyle.BackColor = Color.White;
+            dgvTimeZones.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+            dgvTimeZones.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dgvTimeZones.ColumnHeadersHeight = 40;
         }
+
+        private void SetColumnDisplayOrder()
+        {
+            string[] orderedColumns =
+            {
+                "id",
+                "code",
+                "name",
+                "number",
+                "mode",
+                "encscptimezoneex",
+                "acttime",
+                "deacttime",
+                "intervals",
+                "idays",
+                "istart",
+                "iend"
+            };
+
+            for (int i = 0; i < orderedColumns.Length; i++)
+            {
+                var columnName = orderedColumns[i];
+                if (dgvTimeZones.Columns.Contains(columnName))
+                {
+                    dgvTimeZones.Columns[columnName].DisplayIndex = i;
+                }
+            }
+        }
+
+        private void ConfigureGridColumnWidths()
+        {
+            dgvTimeZones.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            foreach (DataGridViewColumn col in dgvTimeZones.Columns)
+            {
+                string key = col.DataPropertyName?.ToLower() ?? col.Name.ToLower();
+
+                col.MinimumWidth = 75;
+                col.FillWeight = 70;
+
+                if (key == "name")
+                {
+                    col.MinimumWidth = 220;
+                    col.FillWeight = 190;
+                }
+                else if (key == "idays")
+                {
+                    col.MinimumWidth = 135;
+                    col.FillWeight = 110;
+                }
+                else if (key == "id" || key == "code" || key == "number" || key == "mode" || key == "intervals")
+                {
+                    col.MinimumWidth = key == "id" ? 110 : 85;
+                    col.FillWeight = 65;
+                }
+                else if (key == "encscptimezoneex")
+                {
+                    col.MinimumWidth = 120;
+                    col.FillWeight = 90;
+                }
+                else if (key == "acttime" || key == "deacttime" || key == "istart" || key == "iend")
+                {
+                    col.MinimumWidth = 110;
+                    col.FillWeight = 100;
+                }
+            }
+        }
+
+        private void ConfigureGridAlignment()
+        {
+            foreach (DataGridViewColumn col in dgvTimeZones.Columns)
+            {
+                string key = col.DataPropertyName?.ToLower() ?? col.Name.ToLower();
+
+                col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                col.HeaderCell.Style.WrapMode = DataGridViewTriState.False;
+
+                if (key == "name")
+                {
+                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                }
+                else
+                {
+                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                }
+            }
+        }
+
         private void ApplySearch()
         {
             string searchText = txtSearch.Text?.Trim().ToLower();
@@ -318,5 +416,40 @@ namespace AccessControlConfigurator
         //{
         //    ApplySearch();
         //}
+        private void btnClearFilters_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+
+            if (cmbNameFilter.Items.Count > 0)
+                cmbNameFilter.SelectedIndex = 0;
+
+            ApplySearch();
+        }
+
+        private void AlignHeaderControls()
+        {
+            int rightPadding = 12;
+
+            btnClearFilters.Location = new Point(panelHeader.ClientSize.Width - btnClearFilters.Width - rightPadding, 8);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, 9);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 6, 10);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 13);
+        }
+
+        private void AlignFilterControls()
+        {
+            int spacing = 8;
+            int rightPadding = 12;
+
+            btnAdd.Location = new Point(10, 5);
+            btnEdit.Location = new Point(btnAdd.Right + spacing, 5);
+            btnDelete.Location = new Point(btnEdit.Right + spacing, 5);
+            btnSync.Location = new Point(btnDelete.Right + spacing, 5);
+            btnRefresh.Location = new Point(btnSync.Right + spacing, 5);
+            btnback.Location = new Point(btnRefresh.Right + spacing, 5);
+
+            cmbNameFilter.Location = new Point(panelFilter.ClientSize.Width - cmbNameFilter.Width - rightPadding, 2);
+            lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, 5);
+        }
     }
 }

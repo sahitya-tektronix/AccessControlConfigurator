@@ -24,6 +24,7 @@
         private ComboBox cmbActTimeFilter;
         private Label lblDeactTimeFilter;
         private ComboBox cmbDeactTimeFilter;
+        private Button btnClearFilters;
 
 
         protected override void Dispose(bool disposing)
@@ -56,6 +57,7 @@
             cmbActTimeFilter = new ComboBox();
             lblDeactTimeFilter = new Label();
             cmbDeactTimeFilter = new ComboBox();
+            btnClearFilters = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvCards).BeginInit();
             mainLayout.SuspendLayout();
             headerPanel.SuspendLayout();
@@ -74,7 +76,7 @@
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(150, 12);
+            btnAdd.Location = new Point(158, 12);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(80, 30);
             btnAdd.TabIndex = 1;
@@ -83,7 +85,7 @@
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(240, 12);
+            btnEdit.Location = new Point(244, 12);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(80, 30);
             btnEdit.TabIndex = 2;
@@ -129,7 +131,7 @@
             // dgvCards
             // 
             dgvCards.AllowUserToAddRows = false;
-            dgvCards.AllowUserToOrderColumns = true;
+            dgvCards.AllowUserToOrderColumns = false;
             dgvCards.BackgroundColor = Color.White;
             dgvCards.BorderStyle = BorderStyle.None;
             dgvCards.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -167,6 +169,7 @@
             headerPanel.Controls.Add(lblTitle);
             headerPanel.Controls.Add(btnAdd);
             headerPanel.Controls.Add(btnEdit);
+            headerPanel.Controls.Add(btnClearFilters);
             headerPanel.Controls.Add(btnDelete);
             headerPanel.Controls.Add(btnSync);
             headerPanel.Controls.Add(btnRefresh);
@@ -269,6 +272,16 @@
             cmbDeactTimeFilter.Name = "cmbDeactTimeFilter";
             cmbDeactTimeFilter.Size = new Size(110, 28);
             cmbDeactTimeFilter.TabIndex = 17;
+            // 
+            // btnClearFilters
+            // 
+            btnClearFilters.Location = new Point(1006, 12);
+            btnClearFilters.Name = "btnClearFilters";
+            btnClearFilters.Size = new Size(80, 27);
+            btnClearFilters.TabIndex = 18;
+            btnClearFilters.Text = "Clear";
+            btnClearFilters.UseVisualStyleBackColor = true;
+            btnClearFilters.Click += btnClearFilters_Click;
             // 
             // Cards
             // 

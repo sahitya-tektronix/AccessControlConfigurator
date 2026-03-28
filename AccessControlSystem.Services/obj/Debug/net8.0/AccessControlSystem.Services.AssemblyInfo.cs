@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AccessControlSystem.Services")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cfd9500803881d8bebeda179f16a7e351bb877b7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6d81755029e094bc9eb72f63a1ddcacf827412f1")]
 [assembly: System.Reflection.AssemblyProductAttribute("AccessControlSystem.Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AccessControlSystem.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

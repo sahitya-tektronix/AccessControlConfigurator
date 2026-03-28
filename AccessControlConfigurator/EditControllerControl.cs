@@ -178,22 +178,33 @@ namespace AccessControlConfigurator.Forms
 
         {
 
+            AccessControlConfigurator.Helpers.GridStyleHelper.ApplyStandardStyle(dgvSIO);
+
             dgvSIO.AutoGenerateColumns = false;
 
             dgvSIO.RowHeadersVisible = false;
 
             dgvSIO.AllowUserToAddRows = false;
 
+            dgvSIO.AllowUserToDeleteRows = false;
+
+            dgvSIO.AllowUserToResizeRows = false;
+
+            dgvSIO.AllowUserToResizeColumns = false;
+
+            dgvSIO.AllowUserToOrderColumns = false;
+
             dgvSIO.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
             dgvSIO.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-
             dgvSIO.ReadOnly = true;
 
-            dgvSIO.AllowUserToDeleteRows = false;
-
             dgvSIO.EditMode = DataGridViewEditMode.EditProgrammatically;
+
+            dgvSIO.MultiSelect = false;
+
+            dgvSIO.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 
             colHardwareId.HeaderText = "ID";
 
@@ -237,6 +248,16 @@ namespace AccessControlConfigurator.Forms
             //dgvSIO.CellContentClick += dgvSIO_CellContentClick;
 
             dgvSIO.CellFormatting += dgvSIO_CellFormatting;
+
+            foreach (DataGridViewColumn col in dgvSIO.Columns)
+
+            {
+
+                col.Resizable = DataGridViewTriState.False;
+
+                col.SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            }
 
         }
 

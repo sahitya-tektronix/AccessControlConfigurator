@@ -120,6 +120,7 @@ namespace AccessControlConfigurator
             btnCancel.Size = new Size(90, 30);
             btnCancel.TabIndex = 8;
             btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
             // 
             // AddTimezoneForm
             // 

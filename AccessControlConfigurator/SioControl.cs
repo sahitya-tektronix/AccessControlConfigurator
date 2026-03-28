@@ -124,6 +124,16 @@ namespace AccessControlSystem.Forms
 
         {
 
+            grid.AllowUserToAddRows = false;
+            grid.AllowUserToDeleteRows = false;
+            grid.AllowUserToResizeRows = false;
+            grid.AllowUserToResizeColumns = false;
+            grid.AllowUserToOrderColumns = false;
+            grid.MultiSelect = false;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.RowHeadersVisible = false;
+            grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+
             grid.Columns.Clear();
 
             grid.Columns.Add(new DataGridViewTextBoxColumn()
@@ -186,6 +196,15 @@ namespace AccessControlSystem.Forms
 
             grid.Columns.Add(modelColumn);
 
+            foreach (DataGridViewColumn column in grid.Columns)
+
+            {
+
+                column.Resizable = DataGridViewTriState.False;
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            }
+
         }
 
         // ---------------- LOAD ADDRESSES ----------------
@@ -238,14 +257,19 @@ namespace AccessControlSystem.Forms
 
                 AddBusConfigurations(gridRS485_2, 2, request);
 
-                if (HasDuplicateAddress(request.sios))
-
+                if (HasDuplicateAddress(request.sios, out int duplicateAddress))
                 {
-
-                    MessageBox.Show("Duplicate interface panel addresses are not allowed.");
+                    MessageBox.Show(
+                        $"⚠ Conflict Detected!\n\n" +
+                        $"Interface Panel Address {duplicateAddress} is selected in both RS-485 ports.\n\n" +
+                        $"👉 Only one port can use the same address.\n" +
+                        $"Please uncheck it from one side and try again.",
+                        "Validation Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
 
                     return;
-
                 }
 
                 bool ok = await _api.SaveSioBulkAsync(controllerId, request);
@@ -371,26 +395,24 @@ namespace AccessControlSystem.Forms
 
         // ---------------- DUPLICATE CHECK ----------------
 
-        private bool HasDuplicateAddress(List<SioItemDto> list)
-
+        private bool HasDuplicateAddress(List<SioItemDto> list, out int duplicateAddress)
         {
+            duplicateAddress = -1;
 
-            var bus1 = list.Where(x => x.portNumber
+            var addresses = new Dictionary<int, int>(); // address → port
 
-            == 1).Select(x => x.interfacePanelAddress);
+            foreach (var item in list)
+            {
+                if (addresses.ContainsKey(item.interfacePanelAddress))
+                {
+                    duplicateAddress = item.interfacePanelAddress;
+                    return true; // duplicate found across ports
+                }
 
-            var bus2 = list.Where(x => x.portNumber == 2).Select(x => x.interfacePanelAddress);
-
-            if (bus1.Count() != bus1.Distinct().Count())
-
-                return true;
-
-            if (bus2.Count() != bus2.Distinct().Count())
-
-                return true;
+                addresses[item.interfacePanelAddress] = item.portNumber;
+            }
 
             return false;
-
         }
 
 
@@ -598,7 +620,9 @@ namespace AccessControlSystem.Forms
 
                 {
 
-                    isOnboard = true;
+                    chkOnBoard.Checked = true;
+                    chkOnBoard.Enabled = false; 
+                    continue;
 
                 }
 
@@ -638,9 +662,7 @@ namespace AccessControlSystem.Forms
 
             }
 
-            // ✅ SET CHECKBOX HERE
 
-            chkOnBoard.Checked = isOnboard;
 
         }
 

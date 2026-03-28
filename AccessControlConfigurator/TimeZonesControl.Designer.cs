@@ -25,6 +25,7 @@ namespace AccessControlConfigurator
         private Button btnback;
         private Label lblNameFilter;
         private ComboBox cmbNameFilter;
+        private Button btnClearFilters;
 
         private DataGridView dgvTimeZones;
 
@@ -38,14 +39,15 @@ namespace AccessControlConfigurator
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             panelHeader = new Panel();
             btnSearch = new Button();
             txtSearch = new TextBox();
             lblSearchRight = new Label();
             lblTitle = new Label();
+            btnClearFilters = new Button();
             btnAdd = new Button();
             btnEdit = new Button();
             btnDelete = new Button();
@@ -68,14 +70,9 @@ namespace AccessControlConfigurator
             panelHeader.BackColor = Color.White;
             panelHeader.Controls.Add(btnSearch);
             panelHeader.Controls.Add(txtSearch);
+            panelHeader.Controls.Add(btnClearFilters);
             panelHeader.Controls.Add(lblSearchRight);
             panelHeader.Controls.Add(lblTitle);
-            panelHeader.Controls.Add(btnAdd);
-            panelHeader.Controls.Add(btnEdit);
-            panelHeader.Controls.Add(btnDelete);
-            panelHeader.Controls.Add(btnSync);
-            panelHeader.Controls.Add(btnRefresh);
-            panelHeader.Controls.Add(btnback);
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
@@ -85,7 +82,7 @@ namespace AccessControlConfigurator
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(951, 7);
+            btnSearch.Location = new Point(890, 9);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(36, 29);
             btnSearch.TabIndex = 11;
@@ -94,7 +91,7 @@ namespace AccessControlConfigurator
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(741, 8);
+            txtSearch.Location = new Point(680, 10);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search here";
             txtSearch.Size = new Size(204, 27);
@@ -103,7 +100,7 @@ namespace AccessControlConfigurator
             // lblSearchRight
             // 
             lblSearchRight.AutoSize = true;
-            lblSearchRight.Location = new Point(691, 12);
+            lblSearchRight.Location = new Point(621, 13);
             lblSearchRight.Name = "lblSearchRight";
             lblSearchRight.Size = new Size(53, 20);
             lblSearchRight.TabIndex = 9;
@@ -120,9 +117,19 @@ namespace AccessControlConfigurator
             lblTitle.Text = "Time Zones";
             lblTitle.TextAlign = ContentAlignment.MiddleLeft;
             // 
+            // btnClearFilters
+            // 
+            btnClearFilters.Location = new Point(932, 8);
+            btnClearFilters.Name = "btnClearFilters";
+            btnClearFilters.Size = new Size(65, 28);
+            btnClearFilters.TabIndex = 14;
+            btnClearFilters.Text = "Clear";
+            btnClearFilters.UseVisualStyleBackColor = true;
+            btnClearFilters.Click += btnClearFilters_Click;
+            // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(175, 8);
+            btnAdd.Location = new Point(10, 5);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(80, 28);
             btnAdd.TabIndex = 1;
@@ -131,7 +138,7 @@ namespace AccessControlConfigurator
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(261, 9);
+            btnEdit.Location = new Point(96, 5);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(80, 28);
             btnEdit.TabIndex = 2;
@@ -140,7 +147,7 @@ namespace AccessControlConfigurator
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(347, 9);
+            btnDelete.Location = new Point(182, 5);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(80, 28);
             btnDelete.TabIndex = 3;
@@ -149,7 +156,7 @@ namespace AccessControlConfigurator
             // 
             // btnSync
             // 
-            btnSync.Location = new Point(433, 9);
+            btnSync.Location = new Point(268, 5);
             btnSync.Name = "btnSync";
             btnSync.Size = new Size(90, 28);
             btnSync.TabIndex = 4;
@@ -158,7 +165,7 @@ namespace AccessControlConfigurator
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(529, 8);
+            btnRefresh.Location = new Point(364, 5);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(80, 28);
             btnRefresh.TabIndex = 7;
@@ -167,7 +174,7 @@ namespace AccessControlConfigurator
             // 
             // btnback
             // 
-            btnback.Location = new Point(615, 8);
+            btnback.Location = new Point(450, 5);
             btnback.Name = "btnback";
             btnback.Size = new Size(70, 28);
             btnback.TabIndex = 8;
@@ -179,6 +186,12 @@ namespace AccessControlConfigurator
             panelFilter.BackColor = Color.White;
             panelFilter.Controls.Add(lblNameFilter);
             panelFilter.Controls.Add(cmbNameFilter);
+            panelFilter.Controls.Add(btnAdd);
+            panelFilter.Controls.Add(btnback);
+            panelFilter.Controls.Add(btnRefresh);
+            panelFilter.Controls.Add(btnSync);
+            panelFilter.Controls.Add(btnDelete);
+            panelFilter.Controls.Add(btnEdit);
             panelFilter.Dock = DockStyle.Top;
             panelFilter.Location = new Point(0, 45);
             panelFilter.Name = "panelFilter";
@@ -218,29 +231,30 @@ namespace AccessControlConfigurator
             dgvTimeZones.AllowUserToDeleteRows = false;
             dgvTimeZones.AllowUserToResizeColumns = false;
             dgvTimeZones.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 248, 248);
-            dgvTimeZones.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.BackColor = Color.FromArgb(248, 248, 248);
+            dgvTimeZones.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             dgvTimeZones.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTimeZones.BackgroundColor = Color.White;
             dgvTimeZones.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(240, 240, 240);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.Black;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvTimeZones.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dgvTimeZones.GridColor = Color.Black;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.FromArgb(240, 240, 240);
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle5.ForeColor = Color.Black;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            dgvTimeZones.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             dgvTimeZones.ColumnHeadersHeight = 35;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Window;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle3.Padding = new Padding(5, 3, 5, 3);
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            dgvTimeZones.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = SystemColors.Window;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle6.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle6.Padding = new Padding(5, 3, 5, 3);
+            dataGridViewCellStyle6.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
+            dgvTimeZones.DefaultCellStyle = dataGridViewCellStyle6;
             dgvTimeZones.Dock = DockStyle.Fill;
             dgvTimeZones.EnableHeadersVisualStyles = false;
             dgvTimeZones.Location = new Point(15, 10);

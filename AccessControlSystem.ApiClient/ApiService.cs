@@ -790,33 +790,33 @@ namespace AccessControlSystem.Services
      // GET ALL
     public async Task<List<WiegandDto>> GetAllAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<WiegandDto>>("wiegand-formats");
+            return await _httpClient.GetFromJsonAsync<List<WiegandDto>>("api/wiegand-formats?includeDeleted=false");
         }
 
         // GET BY ID
         public async Task<WiegandDto> GetByIdAsync(int id)
         {
-            return await _httpClient.GetFromJsonAsync<WiegandDto>($"wiegand-formats/{id}");
+            return await _httpClient.GetFromJsonAsync<WiegandDto>($"api/wiegand-formats/{id}");
         }
 
-        //// CREATE
-        //public async Task<bool> CreateAsync(CreateWiegandFormatRequest dto)
-        //{
-        //    var res = await _httpClient.PostAsJsonAsync("wiegand-formats", dto);
-        //    return res.IsSuccessStatusCode;
-        //}
+        // CREATE
+        public async Task<bool> CreateWiegandFormatAsync(CreateWiegandFormatRequest dto)
+        {
+            var res = await _httpClient.PostAsJsonAsync("api/wiegand-formats", dto);
+            return res.IsSuccessStatusCode;
+        }
 
-        //// UPDATE
-        //public async Task<bool> UpdateAsync(int id, UpdateWiegandFormatRequest dto)
-        //{
-        //    var res = await _httpClient.PutAsJsonAsync($"wiegand-formats/{id}", dto);
-        //    return res.IsSuccessStatusCode;
-        //}
+        // UPDATE
+        public async Task<bool> UpdateWiegandFormatAsync(int id, UpdateWiegandFormatRequest dto)
+        {
+            var res = await _httpClient.PutAsJsonAsync($"api/wiegand-formats/{id}", dto);
+            return res.IsSuccessStatusCode;
+        }
 
         // DELETE (if needed later)
         public async Task<bool> DeleteAsync(int id)
         {
-            var res = await _httpClient.DeleteAsync($"wiegand-formats/{id}");
+            var res = await _httpClient.DeleteAsync($"api/wiegand-formats/{id}");
             return res.IsSuccessStatusCode;
         }
     }

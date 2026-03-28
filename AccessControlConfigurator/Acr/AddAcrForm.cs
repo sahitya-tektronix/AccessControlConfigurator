@@ -67,7 +67,8 @@ namespace AccessControlConfigurator.Forms
 
             AcrData.doorNumber = (int)numDoorNumber.Value;
 
-            AcrData.rexNumber = (int)numRexNumber.Value;
+            AcrData.rex0Number = (int)numRexNumber.Value;
+            AcrData.rexNumber = AcrData.rex0Number;
 
             DialogResult = DialogResult.OK;
             Close();

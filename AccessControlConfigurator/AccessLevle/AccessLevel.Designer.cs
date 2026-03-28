@@ -22,6 +22,7 @@ namespace AccessControlConfigurator
         private Button btnBack;
         private Label lblNameFilter;
         private ComboBox cmbNameFilter;
+        private Button btnClearFilters;
 
 
         private DataGridView dgvAccessLevels;
@@ -53,6 +54,7 @@ namespace AccessControlConfigurator
             panelFilter = new Panel();
             lblNameFilter = new Label();
             cmbNameFilter = new ComboBox();
+            btnClearFilters = new Button();
             panelContent = new Panel();
             dgvAccessLevels = new DataGridView();
             panelHeader.SuspendLayout();
@@ -66,14 +68,9 @@ namespace AccessControlConfigurator
             panelHeader.BackColor = Color.White;
             panelHeader.Controls.Add(btnSearch);
             panelHeader.Controls.Add(txtSearch);
+            panelHeader.Controls.Add(btnClearFilters);
             panelHeader.Controls.Add(lblSearchRight);
             panelHeader.Controls.Add(lblTitle);
-            panelHeader.Controls.Add(btnAdd);
-            panelHeader.Controls.Add(btnEdit);
-            panelHeader.Controls.Add(btnDelete);
-            panelHeader.Controls.Add(btnSync);
-            panelHeader.Controls.Add(btnRefresh);
-            panelHeader.Controls.Add(btnBack);
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
@@ -83,7 +80,7 @@ namespace AccessControlConfigurator
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(961, 10);
+            btnSearch.Location = new Point(875, 16);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(36, 29);
             btnSearch.TabIndex = 9;
@@ -92,7 +89,7 @@ namespace AccessControlConfigurator
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(818, 11);
+            txtSearch.Location = new Point(732, 17);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search here";
             txtSearch.Size = new Size(137, 27);
@@ -101,7 +98,7 @@ namespace AccessControlConfigurator
             // lblSearchRight
             // 
             lblSearchRight.AutoSize = true;
-            lblSearchRight.Location = new Point(760, 14);
+            lblSearchRight.Location = new Point(673, 22);
             lblSearchRight.Name = "lblSearchRight";
             lblSearchRight.Size = new Size(53, 20);
             lblSearchRight.TabIndex = 8;
@@ -120,7 +117,7 @@ namespace AccessControlConfigurator
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(188, 8);
+            btnAdd.Location = new Point(3, 5);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(80, 28);
             btnAdd.TabIndex = 1;
@@ -129,7 +126,7 @@ namespace AccessControlConfigurator
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(274, 8);
+            btnEdit.Location = new Point(89, 5);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(80, 28);
             btnEdit.TabIndex = 2;
@@ -138,7 +135,7 @@ namespace AccessControlConfigurator
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(360, 8);
+            btnDelete.Location = new Point(175, 5);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(80, 28);
             btnDelete.TabIndex = 3;
@@ -147,7 +144,7 @@ namespace AccessControlConfigurator
             // 
             // btnSync
             // 
-            btnSync.Location = new Point(445, 8);
+            btnSync.Location = new Point(261, 6);
             btnSync.Name = "btnSync";
             btnSync.Size = new Size(80, 28);
             btnSync.TabIndex = 4;
@@ -156,7 +153,7 @@ namespace AccessControlConfigurator
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(530, 8);
+            btnRefresh.Location = new Point(347, 6);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(80, 28);
             btnRefresh.TabIndex = 5;
@@ -165,7 +162,7 @@ namespace AccessControlConfigurator
             // 
             // btnBack
             // 
-            btnBack.Location = new Point(615, 8);
+            btnBack.Location = new Point(433, 6);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(70, 28);
             btnBack.TabIndex = 6;
@@ -177,6 +174,12 @@ namespace AccessControlConfigurator
             panelFilter.BackColor = Color.White;
             panelFilter.Controls.Add(lblNameFilter);
             panelFilter.Controls.Add(cmbNameFilter);
+            panelFilter.Controls.Add(btnAdd);
+            panelFilter.Controls.Add(btnBack);
+            panelFilter.Controls.Add(btnRefresh);
+            panelFilter.Controls.Add(btnSync);
+            panelFilter.Controls.Add(btnDelete);
+            panelFilter.Controls.Add(btnEdit);
             panelFilter.Dock = DockStyle.Top;
             panelFilter.Location = new Point(0, 45);
             panelFilter.Name = "panelFilter";
@@ -199,6 +202,16 @@ namespace AccessControlConfigurator
             cmbNameFilter.Name = "cmbNameFilter";
             cmbNameFilter.Size = new Size(240, 28);
             cmbNameFilter.TabIndex = 11;
+            // 
+            // btnClearFilters
+            // 
+            btnClearFilters.Location = new Point(917, 14);
+            btnClearFilters.Name = "btnClearFilters";
+            btnClearFilters.Size = new Size(80, 28);
+            btnClearFilters.TabIndex = 12;
+            btnClearFilters.Text = "Clear";
+            btnClearFilters.UseVisualStyleBackColor = true;
+            btnClearFilters.Click += btnClearFilters_Click;
             // 
             // panelContent
             // 

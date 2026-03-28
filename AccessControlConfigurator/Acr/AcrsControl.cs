@@ -41,6 +41,7 @@ namespace AccessControlConfigurator
             cmbControllerId.SelectedIndexChanged += (s, e) => ApplyFilters();
             cmbSioNumber.SelectedIndexChanged += (s, e) => ApplyFilters();
             cmbReader.SelectedIndexChanged += (s, e) => ApplyFilters();
+            btnClearFilters.Click += btnClearFilters_Click;
 
             dgvAcrs.CellBeginEdit += (s, e) => e.Cancel = true;
             // Button style
@@ -50,6 +51,7 @@ namespace AccessControlConfigurator
             btnSearch.Click += btnSearch_Click;
             //txtSearch.TextChanged += txtSearch_TextChanged;
 
+            ConfigureGrid();
 
 
             // ⌨️ Enter key search
@@ -60,8 +62,21 @@ namespace AccessControlConfigurator
             };
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            dgvAcrs.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right; ;
+            int rightMargin = 20;
+
+            // Clear button (last)
+            btnClearFilters.Location = new Point(this.Width - btnClearFilters.Width - rightMargin, 10);
+
+            // Search button (before clear)
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 5, 10);
+
+            // Textbox (before search)
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 5, 10);
+
+            // Label (before textbox)
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 5, 14);
             dgvAcrs.MultiSelect = false;
             dgvAcrs.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
             dgvAcrs.DefaultCellStyle.SelectionForeColor = Color.White;
@@ -70,12 +85,25 @@ namespace AccessControlConfigurator
                 if (e.RowIndex >= 0)
                     dgvAcrs.Rows[e.RowIndex].Selected = true;
             };
+        }
+
+        private void ConfigureGrid()
+        {
+            Helpers.GridStyleHelper.ApplyStandardStyle(dgvAcrs);
+
+            dgvAcrs.AutoGenerateColumns = false;
+            dgvAcrs.AllowUserToOrderColumns = false;
             dgvAcrs.AllowUserToResizeColumns = false;
+            dgvAcrs.AllowUserToResizeRows = false;
+            dgvAcrs.MultiSelect = false;
+            dgvAcrs.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
             foreach (DataGridViewColumn col in dgvAcrs.Columns)
             {
+                col.ReadOnly = true;
                 col.Resizable = DataGridViewTriState.False;
+                col.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-
         }
 
         // ================= LOAD CONTROL =================
@@ -181,6 +209,19 @@ namespace AccessControlConfigurator
         private void btnSearch_Click(object sender, EventArgs e)
         {
             ApplySearch();
+        }
+
+        private void btnClearFilters_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = "";
+            if (cmbControllerId.Items.Count > 0)
+                cmbControllerId.SelectedIndex = 0;
+            if (cmbSioNumber.Items.Count > 0)
+                cmbSioNumber.SelectedIndex = 0;
+            if (cmbReader.Items.Count > 0)
+                cmbReader.SelectedIndex = 0;
+
+            PopulateGrid(_allData);
         }
 
         private async void btnRefresh_Click(object sender, EventArgs e)

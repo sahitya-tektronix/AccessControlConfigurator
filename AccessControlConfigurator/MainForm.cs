@@ -11,8 +11,9 @@ namespace AccessControlConfigurator
 {
     public partial class MainForm : Form
     {
-        private Stack<UserControl> _navigationStack = new Stack<UserControl>();
         private UserControl currentPage;
+        private readonly Dictionary<string, UserControl> _pageCache = new Dictionary<string, UserControl>();
+        private string _currentPageKey;
 
         private ControllerDto _controller;
         private Stack<UserControl> pageHistory = new Stack<UserControl>();
@@ -41,15 +42,17 @@ namespace AccessControlConfigurator
             btnOpenDoor.Click += BtnOpenDoor_Click;
 
             // Sidebar Tab Click Events
+            tabEvents.Click += BtnEvents_Click;
             tabControllers.Click += BtnControllers_Click;
             tabAcrs.Click += BtnAcrs_Click;
             tabTimeZones.Click += BtnTimeZones_Click;
             tabAccessLevels.Click += BtnAccessLevels_Click;
             tabCards.Click += BtnCards_Click;
             tabCardholders.Click += BtnCardholders_Click;
-            tabEvents.Click += BtnEvents_Click;
+            tabWiegand.Click += BtnWiegand_Click;
 
             // Apply sidebar style
+            StyleButton(tabEvents, "Events");
             StyleButton(tabControllers, "Controllers");
             StyleButton(tabAcrs, "ACRs (Doors)");
             StyleButton(tabTimeZones, "Time Zones");
@@ -57,14 +60,20 @@ namespace AccessControlConfigurator
 
             StyleButton(tabCards, "Cards");
             StyleButton(tabCardholders, "Cardholders");
-            StyleButton(tabEvents, "Events");
+            StyleButton(tabWiegand, "Wiegand");
             
         }
 
         // ================= PAGE LOADER =================
 
-        public void LoadPage(UserControl page, bool addToHistory = true)
+        public void LoadPage(UserControl page, bool addToHistory = true, string pageKey = null)
         {
+            if (page == null)
+                return;
+
+            if (ReferenceEquals(currentPage, page))
+                return;
+
             pnlPageContainer.SuspendLayout();
 
             if (currentPage != null && addToHistory)
@@ -73,12 +82,50 @@ namespace AccessControlConfigurator
             pnlPageContainer.Controls.Clear();
 
             currentPage = page;
+            _currentPageKey = pageKey ?? page.GetType().FullName ?? page.GetType().Name;
             page.Dock = DockStyle.Fill;
 
             pnlPageContainer.Controls.Add(page);
             page.BringToFront();
 
             pnlPageContainer.ResumeLayout();
+        }
+
+        private T GetOrCreatePage<T>(string cacheKey, Func<T> factory) where T : UserControl
+        {
+            if (_pageCache.TryGetValue(cacheKey, out var existing) && existing is T typedPage && !typedPage.IsDisposed)
+            {
+                return typedPage;
+            }
+
+            var page = factory();
+            _pageCache[cacheKey] = page;
+            return page;
+        }
+
+        private UserControl CreateFreshPage(string pageKey)
+        {
+            if (string.IsNullOrWhiteSpace(pageKey))
+                return null;
+
+            if (_pageCache.TryGetValue(pageKey, out var existingPage))
+            {
+                _pageCache.Remove(pageKey);
+                existingPage.Dispose();
+            }
+
+            return pageKey switch
+            {
+                "Controllers" => GetOrCreatePage(pageKey, () => new ControllersControl()),
+                "Acrs" => GetOrCreatePage(pageKey, () => new AcrsControl(_selectedController, _sioList, _selectedSio)),
+                "TimeZones" => GetOrCreatePage(pageKey, () => new TimeZonesControl()),
+                "AccessLevels" => GetOrCreatePage(pageKey, () => new AccessLevel()),
+                "Cards" => GetOrCreatePage(pageKey, () => new Cards()),
+                "Cardholders" => GetOrCreatePage(pageKey, () => new CardholdersControl()),
+                "Events" => GetOrCreatePage(pageKey, () => new EventsControl()),
+                "Wiegand" => GetOrCreatePage(pageKey, () => new WiegandControl()),
+                _ => null
+            };
         }
 
         // ================= SIDEBAR TAB HIGHLIGHT =================
@@ -99,43 +146,49 @@ namespace AccessControlConfigurator
         private void BtnControllers_Click(object sender, EventArgs e)
         {
             HighlightButton(tabControllers);
-            LoadPage(new ControllersControl());
+            LoadPage(GetOrCreatePage("Controllers", () => new ControllersControl()), true, "Controllers");
         }
 
         private void BtnAcrs_Click(object sender, EventArgs e)
         {
             HighlightButton(tabAcrs);
-            LoadPage(new AcrsControl(_selectedController, _sioList, _selectedSio));
+            LoadPage(GetOrCreatePage("Acrs", () => new AcrsControl(_selectedController, _sioList, _selectedSio)), true, "Acrs");
         }
 
         private void BtnTimeZones_Click(object sender, EventArgs e)
         {
             HighlightButton(tabTimeZones);
-            LoadPage(new TimeZonesControl());
+            LoadPage(GetOrCreatePage("TimeZones", () => new TimeZonesControl()), true, "TimeZones");
         }
 
         private void BtnAccessLevels_Click(object sender, EventArgs e)
         {
             HighlightButton(tabAccessLevels);
-            LoadPage(new AccessLevel());
+            LoadPage(GetOrCreatePage("AccessLevels", () => new AccessLevel()), true, "AccessLevels");
         }
 
         private void BtnCards_Click(object sender, EventArgs e)
         {
             HighlightButton(tabCards);
-            LoadPage(new Cards());
+            LoadPage(GetOrCreatePage("Cards", () => new Cards()), true, "Cards");
         }
 
         private void BtnCardholders_Click(object sender, EventArgs e)
         {
             HighlightButton(tabCardholders);
-            LoadPage(new CardholdersControl());
+            LoadPage(GetOrCreatePage("Cardholders", () => new CardholdersControl()), true, "Cardholders");
         }
 
         private void BtnEvents_Click(object sender, EventArgs e)
         {
             HighlightButton(tabEvents);
-            LoadPage(new EventsControl());
+            LoadPage(GetOrCreatePage("Events", () => new EventsControl()), true, "Events");
+        }
+
+        private void BtnWiegand_Click(object sender, EventArgs e)
+        {
+            HighlightButton(tabWiegand);
+            LoadPage(GetOrCreatePage("Wiegand", () => new WiegandControl()), true, "Wiegand");
         }
 
         // ================= OPEN FIRST PAGE =================
@@ -145,7 +198,7 @@ namespace AccessControlConfigurator
             base.OnShown(e);
 
             HighlightButton(tabControllers);
-            LoadPage(new ControllersControl(), false);
+            LoadPage(GetOrCreatePage("Controllers", () => new ControllersControl()), false, "Controllers");
         }
 
         // ================= BACK BUTTON =================
@@ -166,10 +219,9 @@ namespace AccessControlConfigurator
             if (currentPage == null)
                 return;
 
-            Type t = currentPage.GetType();
-            UserControl newPage = (UserControl)Activator.CreateInstance(t);
+            UserControl newPage = CreateFreshPage(_currentPageKey);
 
-            LoadPage(newPage, false);
+            LoadPage(newPage, false, _currentPageKey);
         }
 
         // ================= FIND BUTTON =================
@@ -190,7 +242,8 @@ namespace AccessControlConfigurator
 
         internal void LoadControllersPage()
         {
-            LoadPage(new ControllersControl());
+            HighlightButton(tabControllers);
+            LoadPage(GetOrCreatePage("Controllers", () => new ControllersControl()), true, "Controllers");
         }
 
         // ================= BUTTON STYLE =================

@@ -14,7 +14,7 @@ namespace AccessControlConfigurator.Forms
         private Button btnSync;
         private Button btnSyncOnline;
         private Button btnback;
-
+        private Button btnClearFilters;
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
@@ -32,6 +32,7 @@ namespace AccessControlConfigurator.Forms
             colEdit = new DataGridViewButtonColumn();
             colDelete = new DataGridViewButtonColumn();
             topPanel = new Panel();
+            btnClearfillter = new Button();
             btnAdd = new Button();
             btnSearch = new Button();
             lblSearchRight = new Label();
@@ -41,6 +42,7 @@ namespace AccessControlConfigurator.Forms
             btnSyncOnline = new Button();
             btnSync = new Button();
             btnDiscover = new Button();
+            btnClearFilters = new Button();
             label1 = new Label();
             contentPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvControllers).BeginInit();
@@ -66,7 +68,7 @@ namespace AccessControlConfigurator.Forms
             dgvControllers.BackgroundColor = Color.White;
             dgvControllers.BorderStyle = BorderStyle.None;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(45, 62, 80);
+            dataGridViewCellStyle1.BackColor = Color.White;
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle1.ForeColor = Color.White;
             dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
@@ -77,6 +79,7 @@ namespace AccessControlConfigurator.Forms
             dgvControllers.Columns.AddRange(new DataGridViewColumn[] { colId, colName, colMac, colIp, colOnline, colStatus, colLastSyncStart, colLastSyncEnd, colEnable, colEdit, colDelete });
             dgvControllers.Dock = DockStyle.Fill;
             dgvControllers.EnableHeadersVisualStyles = false;
+            dgvControllers.GridColor = Color.White;
             dgvControllers.Location = new Point(0, 70);
             dgvControllers.Name = "dgvControllers";
             dgvControllers.RowHeadersVisible = false;
@@ -158,6 +161,7 @@ namespace AccessControlConfigurator.Forms
             // topPanel
             // 
             topPanel.BackColor = Color.White;
+            topPanel.Controls.Add(btnClearfillter);
             topPanel.Controls.Add(btnAdd);
             topPanel.Controls.Add(btnSearch);
             topPanel.Controls.Add(lblSearchRight);
@@ -174,6 +178,16 @@ namespace AccessControlConfigurator.Forms
             topPanel.Size = new Size(1857, 70);
             topPanel.TabIndex = 1;
             // 
+            // btnClearfillter
+            // 
+            btnClearfillter.Location = new Point(1317, 25);
+            btnClearfillter.Name = "btnClearfillter";
+            btnClearfillter.Size = new Size(67, 29);
+            btnClearfillter.TabIndex = 10;
+            btnClearfillter.Text = "Clear";
+            btnClearfillter.UseVisualStyleBackColor = true;
+            btnClearfillter.Click += btnClearFilters_Click;
+            // 
             // btnAdd
             // 
             btnAdd.Location = new Point(163, 19);
@@ -186,7 +200,7 @@ namespace AccessControlConfigurator.Forms
             // btnSearch
             // 
             btnSearch.BackColor = SystemColors.Control;
-            btnSearch.Location = new Point(1296, 25);
+            btnSearch.Location = new Point(1275, 25);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(36, 29);
             btnSearch.TabIndex = 8;
@@ -197,7 +211,7 @@ namespace AccessControlConfigurator.Forms
             // lblSearchRight
             // 
             lblSearchRight.AutoSize = true;
-            lblSearchRight.Location = new Point(985, 30);
+            lblSearchRight.Location = new Point(964, 32);
             lblSearchRight.Name = "lblSearchRight";
             lblSearchRight.Size = new Size(53, 20);
             lblSearchRight.TabIndex = 7;
@@ -205,7 +219,7 @@ namespace AccessControlConfigurator.Forms
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(1044, 27);
+            txtSearch.Location = new Point(1023, 27);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search here";
             txtSearch.Size = new Size(246, 27);
@@ -265,6 +279,16 @@ namespace AccessControlConfigurator.Forms
             btnDiscover.Text = "Discover";
             btnDiscover.Click += BDiscover_Click;
             // 
+            // btnClearFilters
+            // 
+            btnClearFilters.Location = new Point(877, 5);
+            btnClearFilters.Name = "btnClearFilters";
+            btnClearFilters.Size = new Size(80, 27);
+            btnClearFilters.TabIndex = 17;
+            btnClearFilters.Text = "Clear";
+            btnClearFilters.UseVisualStyleBackColor = true;
+            btnClearFilters.Click += btnClearFilters_Click;
+            // 
             // label1
             // 
             label1.AutoSize = true;
@@ -304,5 +328,6 @@ namespace AccessControlConfigurator.Forms
         private DataGridViewButtonColumn colEdit;
         private DataGridViewButtonColumn colDelete;
         private Button btnAdd;
+        private Button btnClearfillter;
     }
 }

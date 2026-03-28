@@ -66,10 +66,20 @@ namespace AccessControlConfigurator
             cmbNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
             lblNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
             cmbNameFilter.DropDownStyle = ComboBoxStyle.DropDownList;
 
             cmbNameFilter.SelectedIndexChanged += (s, e) => ApplyFilter();
+            btnClearFilters.Click += btnClearFilters_Click;
+            Resize += (s, e) =>
+            {
+                AlignHeaderControls();
+                AlignFilterControls();
+            };
+
+            AlignHeaderControls();
+            AlignFilterControls();
 
         }
 
@@ -165,6 +175,8 @@ namespace AccessControlConfigurator
                     dgvAccessLevels.Columns["TimeZones"].HeaderText = "TimeZones";
 
                 LoadNameFilter();
+                AlignHeaderControls();
+                AlignFilterControls();
 
             }
 
@@ -433,6 +445,18 @@ namespace AccessControlConfigurator
 
         }
 
+        private void btnClearFilters_Click(object sender, EventArgs e)
+
+        {
+
+            txtSearch.Text = "";
+            if (cmbNameFilter.Items.Count > 0)
+                cmbNameFilter.SelectedIndex = 0;
+
+            ApplyFilter();
+
+        }
+
         private void LoadNameFilter()
 
         {
@@ -484,6 +508,39 @@ namespace AccessControlConfigurator
                 .Where(l => string.Equals((l.name ?? string.Empty).Trim(), selected, StringComparison.OrdinalIgnoreCase))
 
                 .ToList();
+
+        }
+
+        private void AlignHeaderControls()
+
+        {
+
+            int rightPadding = 12;
+
+            btnClearFilters.Location = new Point(panelHeader.ClientSize.Width - btnClearFilters.Width - rightPadding, 14);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, 14);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, 16);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 20);
+
+        }
+
+        private void AlignFilterControls()
+
+        {
+
+            int top = 6;
+            int spacing = 8;
+            int rightPadding = 12;
+
+            btnAdd.Location = new Point(10, 5);
+            btnEdit.Location = new Point(btnAdd.Right + spacing, 5);
+            btnDelete.Location = new Point(btnEdit.Right + spacing, 5);
+            btnSync.Location = new Point(btnDelete.Right + spacing, 6);
+            btnRefresh.Location = new Point(btnSync.Right + spacing, 6);
+            btnBack.Location = new Point(btnRefresh.Right + spacing, 6);
+
+            cmbNameFilter.Location = new Point(panelFilter.ClientSize.Width - cmbNameFilter.Width - rightPadding, top);
+            lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, 9);
 
         }
 

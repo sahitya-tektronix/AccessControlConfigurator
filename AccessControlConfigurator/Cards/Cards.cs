@@ -54,6 +54,8 @@ namespace AccessControlConfigurator
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
 
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
@@ -78,6 +80,15 @@ namespace AccessControlConfigurator
             cmbActTimeFilter.SelectedIndexChanged += (s, e) => ApplyCardFilter();
 
             cmbDeactTimeFilter.SelectedIndexChanged += (s, e) => ApplyCardFilter();
+
+            Resize += (s, e) =>
+            {
+                AlignHeaderControls();
+                AlignFilterControls();
+            };
+
+            AlignHeaderControls();
+            AlignFilterControls();
 
         }
 
@@ -180,6 +191,8 @@ namespace AccessControlConfigurator
                 ApplyGridSettings();
 
                 LoadFilters();
+                AlignHeaderControls();
+                AlignFilterControls();
 
             }
 
@@ -562,19 +575,27 @@ namespace AccessControlConfigurator
 
         {
 
+            Helpers.GridStyleHelper.ApplyStandardStyle(
+                dgvCards,
+                fillColumns: false,
+                allowColumnResize: false,
+                allowColumnOrder: false);
+
             dgvCards.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
 
             dgvCards.ScrollBars = ScrollBars.Both;
 
-            dgvCards.AllowUserToResizeColumns = true;
+            dgvCards.AllowUserToResizeColumns = false;
 
-            dgvCards.AllowUserToOrderColumns = true;
+            dgvCards.AllowUserToOrderColumns = false;
 
             foreach (DataGridViewColumn col in dgvCards.Columns)
 
             {
 
                 col.Width = 130;
+                col.Resizable = DataGridViewTriState.False;
+                col.SortMode = DataGridViewColumnSortMode.NotSortable;
 
             }
 
@@ -607,6 +628,15 @@ namespace AccessControlConfigurator
             Hide("alvls");
 
             Hide("raw_Command");
+            Hide("tmpDays");
+            Hide("tmpDate");
+            Hide("alvl_Prec_MAX_ACR_PER_SCP");
+            Hide("acrNumbers");
+            Hide("acrScpIds");
+            Hide("vacDate");
+            Hide("vacDays");
+            Hide("issueCode");
+            Hide("isDeleted");
 
             var headerMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 
@@ -666,9 +696,20 @@ namespace AccessControlConfigurator
 
                     col.HeaderText = header;
 
+                col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                col.DefaultCellStyle.Alignment =
+                    string.Equals(key, "cardNumber", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(key, "actTimeLocal", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(key, "dactTimeLocal", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(key, "createdAt", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(key, "lastModified", StringComparison.OrdinalIgnoreCase)
+                        ? DataGridViewContentAlignment.MiddleLeft
+                        : DataGridViewContentAlignment.MiddleCenter;
+
             }
 
             dgvCards.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            ApplyColumnWidths();
 
         }
 
@@ -762,6 +803,80 @@ namespace AccessControlConfigurator
 
         }
 
+        private void ApplyColumnWidths()
+
+        {
+
+            SetWidth("id", 80);
+            SetWidth("cardNumber", 160);
+            SetWidth("accessLevelId", 150);
+            SetWidth("actTime", 160);
+            SetWidth("dactTime", 165);
+            SetWidth("actTimeLocal", 185);
+            SetWidth("dactTimeLocal", 195);
+            SetWidth("user_Level_MAX_ULVL", 120);
+            SetWidth("status", 90);
+            SetWidth("createdAt", 155);
+            SetWidth("lastModified", 165);
+
+        }
+
+        private void SetWidth(string columnName, int width)
+
+        {
+
+            if (dgvCards.Columns.Contains(columnName))
+
+            {
+
+                dgvCards.Columns[columnName].Width = width;
+
+            }
+
+        }
+
+        private void AlignHeaderControls()
+
+        {
+
+            int top = 12;
+            int left = 158;
+            int spacing = 10;
+            int rightPadding = 12;
+
+            btnAdd.Location = new Point(left, top);
+            btnEdit.Location = new Point(btnAdd.Right + spacing, top);
+            btnDelete.Location = new Point(btnEdit.Right + spacing, top);
+            btnSync.Location = new Point(btnDelete.Right + spacing, top);
+            btnRefresh.Location = new Point(btnSync.Right + spacing, top);
+            btnBack.Location = new Point(btnRefresh.Right + spacing, top);
+
+            btnClearFilters.Location = new Point(headerPanel.ClientSize.Width - btnClearFilters.Width - rightPadding, 12);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 8, 12);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, 13);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 17);
+
+        }
+
+        private void AlignFilterControls()
+
+        {
+
+            int top = 4;
+            int rightPadding = 12;
+            int spacing = 10;
+
+            cmbDeactTimeFilter.Location = new Point(filterPanel.ClientSize.Width - cmbDeactTimeFilter.Width - rightPadding, top);
+            lblDeactTimeFilter.Location = new Point(cmbDeactTimeFilter.Left - lblDeactTimeFilter.Width - 8, 8);
+
+            cmbActTimeFilter.Location = new Point(lblDeactTimeFilter.Left - cmbActTimeFilter.Width - spacing, top);
+            lblActTimeFilter.Location = new Point(cmbActTimeFilter.Left - lblActTimeFilter.Width - 8, 8);
+
+            txtCardNumberFilter.Location = new Point(lblActTimeFilter.Left - txtCardNumberFilter.Width - spacing, top);
+            lblCardNumberFilter.Location = new Point(txtCardNumberFilter.Left - lblCardNumberFilter.Width - 8, 8);
+
+        }
+
         //private void txtSearch_TextChanged(object sender, EventArgs e)
 
         //{
@@ -773,6 +888,21 @@ namespace AccessControlConfigurator
         private void btnSearch_Click(object sender, EventArgs e)
 
         {
+
+            ApplyCardFilter();
+
+        }
+
+        private void btnClearFilters_Click(object sender, EventArgs e)
+
+        {
+
+            txtSearch.Text = "";
+            txtCardNumberFilter.Text = "";
+            if (cmbActTimeFilter.Items.Count > 0)
+                cmbActTimeFilter.SelectedIndex = 0;
+            if (cmbDeactTimeFilter.Items.Count > 0)
+                cmbDeactTimeFilter.SelectedIndex = 0;
 
             ApplyCardFilter();
 

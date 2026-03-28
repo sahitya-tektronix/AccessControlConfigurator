@@ -13,6 +13,7 @@ namespace AccessControlConfigurator
         private Button btnRefresh;
         //private Button btnAdd;
         private Button btnEdit;
+        private Button btnClearFilters;
         private ComboBox cmbControllerId;
         private ComboBox cmbSioNumber;
         private ComboBox cmbReader;
@@ -38,6 +39,7 @@ namespace AccessControlConfigurator
             btnEdit = new Button();
             btnRefresh = new Button();
             btnBack = new Button();
+            btnClearFilters = new Button();
             lblController = new Label();
             cmbControllerId = new ComboBox();
             lblSio = new Label();
@@ -117,6 +119,15 @@ namespace AccessControlConfigurator
             btnBack.Text = "Back";
             btnBack.Click += btnBack_Click;
             // 
+            // btnClearFilters
+            // 
+            btnClearFilters.Location = new Point(911, 3);
+            btnClearFilters.Name = "btnClearFilters";
+            btnClearFilters.Size = new Size(80, 28);
+            btnClearFilters.TabIndex = 9;
+            btnClearFilters.Text = "Clear";
+            btnClearFilters.Click += btnClearFilters_Click;
+            // 
             // lblController
             // 
             lblController.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -178,7 +189,7 @@ namespace AccessControlConfigurator
             // 
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.AutoSize = true;
-            lblSearchRight.Location = new Point(650, 10);
+            lblSearchRight.Location = new Point(600, 8);
             lblSearchRight.Name = "lblSearchRight";
             lblSearchRight.Size = new Size(53, 20);
             lblSearchRight.TabIndex = 2;
@@ -187,7 +198,7 @@ namespace AccessControlConfigurator
             // txtSearch
             // 
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            txtSearch.Location = new Point(710, 8);
+            txtSearch.Location = new Point(659, 3);
             txtSearch.Name = "txtSearch";
             txtSearch.Size = new Size(200, 27);
             txtSearch.TabIndex = 3;
@@ -195,7 +206,7 @@ namespace AccessControlConfigurator
             // btnSearch
             // 
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnSearch.Location = new Point(920, 8);
+            btnSearch.Location = new Point(865, 3);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(40, 27);
             btnSearch.TabIndex = 4;
@@ -269,6 +280,7 @@ namespace AccessControlConfigurator
             Controls.Add(dgvAcrs);
             Controls.Add(topPanel);
             Controls.Add(lblSearchRight);
+            Controls.Add(btnClearFilters);
             Controls.Add(txtSearch);
             Controls.Add(btnSearch);
             Controls.Add(lblacr);

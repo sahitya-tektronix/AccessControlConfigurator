@@ -1,4 +1,5 @@
-﻿using AccessControlConfigurator.Forms;
+using AccessControlConfigurator.Forms;
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Models;
 using AccessControlSystem.Services;
 using System;
@@ -12,17 +13,14 @@ namespace AccessControlConfigurator.Controls
     {
         private readonly ApiService _api = new ApiService();
         private List<CardholderDto> _allCardholders = new List<CardholderDto>();
+
         public CardholdersControl()
         {
             InitializeComponent();
             _ = LoadCardholders();
-            //dgvCardholders.Dock = DockStyle.Fill;
-            //this.Controls.Add(dgvCardholders);
 
             btnSearch.Click += btnSearch_Click;
-            //txtSearch.TextChanged += txtSearch_TextChanged;
 
-            // Button style
             btnSearch.FlatStyle = FlatStyle.Flat;
             btnSearch.BackColor = Color.FromArgb(0, 120, 215);
             btnSearch.ForeColor = Color.White;
@@ -30,25 +28,25 @@ namespace AccessControlConfigurator.Controls
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
             txtNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             txtEmailFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblNameFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblEmailFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            dgvCardholders.RowHeadersVisible = false;
-            dgvCardholders.AllowUserToAddRows = false;
-            dgvCardholders.ColumnHeadersVisible = true;
-            dgvCardholders.ColumnHeadersHeight = 34;
-            dgvCardholders.ColumnHeadersHeightSizeMode =
-                DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvCardholders.EnableHeadersVisualStyles = false;
-            dgvCardholders.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(240, 240, 240);
-            dgvCardholders.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
-            dgvCardholders.ColumnHeadersDefaultCellStyle.Font =
-                new Font("Segoe UI", 9F, FontStyle.Bold);
 
-            dgvCardholders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            txtNameFilter.PlaceholderText = "Search name";
+            txtEmailFilter.PlaceholderText = "Search email";
+
+            GridStyleHelper.ApplyStandardStyle(dgvCardholders);
+            dgvCardholders.ColumnHeadersVisible = true;
+
             txtNameFilter.TextChanged += (s, e) => ApplyFilters();
             txtEmailFilter.TextChanged += (s, e) => ApplyFilters();
+            btnClearFilters.Click += btnClearFilters_Click;
+
+            Resize += (s, e) => AlignLayout();
+            AlignLayout();
         }
 
         private async Task LoadCardholders()
@@ -58,15 +56,16 @@ namespace AccessControlConfigurator.Controls
                 dgvCardholders.Rows.Clear();
 
                 var list = await _api.GetCardholders();
-                _allCardholders = list; //  store full data
-                BindGrid(_allCardholders); // 🔥 bind
-
+                _allCardholders = list;
+                BindGrid(_allCardholders);
+                AlignLayout();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
+
         private void BindGrid(List<CardholderDto> data)
         {
             dgvCardholders.Rows.Clear();
@@ -95,8 +94,7 @@ namespace AccessControlConfigurator.Controls
             if (dgvCardholders.SelectedRows.Count == 0)
                 return 0;
 
-            return Convert.ToInt32(
-                dgvCardholders.SelectedRows[0].Cells[0].Value);
+            return Convert.ToInt32(dgvCardholders.SelectedRows[0].Cells[0].Value);
         }
 
         private async void btnRefresh_Click(object sender, EventArgs e)
@@ -104,17 +102,15 @@ namespace AccessControlConfigurator.Controls
             await LoadCardholders();
         }
 
-
         private async void btnAdd_Click(object sender, EventArgs e)
         {
             AddCardholderForm frm = new AddCardholderForm();
 
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                await LoadCardholders(); // refresh grid after save
+                await LoadCardholders();
             }
         }
-
 
         private void btnBack_Click(object sender, EventArgs e)
         {
@@ -140,15 +136,13 @@ namespace AccessControlConfigurator.Controls
 
             try
             {
-                int id = Convert.ToInt32(
-                    dgvCardholders.SelectedRows[0].Cells[0].Value);
+                int id = Convert.ToInt32(dgvCardholders.SelectedRows[0].Cells[0].Value);
 
                 bool isDeleted = await _api.DeleteCardholder(id);
 
                 if (isDeleted)
                 {
                     MessageBox.Show("Deleted successfully");
-
                     await LoadCardholders();
                     dgvCardholders.ClearSelection();
                 }
@@ -159,18 +153,6 @@ namespace AccessControlConfigurator.Controls
             }
         }
 
-        //private void btnEdit_Click(object sender, EventArgs e)
-        //{
-        //    int id = GetSelectedId();
-
-        //    if (id == 0)
-        //        return;
-
-        //    EditCardholderForm frm = new EditCardholderForm(id);
-        //    frm.ShowDialog();
-
-        //    _ = LoadCardholders();
-
         private void btnEdit_Click(object sender, EventArgs e)
         {
             if (dgvCardholders.SelectedRows.Count == 0)
@@ -179,7 +161,6 @@ namespace AccessControlConfigurator.Controls
                 return;
             }
 
-            // ✅ NOW THIS WILL RUN
             var row = dgvCardholders.SelectedRows[0];
 
             var cardholder = new CardholderDto
@@ -190,23 +171,29 @@ namespace AccessControlConfigurator.Controls
                 mobile = row.Cells[5].Value?.ToString(),
                 email = row.Cells[4].Value?.ToString(),
                 department = ""
-            }; ;
+            };
 
             var form = new EditCardholderForm(cardholder);
 
             if (form.ShowDialog() == DialogResult.OK)
             {
-                LoadCardholders(); // 🔥 refresh grid
+                _ = LoadCardholders();
             }
         }
-        //private void txtSearch_TextChanged(object sender, EventArgs e)
-        //{
-        //    ApplySearch();
-        //}
+
         private void btnSearch_Click(object sender, EventArgs e)
         {
             ApplyFilters();
         }
+
+        private void btnClearFilters_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = "";
+            txtNameFilter.Text = "";
+            txtEmailFilter.Text = "";
+            ApplyFilters();
+        }
+
         private void ApplyFilters()
         {
             var filtered = _allCardholders.AsEnumerable();
@@ -242,13 +229,8 @@ namespace AccessControlConfigurator.Controls
             ).ToList();
 
             BindGrid(searched);
-
-            // 🔥 OPTIONAL: No data message
-            if (searched.Count == 0)
-            {
-                //MessageBox.Show("No matching data");
-            }
         }
+
         private void txtSearch_Click(object sender, EventArgs e)
         {
             txtSearch.Clear();
@@ -256,8 +238,30 @@ namespace AccessControlConfigurator.Controls
 
         private void filterPanel_Paint(object sender, PaintEventArgs e)
         {
+        }
 
+        private void AlignLayout()
+        {
+            int top = 2;
+            int left = 164;
+            int spacing = 10;
+            int rightPadding = 12;
+
+            btnAdd.Location = new Point(left, top);
+            btnEdit.Location = new Point(btnAdd.Right + spacing, top);
+            btnDelete.Location = new Point(btnEdit.Right + spacing, top);
+            btnRefresh.Location = new Point(btnDelete.Right + spacing, top);
+            btnBack.Location = new Point(btnRefresh.Right + spacing, top);
+
+            btnClearFilters.Location = new Point(topPanel.ClientSize.Width - btnClearFilters.Width - rightPadding, 5);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, 3);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 6, 5);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 9);
+
+            txtEmailFilter.Location = new Point(filterPanel.ClientSize.Width - txtEmailFilter.Width - 12, 4);
+            lblEmailFilter.Location = new Point(txtEmailFilter.Left - lblEmailFilter.Width - 8, 8);
+            txtNameFilter.Location = new Point(lblEmailFilter.Left - txtNameFilter.Width - 14, 4);
+            lblNameFilter.Location = new Point(txtNameFilter.Left - lblNameFilter.Width - 8, 8);
         }
     }
-
 }

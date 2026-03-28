@@ -19,13 +19,14 @@
 
         private System.Windows.Forms.FlowLayoutPanel sidebar;
 
+        private System.Windows.Forms.Button tabEvents;
         private System.Windows.Forms.Button tabControllers;
         private System.Windows.Forms.Button tabAcrs;
         private System.Windows.Forms.Button tabTimeZones;
         private System.Windows.Forms.Button tabAccessLevels;
         private System.Windows.Forms.Button tabCards;
         private System.Windows.Forms.Button tabCardholders;
-        private System.Windows.Forms.Button tabEvents;
+        private System.Windows.Forms.Button tabWiegand;
 
         private System.Windows.Forms.Panel pnlPageContainer;
         private System.Windows.Forms.Panel pnlMain;
@@ -54,13 +55,14 @@
             btnOpenDoor = new ToolStripButton();
             splitMain = new SplitContainer();
             sidebar = new FlowLayoutPanel();
+            tabEvents = new Button();
             tabControllers = new Button();
             tabAcrs = new Button();
             tabTimeZones = new Button();
             tabAccessLevels = new Button();
             tabCards = new Button();
             tabCardholders = new Button();
-            tabEvents = new Button();
+            tabWiegand = new Button();
             pnlPageContainer = new Panel();
             pnlMain = new Panel();
             statusBar = new StatusStrip();
@@ -160,13 +162,14 @@
             // sidebar
             // 
             sidebar.BackColor = Color.FromArgb(45, 60, 80);
+            sidebar.Controls.Add(tabEvents);
             sidebar.Controls.Add(tabControllers);
             sidebar.Controls.Add(tabAcrs);
             sidebar.Controls.Add(tabTimeZones);
             sidebar.Controls.Add(tabAccessLevels);
             sidebar.Controls.Add(tabCards);
             sidebar.Controls.Add(tabCardholders);
-            sidebar.Controls.Add(tabEvents);
+            sidebar.Controls.Add(tabWiegand);
             sidebar.Dock = DockStyle.Fill;
             sidebar.FlowDirection = FlowDirection.TopDown;
             sidebar.Location = new Point(0, 0);
@@ -175,56 +178,63 @@
             sidebar.TabIndex = 0;
             sidebar.WrapContents = false;
             // 
+            // tabEvents
+            // 
+            tabEvents.Location = new Point(3, 3);
+            tabEvents.Name = "tabEvents";
+            tabEvents.Size = new Size(75, 23);
+            tabEvents.TabIndex = 0;
+            // 
             // tabControllers
             // 
-            tabControllers.Location = new Point(3, 3);
+            tabControllers.Location = new Point(3, 32);
             tabControllers.Name = "tabControllers";
             tabControllers.Size = new Size(75, 23);
-            tabControllers.TabIndex = 0;
+            tabControllers.TabIndex = 1;
             tabControllers.Click += BtnControllers_Click;
             // 
             // tabAcrs
             // 
-            tabAcrs.Location = new Point(3, 32);
+            tabAcrs.Location = new Point(3, 61);
             tabAcrs.Name = "tabAcrs";
             tabAcrs.Size = new Size(75, 23);
-            tabAcrs.TabIndex = 1;
+            tabAcrs.TabIndex = 2;
             tabAcrs.Click += BtnAcrs_Click;
             // 
             // tabTimeZones
             // 
-            tabTimeZones.Location = new Point(3, 61);
+            tabTimeZones.Location = new Point(3, 90);
             tabTimeZones.Name = "tabTimeZones";
             tabTimeZones.Size = new Size(75, 23);
-            tabTimeZones.TabIndex = 2;
+            tabTimeZones.TabIndex = 3;
             // 
             // tabAccessLevels
             // 
-            tabAccessLevels.Location = new Point(3, 90);
+            tabAccessLevels.Location = new Point(3, 119);
             tabAccessLevels.Name = "tabAccessLevels";
             tabAccessLevels.Size = new Size(75, 23);
-            tabAccessLevels.TabIndex = 3;
+            tabAccessLevels.TabIndex = 4;
             // 
             // tabCards
             // 
-            tabCards.Location = new Point(3, 119);
+            tabCards.Location = new Point(3, 148);
             tabCards.Name = "tabCards";
             tabCards.Size = new Size(75, 23);
-            tabCards.TabIndex = 4;
+            tabCards.TabIndex = 5;
             // 
             // tabCardholders
             // 
-            tabCardholders.Location = new Point(3, 148);
+            tabCardholders.Location = new Point(3, 177);
             tabCardholders.Name = "tabCardholders";
             tabCardholders.Size = new Size(75, 23);
-            tabCardholders.TabIndex = 5;
+            tabCardholders.TabIndex = 6;
             // 
-            // tabEvents
+            // tabWiegand
             // 
-            tabEvents.Location = new Point(3, 177);
-            tabEvents.Name = "tabEvents";
-            tabEvents.Size = new Size(75, 23);
-            tabEvents.TabIndex = 6;
+            tabWiegand.Location = new Point(3, 206);
+            tabWiegand.Name = "tabWiegand";
+            tabWiegand.Size = new Size(75, 23);
+            tabWiegand.TabIndex = 7;
             // 
             // pnlPageContainer
             // 

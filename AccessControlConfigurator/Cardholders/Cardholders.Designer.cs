@@ -19,6 +19,7 @@ namespace AccessControlConfigurator.Controls
         private TextBox txtNameFilter;
         private Label lblEmailFilter;
         private TextBox txtEmailFilter;
+        private Button btnClearFilters;
 
         protected override void Dispose(bool disposing)
         {
@@ -53,6 +54,7 @@ namespace AccessControlConfigurator.Controls
             txtNameFilter = new TextBox();
             lblEmailFilter = new Label();
             txtEmailFilter = new TextBox();
+            btnClearFilters = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvCardholders).BeginInit();
             topPanel.SuspendLayout();
             filterPanel.SuspendLayout();
@@ -184,7 +186,7 @@ namespace AccessControlConfigurator.Controls
             // lblSearchRight
             // 
             lblSearchRight.AutoSize = true;
-            lblSearchRight.Location = new Point(686, 9);
+            lblSearchRight.Location = new Point(627, 9);
             lblSearchRight.Name = "lblSearchRight";
             lblSearchRight.Size = new Size(53, 20);
             lblSearchRight.TabIndex = 10;
@@ -192,7 +194,7 @@ namespace AccessControlConfigurator.Controls
             // 
             // txtSearch
             // 
-            txtSearch.Location = new Point(749, 5);
+            txtSearch.Location = new Point(692, 5);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Search here";
             txtSearch.Size = new Size(137, 27);
@@ -200,7 +202,7 @@ namespace AccessControlConfigurator.Controls
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(914, 5);
+            btnSearch.Location = new Point(835, 3);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(36, 29);
             btnSearch.TabIndex = 12;
@@ -214,6 +216,7 @@ namespace AccessControlConfigurator.Controls
             topPanel.Controls.Add(lblTitle);
             topPanel.Controls.Add(btnSearch);
             topPanel.Controls.Add(btnEdit);
+            topPanel.Controls.Add(btnClearFilters);
             topPanel.Controls.Add(txtSearch);
             topPanel.Controls.Add(btnDelete);
             topPanel.Controls.Add(lblSearchRight);
@@ -242,7 +245,7 @@ namespace AccessControlConfigurator.Controls
             // lblNameFilter
             // 
             lblNameFilter.AutoSize = true;
-            lblNameFilter.Location = new Point(530, 8);
+            lblNameFilter.Location = new Point(500, 8);
             lblNameFilter.Name = "lblNameFilter";
             lblNameFilter.Size = new Size(49, 20);
             lblNameFilter.TabIndex = 13;
@@ -250,16 +253,16 @@ namespace AccessControlConfigurator.Controls
             // 
             // txtNameFilter
             // 
-            txtNameFilter.Location = new Point(590, 4);
+            txtNameFilter.Location = new Point(560, 4);
             txtNameFilter.Name = "txtNameFilter";
             txtNameFilter.PlaceholderText = "Filter name";
-            txtNameFilter.Size = new Size(140, 27);
+            txtNameFilter.Size = new Size(150, 27);
             txtNameFilter.TabIndex = 14;
             // 
             // lblEmailFilter
             // 
             lblEmailFilter.AutoSize = true;
-            lblEmailFilter.Location = new Point(740, 8);
+            lblEmailFilter.Location = new Point(720, 8);
             lblEmailFilter.Name = "lblEmailFilter";
             lblEmailFilter.Size = new Size(46, 20);
             lblEmailFilter.TabIndex = 15;
@@ -267,11 +270,21 @@ namespace AccessControlConfigurator.Controls
             // 
             // txtEmailFilter
             // 
-            txtEmailFilter.Location = new Point(790, 4);
+            txtEmailFilter.Location = new Point(775, 4);
             txtEmailFilter.Name = "txtEmailFilter";
             txtEmailFilter.PlaceholderText = "Filter email";
-            txtEmailFilter.Size = new Size(160, 27);
+            txtEmailFilter.Size = new Size(150, 27);
             txtEmailFilter.TabIndex = 16;
+            // 
+            // btnClearFilters
+            // 
+            btnClearFilters.Location = new Point(877, 5);
+            btnClearFilters.Name = "btnClearFilters";
+            btnClearFilters.Size = new Size(80, 27);
+            btnClearFilters.TabIndex = 17;
+            btnClearFilters.Text = "Clear";
+            btnClearFilters.UseVisualStyleBackColor = true;
+            btnClearFilters.Click += btnClearFilters_Click;
             // 
             // CardholdersControl
             // 

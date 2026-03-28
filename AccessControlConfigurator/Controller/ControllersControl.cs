@@ -12,39 +12,37 @@ namespace AccessControlConfigurator.Forms
         private readonly ApiService _api = new ApiService();
         private List<ControllerDto> controllerList = new List<ControllerDto>();
 
+
         public ControllersControl()
         {
             InitializeComponent();
-
-
+            FixHeaderStyle();
             ApplyColumnWidths();
             SetReadOnlyColumns();
-            ApplyGridStyle();
+            //ApplyGridStyle();
             ApplyButtonStyles();
 
             btnSearch.Click += btnSearch_Click;
-            // txtSearch.TextChanged += txtSearch_TextChanged;
-            // Button style
+
+            // 🔵 Search button style
             btnSearch.FlatStyle = FlatStyle.Flat;
-            btnSearch.BackColor = Color.FromArgb(0, 120, 215); // ✅ Blue color
+            btnSearch.BackColor = Color.FromArgb(0, 120, 215);
             btnSearch.ForeColor = Color.White;
             btnSearch.FlatAppearance.BorderSize = 0;
             btnSearch.Cursor = Cursors.Hand;
 
-            // Border style
+            // 🔲 Button border
             btnAdd.FlatAppearance.BorderColor = Color.FromArgb(45, 62, 80);
-                 btnAdd.FlatAppearance.BorderSize = 1;
-            
+            btnAdd.FlatAppearance.BorderSize = 1;
 
-            // Enter key search
+            // ⌨ Enter key search
             txtSearch.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
-                {
                     ApplySearch();
-                }
             };
 
+            // 📊 Grid settings
             dgvControllers.AllowUserToResizeColumns = false;
             dgvControllers.AutoGenerateColumns = false;
             dgvControllers.Dock = DockStyle.Fill;
@@ -54,15 +52,52 @@ namespace AccessControlConfigurator.Forms
             dgvControllers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
             this.Load += ControllersControl_Load;
+            this.Resize += (s, e) => AlignSearchControls();
+
             dgvControllers.CellContentClick += dgvControllers_CellContentClick;
 
-            //txtSearch.TextChanged += txtSearch_TextChanged;
-            //dgvControllers.CellEndEdit += dgvControllers_CellEndEdit;
-            //txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            //btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            //lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            // 📌 Anchors
+            txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
+            // 🔧 Size tuning
+            txtSearch.Width = 200;
+            btnSearch.Width = 40;
+            btnClearFilters.Width = 70;
 
+            // 🔥 OPTIONAL CLEAN UI
+            // lblSearchRight.Visible = false;
+            // txtSearch.PlaceholderText = "Search...";
+        }
+        private void AlignSearchControls()
+        {
+            int rightPadding = 20;
+            int spacing = 5;
+
+            // Clear button (rightmost)
+            btnClearFilters.Left = this.Width - btnClearFilters.Width - rightPadding;
+
+            // Search button (🔍)
+            btnSearch.Left = btnClearFilters.Left - btnSearch.Width - spacing;
+
+            // Textbox
+            txtSearch.Left = btnSearch.Left - txtSearch.Width - spacing;
+
+            // Label (optional)
+            lblSearchRight.Left = txtSearch.Left - lblSearchRight.Width - spacing;
+
+            // Vertical alignment
+            int top = txtSearch.Top;
+            btnSearch.Top = top;
+            btnClearFilters.Top = top;
+
+            lblSearchRight.Top = top + (txtSearch.Height / 2) - (lblSearchRight.Height / 2);
+        }
+        private void FixHeaderStyle()
+        {
+            Helpers.GridStyleHelper.ApplyStandardStyle(dgvControllers);
         }
         private void ApplyButtonStyles()
         {
@@ -328,22 +363,18 @@ namespace AccessControlConfigurator.Forms
             dgvControllers.BackgroundColor = Color.White;
 
             dgvControllers.EnableHeadersVisualStyles = false;
+            dgvControllers.ColumnHeadersDefaultCellStyle.BackColor = Color.White;
+            dgvControllers.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;
+            dgvControllers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
 
             dgvControllers.ColumnHeadersHeight = 40;
             dgvControllers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 
-            dgvControllers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 62, 80);
-            dgvControllers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvControllers.ColumnHeadersDefaultCellStyle.Font =
-                new Font("Segoe UI", 10, FontStyle.Bold);
-
             dgvControllers.DefaultCellStyle.Font =
                 new Font("Segoe UI", 10);
 
-            dgvControllers.DefaultCellStyle.SelectionBackColor =
-                Color.FromArgb(0, 120, 215);
-
-            dgvControllers.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgvControllers.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.White;
+            dgvControllers.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.Black;
 
             dgvControllers.AlternatingRowsDefaultCellStyle.BackColor =
                 Color.FromArgb(245, 245, 245);
@@ -494,6 +525,14 @@ namespace AccessControlConfigurator.Forms
             var clean = msg.Replace("\"", "");
 
             MessageBox.Show(clean);
+        }
+        private void btnClearFilters_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+
+            
+
+            ApplySearch();
         }
     }
 

@@ -45,4 +45,41 @@ namespace AccessControlSystem.Models
         public short IcLen { get; set; }
         public short IcLoc { get; set; }
     }
+
+    public class CreateWiegandFormatRequest
+    {
+        public short FormatNumber { get; set; }
+        public string Name { get; set; }
+        public short Bits { get; set; }
+        public short FacilityCode { get; set; }
+        public short? Flags { get; set; }
+        public short? PeLen { get; set; }
+        public short? PeLoc { get; set; }
+        public short? PoLen { get; set; }
+        public short? PoLoc { get; set; }
+        public short? FcLen { get; set; }
+        public short? FcLoc { get; set; }
+        public short? ChLen { get; set; }
+        public short? ChLoc { get; set; }
+        public short? IcLen { get; set; }
+        public short? IcLoc { get; set; }
+    }
+
+    public class UpdateWiegandFormatRequest
+    {
+        public string Name { get; set; }
+        public short? Bits { get; set; }
+        public short? FacilityCode { get; set; }
+        public short? Flags { get; set; }
+        public short? PeLen { get; set; }
+        public short? PeLoc { get; set; }
+        public short? PoLen { get; set; }
+        public short? PoLoc { get; set; }
+        public short? FcLen { get; set; }
+        public short? FcLoc { get; set; }
+        public short? ChLen { get; set; }
+        public short? ChLoc { get; set; }
+        public short? IcLen { get; set; }
+        public short? IcLoc { get; set; }
+    }
 }

@@ -29,14 +29,15 @@ namespace AccessControlConfigurator.Forms
             // Reader Type
             cbReaderType.DropDownStyle = ComboBoxStyle.DropDownList;
             cbReaderType.Items.Clear();
-            cbReaderType.Items.Add("Signo Reader");
+            cbReaderType.Items.Add("Card");
+            cbReaderType.Items.Add("Pin");
+            cbReaderType.Items.Add("Card + Pin");
             
             // Reader Direction
             cbReaderDirection.DropDownStyle = ComboBoxStyle.DropDownList;
             cbReaderDirection.Items.Clear();
-            cbReaderDirection.Items.Add("In");
-            cbReaderDirection.Items.Add("Out");
-            cbReaderDirection.Items.Add("In/Out");
+            cbReaderDirection.Items.Add("Entry");
+            cbReaderDirection.Items.Add("Exit");
         }
 
         // ════════════════════════════════════════════════════════

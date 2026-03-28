@@ -88,44 +88,63 @@ namespace AccessControlConfigurator
 
             leftAcrId = null;
             rightAcrId = null;
+            chkEnableR1.Checked = false;
+            chkEnableR2.Checked = false;
+            txt1Rname.Text = "";
+            txt2Rname.Text = "";
+            tb1Acr.Text = "";
+            tb2Acr.Text = "";
 
             if (acrlist != null && acrlist.Count > 0)
             {
                 foreach (var item in acrlist)
                 {
-                    if (leftAcrId == null)
-                    {
-                        chkEnableR1.Checked = true;
-                        txt1Rname.Text = item.name;
-                        tb1Acr.Text = item.acrNumber.ToString();
-
-                        cbRdir1.Text = item.readerType switch
-                        {
-                            0 => "In",
-                            1 => "Out",
-                            2 => "In/Out",
-                            _ => "In"
-                        };
-
-                        leftAcrId = item.id;
-                    }
-                    else
-                    {
-                        chkEnableR2.Checked = true;
-                        txt2Rname.Text = item.name;
-                        tb2Acr.Text = item.acrNumber.ToString();
-
-                        cbRdir2.Text = item.readerType switch
-                        {
-                            0 => "In",
-                            1 => "Out",
-                            2 => "In/Out",
-                            _ => "In"
-                        };
-
-                        rightAcrId = item.id;
-                    }
+                    if (item.readerNumber == 0)
+                        ApplyAcrToReader(item, isLeft: true);
+                    else if (item.readerNumber == 1)
+                        ApplyAcrToReader(item, isLeft: false);
+                    else if (leftAcrId == null)
+                        ApplyAcrToReader(item, isLeft: true);
+                    else if (rightAcrId == null)
+                        ApplyAcrToReader(item, isLeft: false);
                 }
+            }
+        }
+        private void ApplyAcrToReader(AcrDto item, bool isLeft)
+        {
+            if (isLeft)
+            {
+                chkEnableR1.Checked = true;
+                txt1Rname.Text = item.name;
+                tb1Acr.Text = item.acrNumber.ToString();
+                cb1RT.SelectedIndex = item.readerType >= 0 && item.readerType < cb1RT.Items.Count
+                    ? item.readerType
+                    : 0;
+                cbRdir1.Text = item.readerDirection switch
+                {
+                    0 => "In",
+                    1 => "Out",
+                    2 => "In/Out",
+                    _ => "In"
+                };
+                leftAcrId = item.id;
+            }
+            else
+            {
+                chkEnableR2.Checked = true;
+                txt2Rname.Text = item.name;
+                tb2Acr.Text = item.acrNumber.ToString();
+                cb2RT.SelectedIndex = item.readerType >= 0 && item.readerType < cb2RT.Items.Count
+                    ? item.readerType
+                    : 0;
+                cbRdir2.Text = item.readerDirection switch
+                {
+                    0 => "In",
+                    1 => "Out",
+                    2 => "In/Out",
+                    _ => "In"
+                };
+                rightAcrId = item.id;
             }
         }
 
@@ -229,7 +248,9 @@ namespace AccessControlConfigurator
                         name = txt1Rname.Text,
                         acrNumber = Convert.ToInt32(tb1Acr.Text),
                         defaultAcrName = txt1Rname.Text,
-                        readerType = GetReaderDirection(cbRdir1),
+                        readerNumber = 0,
+                        readerType = cb1RT.SelectedIndex,
+                        readerDirection = GetReaderDirection(cbRdir1),
                         controllerID = _selectedSio.ControllerID,
                         sioNumber = _selectedSio.SioNumber,
                         rex0Number = 3,
@@ -254,7 +275,9 @@ namespace AccessControlConfigurator
                         name = txt2Rname.Text,
                         acrNumber = Convert.ToInt32(tb2Acr.Text),
                         defaultAcrName = txt2Rname.Text,
-                        readerType = GetReaderDirection(cbRdir2),
+                        readerNumber = 1,
+                        readerType = cb2RT.SelectedIndex,
+                        readerDirection = GetReaderDirection(cbRdir2),
                         controllerID = _selectedSio.ControllerID,
                         sioNumber = _selectedSio.SioNumber,
                         rex0Number = 3,
