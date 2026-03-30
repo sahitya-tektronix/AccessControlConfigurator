@@ -80,6 +80,8 @@ namespace AccessControlConfigurator
             dgvEvents.Columns["timestamp"].Visible = false;
 
             Helpers.GridStyleHelper.ApplyStandardStyle(dgvEvents);
+            dgvEvents.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgvEvents.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         }
 
         private void EventsControl_Load(object sender, EventArgs e)
@@ -540,19 +542,7 @@ namespace AccessControlConfigurator
 
         private void StyleToolbarButton(Button btn)
         {
-            btn.BackColor = Color.FromArgb(245, 245, 245); // light gray
-            btn.ForeColor = Color.FromArgb(45, 62, 80);    // dark text
-
-            btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderColor = Color.FromArgb(200, 200, 200);
-            btn.FlatAppearance.BorderSize = 1;
-
-            btn.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
-            btn.Height = 30;
-            btn.Width = 80;
-
-            btn.Cursor = Cursors.Hand;
-            btn.UseVisualStyleBackColor = false;
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btn, 80);
         }
 
         private void btnBack_Click_1(object sender, EventArgs e)

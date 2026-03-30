@@ -25,5 +25,23 @@ namespace AccessControlSystem.Models
         public int timeZoneId { get; set; }
     }
 
+    public class TimezoneCreateRequest
+    {
+        public int number { get; set; }
+        public string name { get; set; }
+        public int mode { get; set; }
+        public int actTime { get; set; }
+        public int deactTime { get; set; }
+        public int intervals { get; set; }
+        public int iDays { get; set; }
+        public int iStart { get; set; }
+        public int iEnd { get; set; }
+    }
+
+    public class TimezoneUpdateRequest : TimezoneCreateRequest
+    {
+        public int id { get; set; }
+    }
+
     
 }

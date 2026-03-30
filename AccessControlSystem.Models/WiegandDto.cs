@@ -67,6 +67,7 @@ namespace AccessControlSystem.Models
 
     public class UpdateWiegandFormatRequest
     {
+        public short FormatNumber { get; set; }
         public string Name { get; set; }
         public short? Bits { get; set; }
         public short? FacilityCode { get; set; }

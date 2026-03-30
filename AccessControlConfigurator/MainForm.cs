@@ -50,6 +50,7 @@ namespace AccessControlConfigurator
             tabCards.Click += BtnCards_Click;
             tabCardholders.Click += BtnCardholders_Click;
             tabWiegand.Click += BtnWiegand_Click;
+            tabEventReport.Click += BtnEventReport_Click;
 
             // Apply sidebar style
             StyleButton(tabEvents, "Events");
@@ -61,6 +62,7 @@ namespace AccessControlConfigurator
             StyleButton(tabCards, "Cards");
             StyleButton(tabCardholders, "Cardholders");
             StyleButton(tabWiegand, "Wiegand");
+            StyleButton(tabEventReport, "Event Report");
             
         }
 
@@ -124,6 +126,7 @@ namespace AccessControlConfigurator
                 "Cardholders" => GetOrCreatePage(pageKey, () => new CardholdersControl()),
                 "Events" => GetOrCreatePage(pageKey, () => new EventsControl()),
                 "Wiegand" => GetOrCreatePage(pageKey, () => new WiegandControl()),
+                "EventReport" => GetOrCreatePage(pageKey, () => new EventReportControl()),
                 _ => null
             };
         }
@@ -189,6 +192,12 @@ namespace AccessControlConfigurator
         {
             HighlightButton(tabWiegand);
             LoadPage(GetOrCreatePage("Wiegand", () => new WiegandControl()), true, "Wiegand");
+        }
+
+        private void BtnEventReport_Click(object sender, EventArgs e)
+        {
+            HighlightButton(tabEventReport);
+            LoadPage(GetOrCreatePage("EventReport", () => new EventReportControl()), true, "EventReport");
         }
 
         // ================= OPEN FIRST PAGE =================

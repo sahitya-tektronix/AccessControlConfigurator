@@ -140,6 +140,18 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
+                var msg = ex.Message ?? string.Empty;
+                if (msg.Contains("acr_number_in_use", StringComparison.OrdinalIgnoreCase) ||
+                    msg.Contains("already in use", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show(
+                        "ACR number already in use for this Controller and SIO.\nPlease choose a different ACR number.",
+                        "Duplicate ACR Number",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
@@ -264,12 +276,31 @@ namespace AccessControlConfigurator
 
                 if (form.ShowDialog() == DialogResult.OK)
                 {
+                    var updatePayload = new AcrDto
+                    {
+                        name = form.AcrData.name,
+                        defaultAcrName = string.IsNullOrWhiteSpace(form.AcrData.defaultAcrName)
+                            ? form.AcrData.name
+                            : form.AcrData.defaultAcrName,
+                        acrNumber = li.acrNumber,
+                        defaultMode = form.AcrData.defaultMode,
+                        readerNumber = li.readerNumber,
+                        readerType = 2201,
+                        readerDirection = form.AcrData.readerDirection,
+                        controllerID = li.controllerID,
+                        sioNumber = li.sioNumber,
+                        strikeNumber = form.AcrData.strikeNumber,
+                        doorNumber = li.doorNumber,
+                        rex0Number = form.AcrData.rex0Number,
+                        rexNumber = form.AcrData.rexNumber
+                    };
+
                     // ✅ Update API
                     await _api.UpdateAcrAsync(
                         li.controllerID,
                         li.sioNumber,
                         li.id,
-                        form.AcrData);
+                        updatePayload);
 
                     // ✅ Refresh grid
                     await LoadAcrs();
@@ -279,6 +310,19 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
+                var message = ex.Message ?? string.Empty;
+                if (message.Contains("409") ||
+                    message.Contains("Conflict", StringComparison.OrdinalIgnoreCase) ||
+                    message.Contains("already in use", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show(
+                        "ACR update failed because the server reported a conflict. The current ACR number or reader mapping is being treated as a duplicate by the API.",
+                        "ACR Update Conflict",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 MessageBox.Show("Error: " + ex.Message);
             }
         

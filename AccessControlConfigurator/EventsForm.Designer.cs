@@ -53,23 +53,21 @@
             actionPanel.Location = new Point(240, 11);
             actionPanel.Margin = new Padding(0);
             actionPanel.Name = "actionPanel";
-            actionPanel.Size = new Size(380, 34);
+            actionPanel.Size = new Size(410, 34);
             actionPanel.WrapContents = false;
 
+            // ==================== STANDARDIZE BUTTONS ====================
             btnclr.Text = "Clear";
-            btnclr.Size = new Size(90, 30);
-            btnclr.Margin = new Padding(0, 0, 10, 0);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnclr, 80);
 
             btnrefresh.Text = "Refresh";
-            btnrefresh.Size = new Size(90, 30);
-            btnrefresh.Margin = new Padding(0, 0, 10, 0);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnrefresh, 80);
 
             btnDelete.Text = "Delete";
-            btnDelete.Size = new Size(90, 30);
-            btnDelete.Margin = new Padding(0, 0, 10, 0);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 80);
 
             btnBack.Text = "Back";
-            btnBack.Size = new Size(90, 30);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnBack, 80);
             btnBack.Margin = new Padding(0);
 
             actionPanel.Controls.Add(btnclr);
@@ -90,6 +88,8 @@
             btnSearch.Text = "🔍";
             btnSearch.Size = new Size(40, 28);
             btnSearch.Margin = new Padding(8, 0, 0, 0);
+            btnSearch.Font = Helpers.UIStyleHelper.StandardFonts.ButtonFont;
+            btnSearch.FlatStyle = FlatStyle.Flat;
 
             txtSearch.Size = new Size(200, 27);
             txtSearch.PlaceholderText = "Search here";
@@ -142,7 +142,8 @@
 
             // Add controls (RIGHT → LEFT order)
             btnClearFilters.Text = "Clear";
-            btnClearFilters.Size = new Size(70, 28);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnClearFilters, 70);
+            btnClearFilters.Height = 28;
             btnClearFilters.Margin = new Padding(8, 0, 0, 0);
 
             filterRightPanel.Controls.Add(btnClearFilters);
@@ -193,3 +194,4 @@
         private Button btnClearFilters;
     }
 }
+

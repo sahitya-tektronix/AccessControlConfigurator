@@ -27,6 +27,7 @@
         private System.Windows.Forms.Button tabCards;
         private System.Windows.Forms.Button tabCardholders;
         private System.Windows.Forms.Button tabWiegand;
+        private System.Windows.Forms.Button tabEventReport;
 
         private System.Windows.Forms.Panel pnlPageContainer;
         private System.Windows.Forms.Panel pnlMain;
@@ -63,6 +64,7 @@
             tabCards = new Button();
             tabCardholders = new Button();
             tabWiegand = new Button();
+            tabEventReport = new Button();
             pnlPageContainer = new Panel();
             pnlMain = new Panel();
             statusBar = new StatusStrip();
@@ -170,6 +172,7 @@
             sidebar.Controls.Add(tabCards);
             sidebar.Controls.Add(tabCardholders);
             sidebar.Controls.Add(tabWiegand);
+            sidebar.Controls.Add(tabEventReport);
             sidebar.Dock = DockStyle.Fill;
             sidebar.FlowDirection = FlowDirection.TopDown;
             sidebar.Location = new Point(0, 0);
@@ -235,6 +238,13 @@
             tabWiegand.Name = "tabWiegand";
             tabWiegand.Size = new Size(75, 23);
             tabWiegand.TabIndex = 7;
+            // 
+            // tabEventReport
+            // 
+            tabEventReport.Location = new Point(3, 235);
+            tabEventReport.Name = "tabEventReport";
+            tabEventReport.Size = new Size(75, 23);
+            tabEventReport.TabIndex = 8;
             // 
             // pnlPageContainer
             // 

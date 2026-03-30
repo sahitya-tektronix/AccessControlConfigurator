@@ -110,6 +110,7 @@ namespace AccessControlConfigurator
                     new AcrTimeZoneDto
                     {
                         acrId = Convert.ToInt32(cmbAcr.SelectedValue),
+                        acrName = (cmbAcr.SelectedItem as AcrDropdownDto)?.name ?? cmbAcr.Text,
                        // TimeZoneId = Convert.ToInt32(cmbTimeZone.SelectedValue)
                        //TimeZoneId = ((TimezoneDto)cmbTimeZone.SelectedItem).timezoneid
                        timeZoneId = (int)cmbTimeZone.SelectedValue

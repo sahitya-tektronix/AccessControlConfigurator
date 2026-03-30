@@ -115,7 +115,8 @@
             searchPanel.Controls.Add(btnSearch);
             searchPanel.Controls.Add(txtSearch);
             searchPanel.Controls.Add(lblSearchRight);
-            searchPanel.Dock = DockStyle.Right;
+            searchPanel.Dock = DockStyle.None;
+            searchPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             searchPanel.FlowDirection = FlowDirection.RightToLeft;
             searchPanel.Location = new Point(659, 0);
             searchPanel.Name = "searchPanel";

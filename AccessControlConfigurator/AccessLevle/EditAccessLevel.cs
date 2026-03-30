@@ -147,6 +147,7 @@ namespace AccessControlConfigurator
                 var acr = new AcrTimeZoneDto
                 {
                     acrId = (int)cmbAcr.SelectedValue,
+                    acrName = (cmbAcr.SelectedItem as AcrDropdownDto)?.name ?? cmbAcr.Text,
                     timeZoneId = (int)cmbTimeZone.SelectedValue
                 };
 

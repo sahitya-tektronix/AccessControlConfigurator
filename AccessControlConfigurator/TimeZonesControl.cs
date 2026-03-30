@@ -21,6 +21,7 @@ namespace AccessControlConfigurator
             InitializeComponent();
 
             this.Load += TimeZonesControl_Load;
+            dgvTimeZones.CellFormatting += dgvTimeZones_CellFormatting;
             dgvTimeZones.ReadOnly = true;
             dgvTimeZones.EditMode = DataGridViewEditMode.EditProgrammatically;
             //StyleButton(btnAdd);
@@ -215,9 +216,7 @@ namespace AccessControlConfigurator
             var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["id"] = "Timezone ID",
-                ["code"] = "Code",
                 ["name"] = "Name",
-                ["encscptimezoneex"] = "Encoded TZ",
                 ["number"] = "Number",
                 ["mode"] = "Mode",
                 ["acttime"] = "Start Time",
@@ -225,8 +224,7 @@ namespace AccessControlConfigurator
                 ["intervals"] = "Intervals",
                 ["idays"] = "Break Days",
                 ["istart"] = "Break Start",
-                ["iend"] = "Break End",
-                ["timezoneid"] = "Timezone Ref"
+                ["iend"] = "Break End"
             };
 
             foreach (DataGridViewColumn col in dgvTimeZones.Columns)
@@ -239,7 +237,9 @@ namespace AccessControlConfigurator
                 }
 
                 // ❌ REMOVE unwanted duplicate columns
-                if (string.Equals(key, "timezoneid", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(key, "code", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(key, "encscptimezoneex", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(key, "timezoneid", StringComparison.OrdinalIgnoreCase))
                 {
                     col.Visible = false;
                 }
@@ -260,11 +260,9 @@ namespace AccessControlConfigurator
             string[] orderedColumns =
             {
                 "id",
-                "code",
                 "name",
                 "number",
                 "mode",
-                "encscptimezoneex",
                 "acttime",
                 "deacttime",
                 "intervals",
@@ -342,6 +340,25 @@ namespace AccessControlConfigurator
             }
         }
 
+        private void dgvTimeZones_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+            {
+                return;
+            }
+
+            var column = dgvTimeZones.Columns[e.ColumnIndex];
+            string key = column.DataPropertyName?.ToLower() ?? column.Name.ToLower();
+
+            if ((key == "acttime" || key == "deacttime") &&
+                e.Value != null &&
+                int.TryParse(e.Value.ToString(), out var seconds))
+            {
+                e.Value = Helpers.UIStyleHelper.FormatTimeFromSeconds(seconds);
+                e.FormattingApplied = true;
+            }
+        }
+
         private void ApplySearch()
         {
             string searchText = txtSearch.Text?.Trim().ToLower();
@@ -356,9 +373,7 @@ namespace AccessControlConfigurator
             {
                 return
                     t.id.ToString().Contains(searchText) ||
-                    t.code.ToString().Contains(searchText) ||
                     (t.name ?? "").ToLower().Contains(searchText) ||
-                    t.encScpTimezoneEx.ToString().Contains(searchText) ||
                     t.number.ToString().Contains(searchText) ||
                     t.mode.ToString().Contains(searchText) ||
                     t.actTime.ToString().Contains(searchText) ||
@@ -366,8 +381,7 @@ namespace AccessControlConfigurator
                     t.intervals.ToString().Contains(searchText) ||
                     t.iDays.ToString().Contains(searchText) ||
                     t.iStart.ToString().Contains(searchText) ||
-                    t.iEnd.ToString().Contains(searchText) ||
-                    t.timeZoneId.ToString().Contains(searchText);
+                    t.iEnd.ToString().Contains(searchText);
             }).ToList();
 
             // ✅ No popup (professional UX)
@@ -429,27 +443,48 @@ namespace AccessControlConfigurator
         private void AlignHeaderControls()
         {
             int rightPadding = 12;
+            int spacing = 8;
+            int searchGroupWidth =
+                btnClearFilters.Width + 6 +
+                btnSearch.Width + 6 +
+                txtSearch.Width + 8 +
+                lblSearchRight.Width;
 
-            btnClearFilters.Location = new Point(panelHeader.ClientSize.Width - btnClearFilters.Width - rightPadding, 8);
-            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, 9);
-            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 6, 10);
-            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 13);
+            int availableRight = panelHeader.ClientSize.Width - rightPadding;
+            int leftEdge = lblTitle.Right + spacing;
+            bool wrapSearch = (leftEdge + searchGroupWidth) > availableRight;
+            int searchTop = wrapSearch ? (lblTitle.Bottom + 6) : 8;
+
+            btnClearFilters.Location = new Point(availableRight - btnClearFilters.Width, searchTop);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, searchTop + 1);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 6, searchTop + 2);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 5);
+
+            panelHeader.Height = wrapSearch ? (searchTop + btnSearch.Height + 8) : 45;
         }
 
         private void AlignFilterControls()
         {
             int spacing = 8;
             int rightPadding = 12;
+            int top = 5;
 
-            btnAdd.Location = new Point(10, 5);
-            btnEdit.Location = new Point(btnAdd.Right + spacing, 5);
-            btnDelete.Location = new Point(btnEdit.Right + spacing, 5);
-            btnSync.Location = new Point(btnDelete.Right + spacing, 5);
-            btnRefresh.Location = new Point(btnSync.Right + spacing, 5);
-            btnback.Location = new Point(btnRefresh.Right + spacing, 5);
+            btnAdd.Location = new Point(10, top);
+            btnEdit.Location = new Point(btnAdd.Right + spacing, top);
+            btnDelete.Location = new Point(btnEdit.Right + spacing, top);
+            btnSync.Location = new Point(btnDelete.Right + spacing, top);
+            btnRefresh.Location = new Point(btnSync.Right + spacing, top);
+            btnback.Location = new Point(btnRefresh.Right + spacing, top);
 
-            cmbNameFilter.Location = new Point(panelFilter.ClientSize.Width - cmbNameFilter.Width - rightPadding, 2);
-            lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, 5);
+            int filterGroupWidth = cmbNameFilter.Width + 8 + lblNameFilter.Width;
+            int availableRight = panelFilter.ClientSize.Width - rightPadding;
+            bool wrapFilter = (btnback.Right + spacing + filterGroupWidth) > availableRight;
+            int filterTop = wrapFilter ? (btnAdd.Bottom + 6) : 2;
+
+            cmbNameFilter.Location = new Point(availableRight - cmbNameFilter.Width, filterTop);
+            lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, filterTop + 3);
+
+            panelFilter.Height = wrapFilter ? (filterTop + cmbNameFilter.Height + 6) : 32;
         }
     }
 }

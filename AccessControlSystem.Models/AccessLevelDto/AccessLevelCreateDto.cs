@@ -16,6 +16,7 @@ namespace AccessControlSystem.Models.AccessLevelDto.AccessLevelDto
     public class AcrTimeZoneDto
     {
         public int acrId { get; set; }
+        public string acrName { get; set; }
         public int timeZoneId { get; set; }
     }
     //public class AccessLevelCreateDto

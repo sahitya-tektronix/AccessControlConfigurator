@@ -11,6 +11,8 @@
 	<ItemGroup>
 	  <PackageReference Include="ADGV" Version="0.1.0.10" />
 	  <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.1" />
+	  <PackageReference Include="ClosedXML" Version="0.102.2" />
+	  <PackageReference Include="QuestPDF" Version="2024.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>

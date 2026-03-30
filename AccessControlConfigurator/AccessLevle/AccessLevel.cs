@@ -133,7 +133,7 @@ namespace AccessControlConfigurator
 
                                 .Where(a => a.acrId != null)
 
-                                .Select(a => a.acrId.ToString()))
+                                .Select(GetAcrDisplayName))
 
                         : "",
 
@@ -159,16 +159,17 @@ namespace AccessControlConfigurator
                 // 🔥 SAFE COLUMN SETTING
 
                 if (dgvAccessLevels.Columns.Contains("accessLevelId"))
-
-                    dgvAccessLevels.Columns["accessLevelId"].HeaderText = "ID";
+                    dgvAccessLevels.Columns["accessLevelId"].Visible = false;
 
                 if (dgvAccessLevels.Columns.Contains("name"))
 
                     dgvAccessLevels.Columns["name"].HeaderText = "Access Level Name";
 
                 if (dgvAccessLevels.Columns.Contains("AcrCount"))
-
-                    dgvAccessLevels.Columns["AcrCount"].HeaderText = "ACRs";
+                {
+                    dgvAccessLevels.Columns["AcrCount"].HeaderText = "Door (ACR)";
+                    dgvAccessLevels.Columns["AcrCount"].Visible = true;
+                }
 
                 if (dgvAccessLevels.Columns.Contains("TimeZones"))
 
@@ -361,6 +362,7 @@ namespace AccessControlConfigurator
 
                          l.acrs.Any(a =>
 
+                            (!string.IsNullOrWhiteSpace(GetAcrDisplayName(a)) && GetAcrDisplayName(a).ToLower().Contains(search)) ||
                             (a.acrId != null && a.acrId.ToString().Contains(search)) ||
 
                             (a.timeZoneId != null && a.timeZoneId.ToString().Contains(search))
@@ -387,7 +389,7 @@ namespace AccessControlConfigurator
 
                             ? string.Join(", ", l.acrs.Where(a => a.acrId != null)
 
-                                                     .Select(a => a.acrId.ToString()))
+                                                     .Select(GetAcrDisplayName))
 
                             : "",
 
@@ -516,12 +518,36 @@ namespace AccessControlConfigurator
         {
 
             int rightPadding = 12;
+            int spacing = 8;
+            int searchGroupWidth =
+                btnClearFilters.Width + 6 +
+                btnSearch.Width + 6 +
+                txtSearch.Width + 8 +
+                lblSearchRight.Width;
 
-            btnClearFilters.Location = new Point(panelHeader.ClientSize.Width - btnClearFilters.Width - rightPadding, 14);
-            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, 14);
-            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, 16);
-            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 20);
+            int availableRight = panelHeader.ClientSize.Width - rightPadding;
+            int leftEdge = lblTitle.Right + spacing;
+            bool wrapSearch = (leftEdge + searchGroupWidth) > availableRight;
+            int searchTop = wrapSearch ? (lblTitle.Bottom + 6) : 14;
 
+            btnClearFilters.Location = new Point(availableRight - btnClearFilters.Width, searchTop);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, searchTop);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, searchTop + 2);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 6);
+
+            panelHeader.Height = wrapSearch ? (searchTop + btnSearch.Height + 8) : 45;
+
+        }
+
+        private string GetAcrDisplayName(AcrMappingDto acrMapping)
+        {
+            if (!string.IsNullOrWhiteSpace(acrMapping?.acrName))
+            {
+                return acrMapping.acrName;
+            }
+
+            var matchedAcr = acrs.FirstOrDefault(a => a.id == acrMapping.acrId);
+            return matchedAcr?.name ?? acrMapping?.acrId.ToString() ?? string.Empty;
         }
 
         private void AlignFilterControls()
@@ -539,8 +565,15 @@ namespace AccessControlConfigurator
             btnRefresh.Location = new Point(btnSync.Right + spacing, 6);
             btnBack.Location = new Point(btnRefresh.Right + spacing, 6);
 
-            cmbNameFilter.Location = new Point(panelFilter.ClientSize.Width - cmbNameFilter.Width - rightPadding, top);
-            lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, 9);
+            int filterGroupWidth = cmbNameFilter.Width + 8 + lblNameFilter.Width;
+            int availableRight = panelFilter.ClientSize.Width - rightPadding;
+            bool wrapFilter = (btnBack.Right + spacing + filterGroupWidth) > availableRight;
+            int filterTop = wrapFilter ? (btnAdd.Bottom + 6) : top;
+
+            cmbNameFilter.Location = new Point(availableRight - cmbNameFilter.Width, filterTop);
+            lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, filterTop + 3);
+
+            panelFilter.Height = wrapFilter ? (filterTop + cmbNameFilter.Height + 6) : 36;
 
         }
 

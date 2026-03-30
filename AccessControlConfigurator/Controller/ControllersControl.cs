@@ -53,6 +53,7 @@ namespace AccessControlConfigurator.Forms
 
             this.Load += ControllersControl_Load;
             this.Resize += (s, e) => AlignSearchControls();
+            topPanel.SizeChanged += (s, e) => AlignSearchControls();
 
             dgvControllers.CellContentClick += dgvControllers_CellContentClick;
 
@@ -60,27 +61,50 @@ namespace AccessControlConfigurator.Forms
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearfillter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
             // 🔧 Size tuning
             txtSearch.Width = 200;
             btnSearch.Width = 40;
-            btnClearFilters.Width = 70;
+            btnClearfillter.Width = 70;
 
             // 🔥 OPTIONAL CLEAN UI
             // lblSearchRight.Visible = false;
             // txtSearch.PlaceholderText = "Search...";
+
+            AlignSearchControls();
         }
         private void AlignSearchControls()
         {
             int rightPadding = 20;
             int spacing = 5;
 
+            int leftGroupRight = new Control[] { btnDiscover, btnSync, btnSyncOnline, btnAdd, btnback, labelC }
+                .Select(c => c.Right)
+                .DefaultIfEmpty(0)
+                .Max();
+
             // Clear button (rightmost)
-            btnClearFilters.Left = this.Width - btnClearFilters.Width - rightPadding;
+            int availableRight = topPanel.ClientSize.Width - rightPadding;
+            int fixedGroupWidth =
+                btnClearfillter.Width + spacing +
+                btnSearch.Width + spacing +
+                lblSearchRight.Width + spacing;
+
+            int maxSearchWidth = availableRight - leftGroupRight - fixedGroupWidth;
+            int minSearchWidth = 100;
+            int maxAllowedWidth = 260;
+
+            bool wrapSearch = maxSearchWidth < minSearchWidth;
+            int searchTop = wrapSearch ? (btnAdd.Bottom + 6) : txtSearch.Top;
+
+            int searchWidth = Math.Max(minSearchWidth, Math.Min(maxSearchWidth, maxAllowedWidth));
+            txtSearch.Width = searchWidth;
+
+            btnClearfillter.Left = availableRight - btnClearfillter.Width;
 
             // Search button (🔍)
-            btnSearch.Left = btnClearFilters.Left - btnSearch.Width - spacing;
+            btnSearch.Left = btnClearfillter.Left - btnSearch.Width - spacing;
 
             // Textbox
             txtSearch.Left = btnSearch.Left - txtSearch.Width - spacing;
@@ -88,12 +112,34 @@ namespace AccessControlConfigurator.Forms
             // Label (optional)
             lblSearchRight.Left = txtSearch.Left - lblSearchRight.Width - spacing;
 
-            // Vertical alignment
-            int top = txtSearch.Top;
-            btnSearch.Top = top;
-            btnClearFilters.Top = top;
+            if (!wrapSearch)
+            {
+                int minSearchLeft = leftGroupRight + spacing;
+                if (lblSearchRight.Left < minSearchLeft)
+                {
+                    wrapSearch = true;
+                    searchTop = btnAdd.Bottom + 6;
 
-            lblSearchRight.Top = top + (txtSearch.Height / 2) - (lblSearchRight.Height / 2);
+                    btnClearfillter.Left = availableRight - btnClearfillter.Width;
+                    btnSearch.Left = btnClearfillter.Left - btnSearch.Width - spacing;
+                    txtSearch.Left = btnSearch.Left - txtSearch.Width - spacing;
+                    lblSearchRight.Left = txtSearch.Left - lblSearchRight.Width - spacing;
+                }
+            }
+
+            // Vertical alignment
+            btnSearch.Top = searchTop;
+            btnClearfillter.Top = searchTop;
+            txtSearch.Top = searchTop + 2;
+
+            lblSearchRight.Top = searchTop + (txtSearch.Height / 2) - (lblSearchRight.Height / 2) + 2;
+
+            if (topPanel != null)
+            {
+                int minTopHeight = 70;
+                int wrappedHeight = searchTop + btnSearch.Height + 10;
+                topPanel.Height = wrapSearch ? Math.Max(minTopHeight, wrappedHeight) : minTopHeight;
+            }
         }
         private void FixHeaderStyle()
         {
@@ -101,24 +147,11 @@ namespace AccessControlConfigurator.Forms
         }
         private void ApplyButtonStyles()
         {
-            StyleOutlineButton(btnAdd);
-            StyleOutlineButton(btnDiscover);
-            StyleOutlineButton(btnSync);
-            StyleOutlineButton(btnSyncOnline);
-            StyleOutlineButton(btnback);
-
-            // 🔥 FORCE FIX (for Add button issue)
-            btnAdd.ForeColor = Color.FromArgb(45, 62, 80);
-            btnAdd.BackColor = Color.White;
-        }
-        private void StyleOutlineButton(Button btn)
-        {
-            btn.BackColor = Color.White;
-            btn.ForeColor = Color.FromArgb(45, 62, 80);
-            btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderColor = Color.FromArgb(45, 62, 80);
-            btn.FlatAppearance.BorderSize = 1;
-            btn.UseVisualStyleBackColor = false;
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDiscover, 110);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSyncOnline, 170);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnback, 90);
         }
         // PAGE LOAD
         private async void ControllersControl_Load(object sender, EventArgs e)

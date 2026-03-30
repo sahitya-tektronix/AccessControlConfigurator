@@ -1,5 +1,6 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
+using AccessControlConfigurator.Helpers;
 
 namespace AccessControlConfigurator.Forms
 {
@@ -17,10 +18,9 @@ namespace AccessControlConfigurator.Forms
         private Label lblReaderNumber;
         private NumericUpDown numReaderNumber;
         private Label lblReaderType;
-       
-
+        private ComboBox cbReaderType;
         private Label lblReaderDirection;
-        private NumericUpDown numReaderDirection;
+        private ComboBox cbReaderDirection;
         private Label lblStrikeNumber;
         private NumericUpDown numStrikeNumber;
         private Label lblDoorNumber;
@@ -34,7 +34,10 @@ namespace AccessControlConfigurator.Forms
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
+            {
                 components.Dispose();
+            }
+
             base.Dispose(disposing);
         }
 
@@ -50,7 +53,9 @@ namespace AccessControlConfigurator.Forms
             lblReaderNumber = new Label();
             numReaderNumber = new NumericUpDown();
             lblReaderType = new Label();
+            cbReaderType = new ComboBox();
             lblReaderDirection = new Label();
+            cbReaderDirection = new ComboBox();
             lblStrikeNumber = new Label();
             numStrikeNumber = new NumericUpDown();
             lblDoorNumber = new Label();
@@ -60,8 +65,6 @@ namespace AccessControlConfigurator.Forms
             btnSave = new Button();
             btnCancel = new Button();
             bottomPanel = new Panel();
-            cbReaderType = new ComboBox();
-            cbReaderDirection = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)numAcrNumber).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numDefaultMode).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numReaderNumber).BeginInit();
@@ -73,182 +76,182 @@ namespace AccessControlConfigurator.Forms
             // 
             // lblTitle
             // 
+            UIStyleHelper.StyleLabel(lblTitle, UIStyleHelper.LabelStyle.Title);
             lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            lblTitle.ForeColor = Color.FromArgb(30, 60, 100);
-            lblTitle.Location = new Point(20, 16);
+            lblTitle.Location = new Point(24, 20);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(252, 30);
+            lblTitle.Size = new Size(175, 28);
             lblTitle.TabIndex = 0;
-            lblTitle.Text = "Edit ACR Configuration";
+            lblTitle.Text = "Edit ACR Settings";
             // 
             // lblName
             // 
-            lblName.AutoSize = true;
-            lblName.Font = new Font("Segoe UI", 9F);
-            lblName.Location = new Point(20, 63);
+            UIStyleHelper.StyleLabel(lblName);
+            lblName.Location = new Point(24, 70);
             lblName.Name = "lblName";
-            lblName.Size = new Size(49, 20);
+            lblName.Size = new Size(120, 23);
             lblName.TabIndex = 1;
             lblName.Text = "Name";
             // 
             // txtName
             // 
-            txtName.BorderStyle = BorderStyle.FixedSingle;
-            txtName.Font = new Font("Segoe UI", 9F);
-            txtName.Location = new Point(200, 60);
+            UIStyleHelper.StyleTextBox(txtName);
+            txtName.Location = new Point(170, 66);
             txtName.Name = "txtName";
-            txtName.Size = new Size(190, 27);
+            txtName.Size = new Size(240, 30);
             txtName.TabIndex = 2;
             // 
             // lblAcrNumber
             // 
-            lblAcrNumber.AutoSize = true;
-            lblAcrNumber.Font = new Font("Segoe UI", 9F);
-            lblAcrNumber.Location = new Point(20, 98);
+            UIStyleHelper.StyleLabel(lblAcrNumber);
+            lblAcrNumber.Location = new Point(24, 108);
             lblAcrNumber.Name = "lblAcrNumber";
-            lblAcrNumber.Size = new Size(95, 20);
+            lblAcrNumber.Size = new Size(120, 23);
             lblAcrNumber.TabIndex = 3;
             lblAcrNumber.Text = "ACR Number";
             // 
             // numAcrNumber
             // 
+            UIStyleHelper.StyleNumericUpDown(numAcrNumber);
             numAcrNumber.Enabled = false;
-            numAcrNumber.Font = new Font("Segoe UI", 9F);
-            numAcrNumber.Location = new Point(200, 95);
+            numAcrNumber.Location = new Point(170, 104);
             numAcrNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numAcrNumber.Name = "numAcrNumber";
-            numAcrNumber.Size = new Size(190, 27);
+            numAcrNumber.Size = new Size(240, 30);
             numAcrNumber.TabIndex = 4;
             // 
             // lblDefaultMode
             // 
-            lblDefaultMode.AutoSize = true;
-            lblDefaultMode.Font = new Font("Segoe UI", 9F);
-            lblDefaultMode.Location = new Point(20, 133);
+            UIStyleHelper.StyleLabel(lblDefaultMode);
+            lblDefaultMode.Location = new Point(24, 146);
             lblDefaultMode.Name = "lblDefaultMode";
-            lblDefaultMode.Size = new Size(101, 20);
+            lblDefaultMode.Size = new Size(120, 23);
             lblDefaultMode.TabIndex = 5;
             lblDefaultMode.Text = "Default Mode";
             // 
             // numDefaultMode
             // 
-            numDefaultMode.Font = new Font("Segoe UI", 9F);
-            numDefaultMode.Location = new Point(200, 130);
+            UIStyleHelper.StyleNumericUpDown(numDefaultMode);
+            numDefaultMode.Location = new Point(170, 142);
             numDefaultMode.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numDefaultMode.Name = "numDefaultMode";
-            numDefaultMode.Size = new Size(190, 27);
+            numDefaultMode.Size = new Size(240, 30);
             numDefaultMode.TabIndex = 6;
             // 
             // lblReaderNumber
             // 
-            lblReaderNumber.AutoSize = true;
-            lblReaderNumber.Font = new Font("Segoe UI", 9F);
-            lblReaderNumber.Location = new Point(20, 168);
+            UIStyleHelper.StyleLabel(lblReaderNumber);
+            lblReaderNumber.Location = new Point(24, 184);
             lblReaderNumber.Name = "lblReaderNumber";
-            lblReaderNumber.Size = new Size(114, 20);
+            lblReaderNumber.Size = new Size(120, 23);
             lblReaderNumber.TabIndex = 7;
             lblReaderNumber.Text = "Reader Number";
             // 
             // numReaderNumber
             // 
+            UIStyleHelper.StyleNumericUpDown(numReaderNumber);
             numReaderNumber.Enabled = false;
-            numReaderNumber.Font = new Font("Segoe UI", 9F);
-            numReaderNumber.Location = new Point(200, 165);
+            numReaderNumber.Location = new Point(170, 180);
             numReaderNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numReaderNumber.Name = "numReaderNumber";
-            numReaderNumber.Size = new Size(190, 27);
+            numReaderNumber.Size = new Size(240, 30);
             numReaderNumber.TabIndex = 8;
             // 
             // lblReaderType
             // 
-            lblReaderType.AutoSize = true;
-            lblReaderType.Font = new Font("Segoe UI", 9F);
-            lblReaderType.Location = new Point(20, 203);
+            UIStyleHelper.StyleLabel(lblReaderType);
+            lblReaderType.Location = new Point(24, 222);
             lblReaderType.Name = "lblReaderType";
-            lblReaderType.Size = new Size(91, 20);
+            lblReaderType.Size = new Size(120, 23);
             lblReaderType.TabIndex = 9;
             lblReaderType.Text = "Reader Type";
             // 
+            // cbReaderType
+            // 
+            UIStyleHelper.StyleComboBox(cbReaderType);
+            cbReaderType.Location = new Point(170, 218);
+            cbReaderType.Name = "cbReaderType";
+            cbReaderType.Size = new Size(240, 31);
+            cbReaderType.TabIndex = 10;
+            // 
             // lblReaderDirection
             // 
-            lblReaderDirection.AutoSize = true;
-            lblReaderDirection.Font = new Font("Segoe UI", 9F);
-            lblReaderDirection.Location = new Point(20, 238);
+            UIStyleHelper.StyleLabel(lblReaderDirection);
+            lblReaderDirection.Location = new Point(24, 260);
             lblReaderDirection.Name = "lblReaderDirection";
-            lblReaderDirection.Size = new Size(121, 20);
+            lblReaderDirection.Size = new Size(120, 23);
             lblReaderDirection.TabIndex = 11;
             lblReaderDirection.Text = "Reader Direction";
             // 
+            // cbReaderDirection
+            // 
+            UIStyleHelper.StyleComboBox(cbReaderDirection);
+            cbReaderDirection.Location = new Point(170, 256);
+            cbReaderDirection.Name = "cbReaderDirection";
+            cbReaderDirection.Size = new Size(240, 31);
+            cbReaderDirection.TabIndex = 12;
+            // 
             // lblStrikeNumber
             // 
-            lblStrikeNumber.AutoSize = true;
-            lblStrikeNumber.Font = new Font("Segoe UI", 9F);
-            lblStrikeNumber.Location = new Point(20, 273);
+            UIStyleHelper.StyleLabel(lblStrikeNumber);
+            lblStrikeNumber.Location = new Point(24, 298);
             lblStrikeNumber.Name = "lblStrikeNumber";
-            lblStrikeNumber.Size = new Size(104, 20);
+            lblStrikeNumber.Size = new Size(120, 23);
             lblStrikeNumber.TabIndex = 13;
             lblStrikeNumber.Text = "Strike Number";
             // 
             // numStrikeNumber
             // 
-            numStrikeNumber.Font = new Font("Segoe UI", 9F);
-            numStrikeNumber.Location = new Point(200, 270);
+            UIStyleHelper.StyleNumericUpDown(numStrikeNumber);
+            numStrikeNumber.Location = new Point(170, 294);
             numStrikeNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numStrikeNumber.Name = "numStrikeNumber";
-            numStrikeNumber.Size = new Size(190, 27);
+            numStrikeNumber.Size = new Size(240, 30);
             numStrikeNumber.TabIndex = 14;
             // 
             // lblDoorNumber
             // 
-            lblDoorNumber.AutoSize = true;
-            lblDoorNumber.Font = new Font("Segoe UI", 9F);
-            lblDoorNumber.Location = new Point(20, 308);
+            UIStyleHelper.StyleLabel(lblDoorNumber);
+            lblDoorNumber.Location = new Point(24, 336);
             lblDoorNumber.Name = "lblDoorNumber";
-            lblDoorNumber.Size = new Size(101, 20);
+            lblDoorNumber.Size = new Size(120, 23);
             lblDoorNumber.TabIndex = 15;
             lblDoorNumber.Text = "Door Number";
             // 
             // numDoorNumber
             // 
+            UIStyleHelper.StyleNumericUpDown(numDoorNumber);
             numDoorNumber.Enabled = false;
-            numDoorNumber.Font = new Font("Segoe UI", 9F);
-            numDoorNumber.Location = new Point(200, 305);
+            numDoorNumber.Location = new Point(170, 332);
             numDoorNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numDoorNumber.Name = "numDoorNumber";
-            numDoorNumber.Size = new Size(190, 27);
+            numDoorNumber.Size = new Size(240, 30);
             numDoorNumber.TabIndex = 16;
             // 
             // lblRexNumber
             // 
-            lblRexNumber.AutoSize = true;
-            lblRexNumber.Font = new Font("Segoe UI", 9F);
-            lblRexNumber.Location = new Point(20, 343);
+            UIStyleHelper.StyleLabel(lblRexNumber);
+            lblRexNumber.Location = new Point(24, 374);
             lblRexNumber.Name = "lblRexNumber";
-            lblRexNumber.Size = new Size(93, 20);
+            lblRexNumber.Size = new Size(120, 23);
             lblRexNumber.TabIndex = 17;
             lblRexNumber.Text = "REX Number";
             // 
             // numRexNumber
             // 
-            numRexNumber.Font = new Font("Segoe UI", 9F);
-            numRexNumber.Location = new Point(200, 340);
+            UIStyleHelper.StyleNumericUpDown(numRexNumber);
+            numRexNumber.Location = new Point(170, 370);
             numRexNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numRexNumber.Name = "numRexNumber";
-            numRexNumber.Size = new Size(190, 27);
+            numRexNumber.Size = new Size(240, 30);
             numRexNumber.TabIndex = 18;
             // 
             // btnSave
             // 
-            btnSave.BackColor = Color.FromArgb(26, 95, 180);
-            btnSave.Cursor = Cursors.Hand;
-            btnSave.FlatAppearance.BorderSize = 0;
-            btnSave.FlatStyle = FlatStyle.Flat;
-            btnSave.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(210, 11);
+            UIStyleHelper.StyleButton(btnSave, UIStyleHelper.ButtonStyle.Primary);
+            btnSave.Location = new Point(185, 10);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(100, 32);
+            btnSave.Size = new Size(100, 35);
             btnSave.TabIndex = 0;
             btnSave.Text = "Update";
             btnSave.UseVisualStyleBackColor = false;
@@ -256,72 +259,55 @@ namespace AccessControlConfigurator.Forms
             // 
             // btnCancel
             // 
-            btnCancel.Cursor = Cursors.Hand;
-            btnCancel.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 180);
-            btnCancel.FlatStyle = FlatStyle.Flat;
-            btnCancel.Font = new Font("Segoe UI", 9F);
-            btnCancel.Location = new Point(320, 11);
+            UIStyleHelper.StyleButton(btnCancel, UIStyleHelper.ButtonStyle.Default);
+            btnCancel.Location = new Point(300, 10);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(90, 32);
+            btnCancel.Size = new Size(100, 35);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
             // 
             // bottomPanel
             // 
-            bottomPanel.BackColor = Color.FromArgb(245, 245, 245);
+            bottomPanel.BackColor = UIStyleHelper.StandardColors.LightBackground;
             bottomPanel.Controls.Add(btnSave);
             bottomPanel.Controls.Add(btnCancel);
             bottomPanel.Dock = DockStyle.Bottom;
-            bottomPanel.Location = new Point(0, 478);
+            bottomPanel.Location = new Point(0, 431);
             bottomPanel.Name = "bottomPanel";
-            bottomPanel.Size = new Size(422, 55);
+            bottomPanel.Size = new Size(438, 55);
             bottomPanel.TabIndex = 19;
-            // 
-            // cbReaderType
-            // 
-            cbReaderType.FormattingEnabled = true;
-            cbReaderType.Location = new Point(200, 200);
-            cbReaderType.Name = "cbReaderType";
-            cbReaderType.Size = new Size(190, 28);
-            cbReaderType.TabIndex = 20;
-            // 
-            // cbReaderDirection
-            // 
-            cbReaderDirection.FormattingEnabled = true;
-            cbReaderDirection.Location = new Point(200, 235);
-            cbReaderDirection.Name = "cbReaderDirection";
-            cbReaderDirection.Size = new Size(190, 28);
-            cbReaderDirection.TabIndex = 21;
             // 
             // EditAcrForm
             // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(422, 533);
-            Controls.Add(cbReaderDirection);
-            Controls.Add(cbReaderType);
-            Controls.Add(lblTitle);
-            Controls.Add(lblName);
-            Controls.Add(txtName);
-            Controls.Add(lblAcrNumber);
-            Controls.Add(numAcrNumber);
-            Controls.Add(lblDefaultMode);
-            Controls.Add(numDefaultMode);
-            Controls.Add(lblReaderNumber);
-            Controls.Add(numReaderNumber);
-            Controls.Add(lblReaderType);
-            Controls.Add(lblReaderDirection);
-            Controls.Add(lblStrikeNumber);
-            Controls.Add(numStrikeNumber);
-            Controls.Add(lblDoorNumber);
-            Controls.Add(numDoorNumber);
-            Controls.Add(lblRexNumber);
-            Controls.Add(numRexNumber);
+            ClientSize = new Size(438, 486);
             Controls.Add(bottomPanel);
+            Controls.Add(numRexNumber);
+            Controls.Add(lblRexNumber);
+            Controls.Add(numDoorNumber);
+            Controls.Add(lblDoorNumber);
+            Controls.Add(numStrikeNumber);
+            Controls.Add(lblStrikeNumber);
+            Controls.Add(cbReaderDirection);
+            Controls.Add(lblReaderDirection);
+            Controls.Add(cbReaderType);
+            Controls.Add(lblReaderType);
+            Controls.Add(numReaderNumber);
+            Controls.Add(lblReaderNumber);
+            Controls.Add(numDefaultMode);
+            Controls.Add(lblDefaultMode);
+            Controls.Add(numAcrNumber);
+            Controls.Add(lblAcrNumber);
+            Controls.Add(txtName);
+            Controls.Add(lblName);
+            Controls.Add(lblTitle);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
-            MinimumSize = new Size(440, 580);
             Name = "EditAcrForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Edit ACR";
@@ -335,7 +321,5 @@ namespace AccessControlConfigurator.Forms
             ResumeLayout(false);
             PerformLayout();
         }
-        private ComboBox cbReaderType;
-        private ComboBox cbReaderDirection;
     }
 }
