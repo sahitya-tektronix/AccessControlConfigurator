@@ -83,16 +83,16 @@ namespace AccessControlConfigurator.Helpers
             if (btn == null) return;
 
             btn.Font = StandardFonts.ButtonFont;
-            btn.Height = 32;
+            btn.Height = 34;
             btn.Width = width;
             btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderSize = 1;
-            btn.FlatAppearance.BorderColor = Color.FromArgb(200, 200, 200);
+            btn.FlatAppearance.BorderSize = 2;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(160, 160, 160);
             btn.BackColor = Color.White;
             btn.ForeColor = Color.Black;
             btn.Cursor = Cursors.Hand;
             btn.UseVisualStyleBackColor = false;
-            btn.Margin = new Padding(0, 0, 8, 0);
+            btn.Margin = new Padding(0, 0, 12, 0);
         }
 
         private static void ApplyButtonColorScheme(Button btn, ButtonStyle style)

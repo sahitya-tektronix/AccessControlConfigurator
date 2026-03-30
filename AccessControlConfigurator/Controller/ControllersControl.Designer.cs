@@ -114,7 +114,7 @@ namespace AccessControlConfigurator.Forms
             // 
             // colOnline
             // 
-            colOnline.HeaderText = "Online";
+            colOnline.HeaderText = "Status";
             colOnline.MinimumWidth = 6;
             colOnline.Name = "colOnline";
             // 
@@ -123,6 +123,7 @@ namespace AccessControlConfigurator.Forms
             colStatus.HeaderText = "Status";
             colStatus.MinimumWidth = 6;
             colStatus.Name = "colStatus";
+            colStatus.Visible = false;
             // 
             // colLastSyncStart
             // 

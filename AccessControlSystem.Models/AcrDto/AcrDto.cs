@@ -8,7 +8,7 @@ namespace AccessControlSystem.Models.Acr
 {
     public class AcrDto
     {
-        public readonly bool isOnline;
+        public bool isOnline { get; set; }
         public int controllerId;
 
         public int id { get; set; }

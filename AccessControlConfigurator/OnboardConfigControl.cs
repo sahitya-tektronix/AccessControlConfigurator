@@ -246,12 +246,13 @@ namespace AccessControlConfigurator
                         defaultAcrName = txt1Rname.Text,
                         readerNumber = 0,
                         readerType = 2201,
+                        defaultMode = 5,
                         readerDirection = GetReaderDirection(cbRdir1),
                         controllerID = _selectedSio.ControllerID,
                         sioNumber = _selectedSio.SioNumber,
-                        rex0Number = 3,
-                        doorNumber = 3,
-                        strikeNumber = 3
+                        rex0Number = 1,
+                        doorNumber = 0,
+                        strikeNumber = 0
                     };
 
                     if (leftAcrId.HasValue)
@@ -273,12 +274,13 @@ namespace AccessControlConfigurator
                         defaultAcrName = txt2Rname.Text,
                         readerNumber = 1,
                         readerType = 2201,
+                        defaultMode = 5,
                         readerDirection = GetReaderDirection(cbRdir2),
                         controllerID = _selectedSio.ControllerID,
                         sioNumber = _selectedSio.SioNumber,
                         rex0Number = 3,
-                        doorNumber = 3,
-                        strikeNumber = 3
+                        doorNumber = 2,
+                        strikeNumber = 2
                     };
 
                     if (rightAcrId.HasValue)

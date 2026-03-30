@@ -24,6 +24,7 @@ namespace AccessControlConfigurator
             dgvTimeZones.CellFormatting += dgvTimeZones_CellFormatting;
             dgvTimeZones.ReadOnly = true;
             dgvTimeZones.EditMode = DataGridViewEditMode.EditProgrammatically;
+            ApplyButtonStyles();
             //StyleButton(btnAdd);
             //StyleButton(btnEdit);
             //StyleButton(btnDelete);
@@ -53,6 +54,7 @@ namespace AccessControlConfigurator
                 AlignHeaderControls();
                 AlignFilterControls();
             };
+            panelFilter.SizeChanged += (s, e) => AlignFilterControls();
 
             AlignHeaderControls();
             AlignFilterControls();
@@ -222,9 +224,9 @@ namespace AccessControlConfigurator
                 ["acttime"] = "Start Time",
                 ["deacttime"] = "End Time",
                 ["intervals"] = "Intervals",
-                ["idays"] = "Break Days",
-                ["istart"] = "Break Start",
-                ["iend"] = "Break End"
+                ["idays"] = "iDays",
+                ["istart"] = "iStart",
+                ["iend"] = "iEnd"
             };
 
             foreach (DataGridViewColumn col in dgvTimeZones.Columns)
@@ -465,9 +467,9 @@ namespace AccessControlConfigurator
 
         private void AlignFilterControls()
         {
-            int spacing = 8;
+            int spacing = 14;
             int rightPadding = 12;
-            int top = 5;
+            int top = 8;
 
             btnAdd.Location = new Point(10, top);
             btnEdit.Location = new Point(btnAdd.Right + spacing, top);
@@ -479,12 +481,22 @@ namespace AccessControlConfigurator
             int filterGroupWidth = cmbNameFilter.Width + 8 + lblNameFilter.Width;
             int availableRight = panelFilter.ClientSize.Width - rightPadding;
             bool wrapFilter = (btnback.Right + spacing + filterGroupWidth) > availableRight;
-            int filterTop = wrapFilter ? (btnAdd.Bottom + 6) : 2;
+            int filterTop = wrapFilter ? (btnAdd.Bottom + 10) : 8;
 
             cmbNameFilter.Location = new Point(availableRight - cmbNameFilter.Width, filterTop);
             lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, filterTop + 3);
 
-            panelFilter.Height = wrapFilter ? (filterTop + cmbNameFilter.Height + 6) : 32;
+            panelFilter.Height = wrapFilter ? (filterTop + cmbNameFilter.Height + 10) : 52;
+        }
+
+        private void ApplyButtonStyles()
+        {
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnback, 90);
         }
     }
 }

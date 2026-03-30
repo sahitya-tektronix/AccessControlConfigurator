@@ -31,6 +31,7 @@ namespace AccessControlConfigurator
         {
 
             InitializeComponent();
+            ApplyButtonStyles();
 
             Load += Cards_Load;
             dgvCards.Enabled = true;
@@ -637,6 +638,10 @@ namespace AccessControlConfigurator
             Hide("vacDays");
             Hide("issueCode");
             Hide("isDeleted");
+            Hide("startDateTime");
+            Hide("endDateTime");
+            Hide("status");
+            Hide("user_Level_MAX_ULVL");
 
             var headerMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 
@@ -921,6 +926,16 @@ namespace AccessControlConfigurator
 
             ApplyCardFilter();
 
+        }
+
+        private void ApplyButtonStyles()
+        {
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnBack, 90);
         }
 
     }

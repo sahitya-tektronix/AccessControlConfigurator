@@ -2,6 +2,7 @@
 using AccessControlSystem.Services;
 using AccessControlConfigurator.Helpers;
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
@@ -16,12 +17,13 @@ namespace AccessControlConfigurator
         {
             InitializeComponent();
             _timezone = timezone;
+            ConfigureTextEntry();
 
             txtName.Text = timezone.name;
             txtNumber.Text = timezone.number.ToString();
             txtMode.Text = timezone.mode.ToString();
-            dtpActTime.Value = DateTime.Today.AddSeconds(Math.Max(0, Math.Min(86399, timezone.actTime)));
-            dtpDeactTime.Value = DateTime.Today.AddSeconds(Math.Max(0, Math.Min(86399, timezone.deactTime)));
+            txtActTime.Text = UIStyleHelper.FormatTimeFromSeconds(timezone.actTime);
+            txtDeactTime.Text = UIStyleHelper.FormatTimeFromSeconds(timezone.deactTime);
             txtIntervals.Text = timezone.intervals.ToString();
             txtIDays.Text = timezone.iDays.ToString();
             txtIStart.Text = timezone.iStart.ToString();
@@ -42,8 +44,14 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                int actTime = GetSecondsFromPicker(dtpActTime);
-                int deactTime = GetSecondsFromPicker(dtpDeactTime);
+                if (!await ValidateUniqueFieldsAsync(number, txtName.Text?.Trim(), _timezone.id))
+                    return;
+
+                if (!TryGetTimeSeconds(txtActTime.Text, "Start Time", out var actTime) ||
+                    !TryGetTimeSeconds(txtDeactTime.Text, "End Time", out var deactTime))
+                {
+                    return;
+                }
 
                 if (deactTime <= actTime)
                 {
@@ -94,10 +102,60 @@ namespace AccessControlConfigurator
             return true;
         }
 
-        private static int GetSecondsFromPicker(DateTimePicker picker)
+        private void ConfigureTextEntry()
         {
-            var time = picker.Value.TimeOfDay;
-            return (time.Hours * 3600) + (time.Minutes * 60) + time.Seconds;
+            foreach (var textBox in new[] { txtNumber, txtMode, txtIntervals, txtIDays, txtIStart, txtIEnd })
+                textBox.KeyPress += NumericTextBox_KeyPress;
+
+            txtActTime.KeyPress += TimeTextBox_KeyPress;
+            txtDeactTime.KeyPress += TimeTextBox_KeyPress;
+        }
+
+        private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                e.Handled = true;
+        }
+
+        private void TimeTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != ':')
+                e.Handled = true;
+        }
+
+        private static bool TryGetTimeSeconds(string raw, string label, out int value)
+        {
+            value = 0;
+            if (!UIStyleHelper.TryParseTimeToSeconds(raw?.Trim(), out value))
+            {
+                MessageBox.Show($"{label} must be in HH:MM:SS format.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> ValidateUniqueFieldsAsync(int number, string name, int? currentId)
+        {
+            var existing = await _apiService.GetTimezones();
+
+            if (existing.Any(t => t.number == number && (!currentId.HasValue || t.id != currentId.Value)))
+            {
+                MessageBox.Show("Timezone number must be unique.");
+                txtNumber.Focus();
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(name) &&
+                existing.Any(t => string.Equals((t.name ?? string.Empty).Trim(), name, StringComparison.OrdinalIgnoreCase) &&
+                                  (!currentId.HasValue || t.id != currentId.Value)))
+            {
+                MessageBox.Show("Timezone name must be unique.");
+                txtName.Focus();
+                return false;
+            }
+
+            return true;
         }
     }
 }

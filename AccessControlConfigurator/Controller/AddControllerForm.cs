@@ -31,7 +31,7 @@ namespace AccessControlConfigurator.Forms
         {
             return Regex.IsMatch(
                 mac,
-                @"^([0-9A-F]{2}:){5}([0-9A-F]{2})$"
+                @"^([A-Z0-9]{2}:){5}([A-Z0-9]{2})$"
             );
         }
 
@@ -93,16 +93,16 @@ namespace AccessControlConfigurator.Forms
                     SubnetMask = "255.255.255.0",
                     DefaultGateway = "192.168.1.1",
 
-                    InternalPort0IsEnabled = false,
-                    InternalPort0BaudRate = 9600,
+                    InternalPort0IsEnabled = true,
+                    InternalPort0BaudRate = 0,
                     InternalPort0ProtocolType = 0,
 
                     Rs485Port1IsEnabled = true,
-                    Rs485Port1BaudRate = 9600,
+                    Rs485Port1BaudRate = 38400,
                     Rs485Port1ProtocolType = 0,
 
-                    Rs485Port2IsEnabled = false,
-                    Rs485Port2BaudRate = 0,
+                    Rs485Port2IsEnabled = true,
+                    Rs485Port2BaudRate = 38400,
                     Rs485Port2ProtocolType = 0
                 };
 

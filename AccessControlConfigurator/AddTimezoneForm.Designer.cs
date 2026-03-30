@@ -20,8 +20,8 @@ namespace AccessControlConfigurator
         private TextBox txtName;
         private TextBox txtNumber;
         private TextBox txtMode;
-        private DateTimePicker dtpActTime;
-        private DateTimePicker dtpDeactTime;
+        private TextBox txtActTime;
+        private TextBox txtDeactTime;
         private TextBox txtIntervals;
         private TextBox txtIDays;
         private TextBox txtIStart;
@@ -45,8 +45,8 @@ namespace AccessControlConfigurator
             txtName = new TextBox();
             txtNumber = new TextBox();
             txtMode = new TextBox();
-            dtpActTime = new DateTimePicker();
-            dtpDeactTime = new DateTimePicker();
+            txtActTime = new TextBox();
+            txtDeactTime = new TextBox();
             txtIntervals = new TextBox();
             txtIDays = new TextBox();
             txtIStart = new TextBox();
@@ -57,7 +57,7 @@ namespace AccessControlConfigurator
             SuspendLayout();
             UIStyleHelper.StyleHeaderPanel(headerPanel);
             headerPanel.Controls.Add(lblHeader);
-            headerPanel.Size = new Size(450, 60);
+            headerPanel.Size = new Size(470, 60);
             UIStyleHelper.StyleLabel(lblHeader, UIStyleHelper.LabelStyle.Header);
             lblHeader.AutoSize = true;
             lblHeader.Location = new Point(18, 18);
@@ -71,17 +71,17 @@ namespace AccessControlConfigurator
             ConfigureLabel(lblIDays, "Break Days", 24, 306);
             ConfigureLabel(lblIStart, "Break Start", 24, 344);
             ConfigureLabel(lblIEnd, "Break End", 24, 382);
-            ConfigureTextBox(txtName, 150, 74, 260);
-            ConfigureTextBox(txtNumber, 150, 112, 260);
-            ConfigureTextBox(txtMode, 150, 150, 260);
-            ConfigureTextBox(txtIntervals, 150, 264, 260);
-            ConfigureTextBox(txtIDays, 150, 302, 260);
-            ConfigureTextBox(txtIStart, 150, 340, 260);
-            ConfigureTextBox(txtIEnd, 150, 378, 260);
-            ConfigureTimePicker(dtpActTime, 150, 188);
-            ConfigureTimePicker(dtpDeactTime, 150, 226);
+            ConfigureTextBox(txtName, 150, 74, 280);
+            ConfigureTextBox(txtNumber, 150, 112, 280);
+            ConfigureTextBox(txtMode, 150, 150, 280);
+            ConfigureTimeTextBox(txtActTime, 150, 188);
+            ConfigureTimeTextBox(txtDeactTime, 150, 226);
+            ConfigureTextBox(txtIntervals, 150, 264, 280);
+            ConfigureTextBox(txtIDays, 150, 302, 280);
+            ConfigureTextBox(txtIStart, 150, 340, 280);
+            ConfigureTextBox(txtIEnd, 150, 378, 280);
             UIStyleHelper.StyleButton(btnSave, UIStyleHelper.ButtonStyle.Success);
-            btnSave.Location = new Point(200, 426);
+            btnSave.Location = new Point(210, 426);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(100, 35);
             btnSave.TabIndex = 17;
@@ -89,7 +89,7 @@ namespace AccessControlConfigurator
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Click += btnSave_Click;
             UIStyleHelper.StyleButton(btnCancel, UIStyleHelper.ButtonStyle.Default);
-            btnCancel.Location = new Point(310, 426);
+            btnCancel.Location = new Point(330, 426);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 35);
             btnCancel.TabIndex = 18;
@@ -99,15 +99,15 @@ namespace AccessControlConfigurator
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(450, 480);
+            ClientSize = new Size(470, 480);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(txtIEnd);
             Controls.Add(txtIStart);
             Controls.Add(txtIDays);
             Controls.Add(txtIntervals);
-            Controls.Add(dtpDeactTime);
-            Controls.Add(dtpActTime);
+            Controls.Add(txtDeactTime);
+            Controls.Add(txtActTime);
             Controls.Add(txtMode);
             Controls.Add(txtNumber);
             Controls.Add(txtName);
@@ -147,15 +147,11 @@ namespace AccessControlConfigurator
             textBox.Size = new Size(width, 30);
         }
 
-        private static void ConfigureTimePicker(DateTimePicker picker, int x, int y)
+        private static void ConfigureTimeTextBox(TextBox textBox, int x, int y)
         {
-            picker.CustomFormat = "HH:mm:ss";
-            picker.Format = DateTimePickerFormat.Custom;
-            picker.ShowUpDown = true;
-            picker.Font = UIStyleHelper.StandardFonts.InputFont;
-            picker.CalendarMonthBackground = Color.White;
-            picker.Location = new Point(x, y);
-            picker.Size = new Size(260, 30);
+            ConfigureTextBox(textBox, x, y, 280);
+            textBox.PlaceholderText = "HH:MM:SS";
+            textBox.MaxLength = 8;
         }
     }
 }
