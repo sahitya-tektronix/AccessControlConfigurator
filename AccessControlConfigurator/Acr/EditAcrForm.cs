@@ -12,12 +12,28 @@ namespace AccessControlConfigurator.Forms
         {
             InitializeComponent();
 
-            AcrData = acr ?? new AcrDto();
-           
-            numDoorNumber.ReadOnly = false;
-            numDoorNumber.Enabled = true;
+            AcrData = acr == null
+                ? new AcrDto()
+                : new AcrDto
+                {
+                    id = acr.id,
+                    controllerID = acr.controllerID,
+                    sioNumber = acr.sioNumber,
+                    name = acr.name,
+                    acrNumber = acr.acrNumber,
+                    defaultAcrName = acr.defaultAcrName,
+                    defaultMode = acr.defaultMode,
+                    readerNumber = acr.readerNumber,
+                    readerType = acr.readerType,
+                    readerDirection = acr.readerDirection,
+                    strikeNumber = acr.strikeNumber,
+                    doorNumber = acr.doorNumber,
+                    rexNumber = acr.rexNumber,
+                    acrId = acr.acrId,
+                    rex0Number = acr.rex0Number
+                };
 
-            InitializeDropdowns();   
+            InitializeDropdowns();
             LoadValues();
         }
 
@@ -29,15 +45,15 @@ namespace AccessControlConfigurator.Forms
             // Reader Type
             cbReaderType.DropDownStyle = ComboBoxStyle.DropDownList;
             cbReaderType.Items.Clear();
-            cbReaderType.Items.Add("Card");
-            cbReaderType.Items.Add("Pin");
-            cbReaderType.Items.Add("Card + Pin");
+            cbReaderType.Items.Add("Signo Reader");
+            cbReaderType.SelectedIndex = 0;
             
             // Reader Direction
             cbReaderDirection.DropDownStyle = ComboBoxStyle.DropDownList;
             cbReaderDirection.Items.Clear();
-            cbReaderDirection.Items.Add("Entry");
-            cbReaderDirection.Items.Add("Exit");
+            cbReaderDirection.Items.Add("In");
+            cbReaderDirection.Items.Add("Out");
+            cbReaderDirection.Items.Add("In/Out");
         }
 
         // ════════════════════════════════════════════════════════
@@ -52,13 +68,15 @@ namespace AccessControlConfigurator.Forms
             SafeSet(numReaderNumber, AcrData.readerNumber);
 
             // ✅ SET DROPDOWNS
-            cbReaderType.SelectedIndex =
-                (AcrData.readerType >= 0 && AcrData.readerType < cbReaderType.Items.Count)
-                ? AcrData.readerType : 0;
+            cbReaderType.SelectedIndex = AcrData.readerType == 2201 ? 0 : 0;
 
-            cbReaderDirection.SelectedIndex =
-                (AcrData.readerDirection >= 0 && AcrData.readerDirection < cbReaderDirection.Items.Count)
-                ? AcrData.readerDirection : 0;
+            cbReaderDirection.SelectedIndex = AcrData.readerDirection switch
+            {
+                1 => 0,
+                2 => 1,
+                3 => 2,
+                _ => 0
+            };
 
             SafeSet(numStrikeNumber, AcrData.strikeNumber);
             SafeSet(numDoorNumber, AcrData.doorNumber);   // ✅ editable
@@ -87,17 +105,25 @@ namespace AccessControlConfigurator.Forms
             }
 
             AcrData.name = txtName.Text.Trim();
+            AcrData.defaultAcrName = AcrData.name;
             AcrData.acrNumber = (int)numAcrNumber.Value;
             AcrData.defaultMode = (int)numDefaultMode.Value;
             AcrData.readerNumber = (int)numReaderNumber.Value;
 
             // ✅ GET FROM DROPDOWN
-            AcrData.readerType = cbReaderType.SelectedIndex;
-            AcrData.readerDirection = cbReaderDirection.SelectedIndex;
+            AcrData.readerType = 2201;
+            AcrData.readerDirection = cbReaderDirection.SelectedIndex switch
+            {
+                0 => 1,
+                1 => 2,
+                2 => 3,
+                _ => 1
+            };
 
             AcrData.strikeNumber = (int)numStrikeNumber.Value;
-            AcrData.doorNumber = (int)numDoorNumber.Value;  // ✅ editable
+            AcrData.doorNumber = (int)numDoorNumber.Value;
             AcrData.rex0Number = (int)numRexNumber.Value;
+            AcrData.rexNumber = AcrData.rex0Number;
 
             DialogResult = DialogResult.OK;
             Close();

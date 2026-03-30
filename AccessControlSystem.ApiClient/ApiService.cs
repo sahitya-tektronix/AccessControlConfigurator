@@ -194,6 +194,18 @@ namespace AccessControlSystem.Services
             }
         }
 
+        public async Task<EventReportResponse> GetEventReportAsync(EventReportFilterRequest request)
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                "api/reports/event-logs/filter",
+                request);
+
+            response.EnsureSuccessStatusCode();
+
+            var data = await response.Content.ReadFromJsonAsync<EventReportResponse>();
+            return data ?? new EventReportResponse();
+        }
+
         public async Task<bool> OpenDoorAsync(int doorId)
         {
             try
@@ -451,8 +463,16 @@ namespace AccessControlSystem.Services
             string url = $"api/controllers/{controllerId}/sios/{sioNumber}/acrs/{id}";
 
             var response = await _httpClient.PutAsJsonAsync(url, acr);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrWhiteSpace(error))
+                {
+                    error = $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}).";
+                }
 
-            response.EnsureSuccessStatusCode();
+                throw new Exception(error);
+            }
         }
    
         public async Task<bool> DeleteAcrAsync(int controllerId, int sioNumber, int acrId)
@@ -588,16 +608,17 @@ namespace AccessControlSystem.Services
         
 
 
-        public async Task CreateTimezone(TimezoneDto dto)
+        public async Task CreateTimezone(TimezoneCreateRequest dto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/timezones", dto);
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task UpdateTimezone(int id, TimezoneDto dto)
-    {
-        await _httpClient.PutAsJsonAsync($"api/timezones/{id}", dto);
-    }
+        public async Task UpdateTimezone(int id, TimezoneUpdateRequest dto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/timezones/{id}", dto);
+            response.EnsureSuccessStatusCode();
+        }
 
     public async Task DeleteTimezone(int id)
     {

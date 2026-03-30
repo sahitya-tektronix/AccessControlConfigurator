@@ -14,6 +14,8 @@ using System.Net.Http;
 
 using System.Net.Http.Json;
 
+using System.Text.RegularExpressions;
+
 using System.Threading.Tasks;
 
 using System.Windows.Forms;
@@ -66,7 +68,7 @@ namespace AccessControlConfigurator.Forms
 
             {
 
-                MessageBox.Show("This is a discovered controller. Configure and save to activate.");
+                ConfigureDiscoveredControllerView();
 
             }
 
@@ -96,6 +98,8 @@ namespace AccessControlConfigurator.Forms
 
             LoadController();
 
+            ConfigureDiscoveredControllerView();
+
             dgvSIO.DataSource = _sioList;
 
             this.Load += async (s, e) => await RefreshSiosAsync();
@@ -123,10 +127,8 @@ namespace AccessControlConfigurator.Forms
                 {
 
                     dgvSIO.DataSource = null;
-
-                    // Optional UX
-
-                    MessageBox.Show("SIOs are available only after activating the controller.");
+                    panelAdd.Visible = false;
+                    panelGrid.Visible = false;
 
                     return;
 
@@ -485,27 +487,27 @@ namespace AccessControlConfigurator.Forms
 
                     DefaultGateway = "192.168.1.1",
 
-                    InternalPort0IsEnabled = false,
+                    InternalPort0IsEnabled = true,
 
-                    InternalPort0BaudRate = 9600,
+                    InternalPort0BaudRate = 0,
 
                     InternalPort0ProtocolType = 0,
 
                     Rs485Port1IsEnabled = true,
 
-                    Rs485Port1BaudRate = 9600,
+                    Rs485Port1BaudRate = 38400,
 
                     Rs485Port1ProtocolType = 0,
 
-                    Rs485Port2IsEnabled = false,
+                    Rs485Port2IsEnabled = true,
 
-                    Rs485Port2BaudRate = 0,
+                    Rs485Port2BaudRate = 38400,
 
                     Rs485Port2ProtocolType = 0
 
                 };
 
-                if (controllerId == 0) // NEW (DISCOVERED)
+                if (!_controller.IsEnabled) // NEW (DISCOVERED)
 
                 {
 
@@ -542,6 +544,9 @@ namespace AccessControlConfigurator.Forms
                 }
 
                 MessageBox.Show("Saved successfully");
+                _controller.IsEnabled = true;
+                ConfigureDiscoveredControllerView();
+                await RefreshSiosAsync();
 
 
             }
@@ -590,9 +595,9 @@ namespace AccessControlConfigurator.Forms
 
             // MAC format
 
-            if (!System.Text.RegularExpressions.Regex.IsMatch(txtMac.Text,
+            if (!Regex.IsMatch(txtMac.Text,
 
-                @"^([0-9A-Fa-f]{2}:){5}([0-9A-Fa-f]{2})$"))
+                @"^([A-Za-z0-9]{2}:){5}([A-Za-z0-9]{2})$"))
 
             {
 
@@ -631,6 +636,20 @@ namespace AccessControlConfigurator.Forms
             }
 
             return true;
+
+        }
+
+        private void ConfigureDiscoveredControllerView()
+
+        {
+
+            bool isActiveController = _controller?.IsEnabled == true;
+
+            panelAdd.Visible = isActiveController;
+
+            panelGrid.Visible = isActiveController;
+
+            btnAddSIO.Enabled = isActiveController;
 
         }
 

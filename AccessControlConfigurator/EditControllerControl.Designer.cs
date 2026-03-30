@@ -87,12 +87,15 @@
             // 
             // btnBack
             // 
-            btnBack.BackColor = Color.DarkOliveGreen;
+            btnBack.BackColor = Helpers.UIStyleHelper.StandardColors.PrimaryBlue;
+            btnBack.ForeColor = Color.White;
             btnBack.Location = new Point(1091, 15);
             btnBack.Name = "btnBack";
-            btnBack.Size = new Size(94, 31);
+            btnBack.Size = new Size(Helpers.UIStyleHelper.StandardSizes.ButtonWidth, Helpers.UIStyleHelper.StandardSizes.ButtonHeight - 5);
             btnBack.TabIndex = 1;
             btnBack.Text = "Back";
+            btnBack.Font = Helpers.UIStyleHelper.StandardFonts.ButtonFont;
+            btnBack.FlatStyle = FlatStyle.Flat;
             btnBack.UseVisualStyleBackColor = false;
             // 
             // lblHeader
@@ -156,9 +159,13 @@
             btnAddSIO.Dock = DockStyle.Left;
             btnAddSIO.Location = new Point(15, 8);
             btnAddSIO.Name = "btnAddSIO";
-            btnAddSIO.Size = new Size(150, 34);
+            btnAddSIO.Size = new Size(Helpers.UIStyleHelper.StandardSizes.SmallButtonWidth + 20, Helpers.UIStyleHelper.StandardSizes.ButtonHeight - 5);
             btnAddSIO.TabIndex = 0;
             btnAddSIO.Text = "Add New SIO";
+            btnAddSIO.Font = Helpers.UIStyleHelper.StandardFonts.ButtonFont;
+            btnAddSIO.FlatStyle = FlatStyle.Flat;
+            btnAddSIO.BackColor = Helpers.UIStyleHelper.StandardColors.SuccessGreen;
+            btnAddSIO.ForeColor = Color.White;
             // 
             // grpController
             // 
@@ -242,14 +249,15 @@
             // 
             // btnSave
             // 
-            btnSave.BackColor = Color.SeaGreen;
+            btnSave.BackColor = Helpers.UIStyleHelper.StandardColors.SuccessGreen;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
             btnSave.Location = new Point(150, 140);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(100, 30);
+            btnSave.Size = new Size(Helpers.UIStyleHelper.StandardSizes.ButtonWidth, Helpers.UIStyleHelper.StandardSizes.ButtonHeight - 5);
             btnSave.TabIndex = 10;
             btnSave.Text = "Save";
+            btnSave.Font = Helpers.UIStyleHelper.StandardFonts.ButtonFont;
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Click += btnSave_Click;
             // 

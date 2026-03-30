@@ -20,6 +20,7 @@ namespace AccessControlConfigurator
         public WiegandControl()
         {
             InitializeComponent();
+            ApplyButtonStyles();
             dgvFormats.ReadOnly = true;
             dgvFormats.AllowUserToAddRows = false;
             dgvFormats.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -41,6 +42,37 @@ namespace AccessControlConfigurator
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
             btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
+            Resize += (s, e) => AdjustHeaderLayout();
+            AdjustHeaderLayout();
+        }
+
+        private void AdjustHeaderLayout()
+        {
+            int spacing = 14;
+            int rightPadding = 12;
+
+            AlignActionButtons(spacing);
+
+            int actionsRight = btnRefresh.Right + spacing;
+            int searchWidth = searchPanel.Width;
+            int available = topPanel.ClientSize.Width - rightPadding;
+            bool wrapSearch = actionsRight + searchWidth > available;
+
+            if (wrapSearch)
+            {
+                searchPanel.Location = new Point(
+                    topPanel.ClientSize.Width - searchPanel.Width - rightPadding,
+                    btnAdd.Bottom + 6);
+                topPanel.Height = btnAdd.Bottom + searchPanel.Height + 8;
+            }
+            else
+            {
+                searchPanel.Location = new Point(
+                    topPanel.ClientSize.Width - searchPanel.Width - rightPadding,
+                    0);
+                topPanel.Height = 50;
+            }
         }
         private void InitializeGrid()
         {
@@ -63,6 +95,8 @@ namespace AccessControlConfigurator
             dgvFormats.Columns.Add(BuildTextColumn("IcLoc", "IC Loc", 60, DataGridViewContentAlignment.MiddleCenter));
 
             Helpers.GridStyleHelper.ApplyStandardStyle(dgvFormats);
+            dgvFormats.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgvFormats.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         }
         private async void Form_Load(object sender, EventArgs e)
         {
@@ -114,9 +148,6 @@ namespace AccessControlConfigurator
             ).ToList();
 
             dgvFormats.DataSource = filtered;
-
-            if (!filtered.Any())
-                MessageBox.Show("No matching data");
         }
         private async void btnRefresh_Click(object sender, EventArgs e)
         {
@@ -130,7 +161,7 @@ namespace AccessControlConfigurator
         {
             var dto = new CreateWiegandFormatRequest();
 
-            if (!TryEditWiegand(dto, isEdit: false, out var createDto))
+            if (!TryEditWiegand(dto, isEdit: false, existingFormats: _data, out var createDto))
                 return;
 
             var ok = await _apiService.CreateWiegandFormatAsync(createDto);
@@ -170,7 +201,7 @@ namespace AccessControlConfigurator
                 IcLoc = item.IcLoc
             };
 
-            if (!TryEditWiegand(updateDto, item.FormatNumber, isEdit: true, out var edited))
+            if (!TryEditWiegand(updateDto, item.FormatNumber, isEdit: true, existingFormats: _data, out var edited))
                 return;
 
             var ok = await _apiService.UpdateWiegandFormatAsync(item.FormatNumber, edited);
@@ -211,7 +242,7 @@ namespace AccessControlConfigurator
             await LoadData();
         }
 
-        private bool TryEditWiegand(CreateWiegandFormatRequest dto, bool isEdit, out CreateWiegandFormatRequest result)
+        private bool TryEditWiegand(CreateWiegandFormatRequest dto, bool isEdit, List<WiegandDto> existingFormats, out CreateWiegandFormatRequest result)
         {
             result = dto;
             using var dialog = BuildWiegandDialog(
@@ -237,7 +268,7 @@ namespace AccessControlConfigurator
             if (dialog.ShowDialog(this) != DialogResult.OK)
                 return false;
 
-            if (!TryParseWiegandForm(controls, out var parsed))
+            if (!TryParseWiegandForm(controls, existingFormats, isEdit, out var parsed))
                 return false;
 
             result = parsed;
@@ -245,7 +276,7 @@ namespace AccessControlConfigurator
             return true;
         }
 
-        private bool TryEditWiegand(UpdateWiegandFormatRequest dto, short formatNumber, bool isEdit, out UpdateWiegandFormatRequest result)
+        private bool TryEditWiegand(UpdateWiegandFormatRequest dto, short formatNumber, bool isEdit, List<WiegandDto> existingFormats, out UpdateWiegandFormatRequest result)
         {
             result = dto;
             using var dialog = BuildWiegandDialog(
@@ -271,11 +302,12 @@ namespace AccessControlConfigurator
             if (dialog.ShowDialog(this) != DialogResult.OK)
                 return false;
 
-            if (!TryParseWiegandForm(controls, out var parsed))
+            if (!TryParseWiegandForm(controls, existingFormats, isEdit, out var parsed))
                 return false;
 
             result = new UpdateWiegandFormatRequest
             {
+                FormatNumber = parsed.FormatNumber,
                 Name = parsed.Name,
                 Bits = parsed.Bits,
                 FacilityCode = parsed.FacilityCode,
@@ -355,6 +387,8 @@ namespace AccessControlConfigurator
                 IcLen = BuildNumberTextBox(icLen, false, "0"),
                 IcLoc = BuildNumberTextBox(icLoc, false, "0")
             };
+
+            controls.FormatNumber.KeyPress += DigitsOnly_KeyPress;
 
             AddRow(layout, "Format Number", controls.FormatNumber);
             AddRow(layout, "Name", controls.Name);
@@ -471,7 +505,7 @@ namespace AccessControlConfigurator
 
             if (!short.TryParse(raw.Trim(), out var parsed))
             {
-                MessageBox.Show($"Invalid {label}");
+                MessageBox.Show($"{label} must contain numbers only.");
                 return false;
             }
 
@@ -481,13 +515,15 @@ namespace AccessControlConfigurator
 
         private static bool TryParseWiegandForm(
             WiegandDialogControls controls,
+            List<WiegandDto> existingFormats,
+            bool isEdit,
             out CreateWiegandFormatRequest result)
         {
             result = new CreateWiegandFormatRequest();
 
             if (string.IsNullOrWhiteSpace(controls.Name.Text))
             {
-                MessageBox.Show("Name is required");
+                MessageBox.Show("Name is required.");
                 return false;
             }
 
@@ -522,9 +558,24 @@ namespace AccessControlConfigurator
 
             if (formatNumber < 0 || formatNumber > 7)
             {
-                MessageBox.Show("Format Number must be between 0 and 7.");
+                MessageBox.Show("Format Number must be a number between 0 and 7.");
                 return false;
             }
+
+            // Check for uniqueness only when adding (not editing)
+            if (!isEdit && existingFormats?.Any(x => x.FormatNumber == formatNumber) == true)
+            {
+                MessageBox.Show("Format Number already exists. Please enter a unique number between 0 and 7.");
+                return false;
+            }
+
+            // Check max 8 formats total
+            if (!isEdit && existingFormats?.Count >= 8)
+            {
+                MessageBox.Show("Maximum of 8 card formats can be added.");
+                return false;
+            }
+
             if (bits <= 0)
             {
                 MessageBox.Show("Bits must be greater than zero.");
@@ -563,7 +614,7 @@ namespace AccessControlConfigurator
             value = 0;
             if (!short.TryParse(raw?.Trim(), out value))
             {
-                MessageBox.Show($"Invalid {label}");
+                MessageBox.Show($"{label} must contain numbers only.");
                 return false;
             }
 
@@ -578,12 +629,35 @@ namespace AccessControlConfigurator
 
             if (!short.TryParse(raw.Trim(), out var parsed))
             {
-                MessageBox.Show($"Invalid {label}");
+                MessageBox.Show($"{label} must contain numbers only.");
                 return false;
             }
 
             value = parsed;
             return true;
+        }
+
+        private void ApplyButtonStyles()
+        {
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
+        }
+
+        private static void DigitsOnly_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                e.Handled = true;
+        }
+
+        private void AlignActionButtons(int spacing)
+        {
+            int top = 10;
+            btnAdd.Location = new Point(220, top);
+            btnEdit.Location = new Point(btnAdd.Right + spacing, top);
+            btnDelete.Location = new Point(btnEdit.Right + spacing, top);
+            btnRefresh.Location = new Point(btnDelete.Right + spacing, top);
         }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -37,6 +38,7 @@ namespace AccessControlConfigurator
             _selectedSio = selectedSio;
 
             LoadFilters(); // ✅ MUST
+            ApplyButtonStyles();
 
             cmbControllerId.SelectedIndexChanged += (s, e) => ApplyFilters();
             cmbSioNumber.SelectedIndexChanged += (s, e) => ApplyFilters();
@@ -52,6 +54,8 @@ namespace AccessControlConfigurator
             //txtSearch.TextChanged += txtSearch_TextChanged;
 
             ConfigureGrid();
+            Resize += (s, e) => AlignToolbar();
+            topPanel.SizeChanged += (s, e) => AlignToolbar();
 
 
             // ⌨️ Enter key search
@@ -64,19 +68,7 @@ namespace AccessControlConfigurator
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnClearFilters.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right; ;
-            int rightMargin = 20;
-
-            // Clear button (last)
-            btnClearFilters.Location = new Point(this.Width - btnClearFilters.Width - rightMargin, 10);
-
-            // Search button (before clear)
-            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 5, 10);
-
-            // Textbox (before search)
-            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 5, 10);
-
-            // Label (before textbox)
-            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 5, 14);
+            AlignToolbar();
             dgvAcrs.MultiSelect = false;
             dgvAcrs.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 120, 215);
             dgvAcrs.DefaultCellStyle.SelectionForeColor = Color.White;
@@ -140,6 +132,18 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
+                var msg = ex.Message ?? string.Empty;
+                if (msg.Contains("acr_number_in_use", StringComparison.OrdinalIgnoreCase) ||
+                    msg.Contains("already in use", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show(
+                        "ACR number already in use for this Controller and SIO.\nPlease choose a different ACR number.",
+                        "Duplicate ACR Number",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
@@ -165,7 +169,7 @@ namespace AccessControlConfigurator
                 string acr = a.acrNumber.ToString();
                 string reader = $"reader {a.readerNumber}".ToLower();
                 string readerNum = a.readerNumber.ToString();
-                string online = a.isOnline ? "online" : "offline";
+                string online = ResolveIsOnline(a) ? "online" : "offline";
 
                 // Match ANY field
                 return id.Contains(searchText) ||
@@ -188,7 +192,8 @@ namespace AccessControlConfigurator
 
             foreach (var a in data)
             {
-                string onlineText = a.isOnline ? "Online" : "Offline";
+                bool isOnline = ResolveIsOnline(a);
+                string onlineText = isOnline ? "Online" : "Offline";
 
                 int rowIndex = dgvAcrs.Rows.Add(
                     a.id,
@@ -201,7 +206,7 @@ namespace AccessControlConfigurator
                 );
 
                 dgvAcrs.Rows[rowIndex].Cells[6].Style.ForeColor =
-                    a.isOnline ? Color.Green : Color.Red;
+                    isOnline ? Color.Green : Color.Red;
             }
         }
 
@@ -264,12 +269,31 @@ namespace AccessControlConfigurator
 
                 if (form.ShowDialog() == DialogResult.OK)
                 {
+                    var updatePayload = new AcrDto
+                    {
+                        name = form.AcrData.name,
+                        defaultAcrName = string.IsNullOrWhiteSpace(form.AcrData.defaultAcrName)
+                            ? form.AcrData.name
+                            : form.AcrData.defaultAcrName,
+                        acrNumber = li.acrNumber,
+                        defaultMode = form.AcrData.defaultMode,
+                        readerNumber = li.readerNumber,
+                        readerType = 2201,
+                        readerDirection = form.AcrData.readerDirection,
+                        controllerID = li.controllerID,
+                        sioNumber = li.sioNumber,
+                        strikeNumber = form.AcrData.strikeNumber,
+                        doorNumber = li.doorNumber,
+                        rex0Number = form.AcrData.rex0Number,
+                        rexNumber = form.AcrData.rexNumber
+                    };
+
                     // ✅ Update API
                     await _api.UpdateAcrAsync(
                         li.controllerID,
                         li.sioNumber,
                         li.id,
-                        form.AcrData);
+                        updatePayload);
 
                     // ✅ Refresh grid
                     await LoadAcrs();
@@ -279,6 +303,19 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
+                var message = ex.Message ?? string.Empty;
+                if (message.Contains("409") ||
+                    message.Contains("Conflict", StringComparison.OrdinalIgnoreCase) ||
+                    message.Contains("already in use", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show(
+                        "ACR update failed because the server reported a conflict. The current ACR number or reader mapping is being treated as a duplicate by the API.",
+                        "ACR Update Conflict",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 MessageBox.Show("Error: " + ex.Message);
             }
         
@@ -347,6 +384,92 @@ namespace AccessControlConfigurator
         private void cmbControllerId_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void ApplyButtonStyles()
+        {
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnBack, 90);
+        }
+
+        private void AlignToolbar()
+        {
+            int top = 8;
+            int spacing = 14;
+            int rightPadding = 10;
+
+            btnEdit.Location = new Point(10, top);
+            btnRefresh.Location = new Point(btnEdit.Right + spacing, top);
+            btnBack.Location = new Point(btnRefresh.Right + spacing, top);
+
+            int filterTop = top;
+            cmbReader.Location = new Point(topPanel.ClientSize.Width - cmbReader.Width - rightPadding, filterTop);
+            lblReader.Location = new Point(cmbReader.Left - lblReader.Width - 8, filterTop + 4);
+            cmbSioNumber.Location = new Point(lblReader.Left - cmbSioNumber.Width - 16, filterTop);
+            lblSio.Location = new Point(cmbSioNumber.Left - lblSio.Width - 8, filterTop + 4);
+            cmbControllerId.Location = new Point(lblSio.Left - cmbControllerId.Width - 16, filterTop);
+            lblController.Location = new Point(cmbControllerId.Left - lblController.Width - 8, filterTop + 4);
+
+            bool wrapFilters = lblController.Left <= btnBack.Right + spacing;
+            if (wrapFilters)
+            {
+                filterTop = btnEdit.Bottom + 10;
+                cmbReader.Location = new Point(topPanel.ClientSize.Width - cmbReader.Width - rightPadding, filterTop);
+                lblReader.Location = new Point(cmbReader.Left - lblReader.Width - 8, filterTop + 4);
+                cmbSioNumber.Location = new Point(lblReader.Left - cmbSioNumber.Width - 16, filterTop);
+                lblSio.Location = new Point(cmbSioNumber.Left - lblSio.Width - 8, filterTop + 4);
+                cmbControllerId.Location = new Point(lblSio.Left - cmbControllerId.Width - 16, filterTop);
+                lblController.Location = new Point(cmbControllerId.Left - lblController.Width - 8, filterTop + 4);
+            }
+
+            topPanel.Height = wrapFilters ? cmbReader.Bottom + 10 : 50;
+
+            int searchTop = topPanel.Bottom + 8;
+            btnClearFilters.Location = new Point(Width - btnClearFilters.Width - 10, searchTop);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 8, searchTop);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, searchTop + 1);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 4);
+
+            dgvAcrs.Location = new Point(0, btnSearch.Bottom + 8);
+            dgvAcrs.Size = new Size(Width, Height - dgvAcrs.Top);
+        }
+
+        private static bool ResolveIsOnline(AcrDto acr)
+        {
+            if (acr == null)
+                return false;
+
+            var type = acr.GetType();
+            foreach (var propertyName in new[] { "isOnline", "IsOnline", "online", "Online" })
+            {
+                var property = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (property == null)
+                    continue;
+
+                var rawValue = property.GetValue(acr);
+                if (rawValue is bool boolValue)
+                    return boolValue;
+
+                if (rawValue != null && bool.TryParse(rawValue.ToString(), out var parsed))
+                    return parsed;
+            }
+
+            foreach (var propertyName in new[] { "status", "Status", "statusText", "StatusText" })
+            {
+                var property = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                var text = property?.GetValue(acr)?.ToString();
+                if (string.IsNullOrWhiteSpace(text))
+                    continue;
+
+                if (text.Equals("online", StringComparison.OrdinalIgnoreCase))
+                    return true;
+
+                if (text.Equals("offline", StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return false;
         }
     }
 }

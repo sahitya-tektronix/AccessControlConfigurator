@@ -1,5 +1,6 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
+using AccessControlConfigurator.Helpers;
 
 namespace AccessControlConfigurator
 {
@@ -7,15 +8,24 @@ namespace AccessControlConfigurator
     {
         private Panel headerPanel;
         private Label lblHeader;
-
         private Label lblName;
         private Label lblNumber;
         private Label lblMode;
-
+        private Label lblActTime;
+        private Label lblDeactTime;
+        private Label lblIntervals;
+        private Label lblIDays;
+        private Label lblIStart;
+        private Label lblIEnd;
         private TextBox txtName;
         private TextBox txtNumber;
         private TextBox txtMode;
-
+        private TextBox txtActTime;
+        private TextBox txtDeactTime;
+        private TextBox txtIntervals;
+        private TextBox txtIDays;
+        private TextBox txtIStart;
+        private TextBox txtIEnd;
         private Button btnSave;
         private Button btnCancel;
 
@@ -24,124 +34,124 @@ namespace AccessControlConfigurator
             headerPanel = new Panel();
             lblHeader = new Label();
             lblName = new Label();
-            txtName = new TextBox();
             lblNumber = new Label();
-            txtNumber = new TextBox();
             lblMode = new Label();
+            lblActTime = new Label();
+            lblDeactTime = new Label();
+            lblIntervals = new Label();
+            lblIDays = new Label();
+            lblIStart = new Label();
+            lblIEnd = new Label();
+            txtName = new TextBox();
+            txtNumber = new TextBox();
             txtMode = new TextBox();
+            txtActTime = new TextBox();
+            txtDeactTime = new TextBox();
+            txtIntervals = new TextBox();
+            txtIDays = new TextBox();
+            txtIStart = new TextBox();
+            txtIEnd = new TextBox();
             btnSave = new Button();
             btnCancel = new Button();
             headerPanel.SuspendLayout();
             SuspendLayout();
-            // 
-            // headerPanel
-            // 
-            headerPanel.BackColor = Color.FromArgb(45, 62, 80);
+            UIStyleHelper.StyleHeaderPanel(headerPanel);
             headerPanel.Controls.Add(lblHeader);
-            headerPanel.Dock = DockStyle.Top;
-            headerPanel.Location = new Point(0, 0);
-            headerPanel.Name = "headerPanel";
-            headerPanel.Size = new Size(374, 40);
-            headerPanel.TabIndex = 0;
-            // 
-            // lblHeader
-            // 
+            headerPanel.Size = new Size(470, 60);
+            UIStyleHelper.StyleLabel(lblHeader, UIStyleHelper.LabelStyle.Header);
             lblHeader.AutoSize = true;
-            lblHeader.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            lblHeader.ForeColor = Color.White;
-            lblHeader.Location = new Point(10, 10);
-            lblHeader.Name = "lblHeader";
-            lblHeader.Size = new Size(148, 25);
-            lblHeader.TabIndex = 0;
+            lblHeader.Location = new Point(18, 18);
             lblHeader.Text = "Add Time Zone";
-            // 
-            // lblName
-            // 
-            lblName.Location = new Point(40, 70);
-            lblName.Name = "lblName";
-            lblName.Size = new Size(100, 23);
-            lblName.TabIndex = 1;
-            lblName.Text = "Name";
-            // 
-            // txtName
-            // 
-            txtName.Location = new Point(140, 65);
-            txtName.Name = "txtName";
-            txtName.Size = new Size(200, 27);
-            txtName.TabIndex = 2;
-            // 
-            // lblNumber
-            // 
-            lblNumber.Location = new Point(40, 110);
-            lblNumber.Name = "lblNumber";
-            lblNumber.Size = new Size(100, 23);
-            lblNumber.TabIndex = 3;
-            lblNumber.Text = "Number";
-            // 
-            // txtNumber
-            // 
-            txtNumber.Location = new Point(140, 105);
-            txtNumber.Name = "txtNumber";
-            txtNumber.Size = new Size(200, 27);
-            txtNumber.TabIndex = 4;
-            // 
-            // lblMode
-            // 
-            lblMode.Location = new Point(40, 150);
-            lblMode.Name = "lblMode";
-            lblMode.Size = new Size(100, 23);
-            lblMode.TabIndex = 5;
-            lblMode.Text = "Mode";
-            // 
-            // txtMode
-            // 
-            txtMode.Location = new Point(140, 145);
-            txtMode.Name = "txtMode";
-            txtMode.Size = new Size(200, 27);
-            txtMode.TabIndex = 6;
-            // 
-            // btnSave
-            // 
-            btnSave.BackColor = Color.SeaGreen;
-            btnSave.FlatStyle = FlatStyle.Flat;
-            btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(140, 185);
+            ConfigureLabel(lblName, "Name", 24, 78);
+            ConfigureLabel(lblNumber, "Number", 24, 116);
+            ConfigureLabel(lblMode, "Mode", 24, 154);
+            ConfigureLabel(lblActTime, "Start Time", 24, 192);
+            ConfigureLabel(lblDeactTime, "End Time", 24, 230);
+            ConfigureLabel(lblIntervals, "Intervals", 24, 268);
+            ConfigureLabel(lblIDays, "Break Days", 24, 306);
+            ConfigureLabel(lblIStart, "Break Start", 24, 344);
+            ConfigureLabel(lblIEnd, "Break End", 24, 382);
+            ConfigureTextBox(txtName, 150, 74, 280);
+            ConfigureTextBox(txtNumber, 150, 112, 280);
+            ConfigureTextBox(txtMode, 150, 150, 280);
+            ConfigureTimeTextBox(txtActTime, 150, 188);
+            ConfigureTimeTextBox(txtDeactTime, 150, 226);
+            ConfigureTextBox(txtIntervals, 150, 264, 280);
+            ConfigureTextBox(txtIDays, 150, 302, 280);
+            ConfigureTextBox(txtIStart, 150, 340, 280);
+            ConfigureTextBox(txtIEnd, 150, 378, 280);
+            UIStyleHelper.StyleButton(btnSave, UIStyleHelper.ButtonStyle.Success);
+            btnSave.Location = new Point(210, 426);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(90, 30);
-            btnSave.TabIndex = 7;
+            btnSave.Size = new Size(100, 35);
+            btnSave.TabIndex = 17;
             btnSave.Text = "Save";
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Click += btnSave_Click;
-            // 
-            // btnCancel
-            // 
-            btnCancel.Location = new Point(250, 185);
+            UIStyleHelper.StyleButton(btnCancel, UIStyleHelper.ButtonStyle.Default);
+            btnCancel.Location = new Point(330, 426);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(90, 30);
-            btnCancel.TabIndex = 8;
+            btnCancel.Size = new Size(100, 35);
+            btnCancel.TabIndex = 18;
             btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
-            // 
-            // AddTimezoneForm
-            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(374, 229);
-            Controls.Add(headerPanel);
-            Controls.Add(lblName);
-            Controls.Add(txtName);
-            Controls.Add(lblNumber);
-            Controls.Add(txtNumber);
-            Controls.Add(lblMode);
-            Controls.Add(txtMode);
-            Controls.Add(btnSave);
+            ClientSize = new Size(470, 480);
             Controls.Add(btnCancel);
+            Controls.Add(btnSave);
+            Controls.Add(txtIEnd);
+            Controls.Add(txtIStart);
+            Controls.Add(txtIDays);
+            Controls.Add(txtIntervals);
+            Controls.Add(txtDeactTime);
+            Controls.Add(txtActTime);
+            Controls.Add(txtMode);
+            Controls.Add(txtNumber);
+            Controls.Add(txtName);
+            Controls.Add(lblIEnd);
+            Controls.Add(lblIStart);
+            Controls.Add(lblIDays);
+            Controls.Add(lblIntervals);
+            Controls.Add(lblDeactTime);
+            Controls.Add(lblActTime);
+            Controls.Add(lblMode);
+            Controls.Add(lblNumber);
+            Controls.Add(lblName);
+            Controls.Add(headerPanel);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "AddTimezoneForm";
             StartPosition = FormStartPosition.CenterParent;
+            Text = "Add Time Zone";
             headerPanel.ResumeLayout(false);
             headerPanel.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
+        }
+
+        private static void ConfigureLabel(Label label, string text, int x, int y)
+        {
+            UIStyleHelper.StyleLabel(label);
+            label.Location = new Point(x, y);
+            label.Size = new Size(110, 23);
+            label.Text = text;
+        }
+
+        private static void ConfigureTextBox(TextBox textBox, int x, int y, int width)
+        {
+            UIStyleHelper.StyleTextBox(textBox);
+            textBox.Location = new Point(x, y);
+            textBox.Size = new Size(width, 30);
+        }
+
+        private static void ConfigureTimeTextBox(TextBox textBox, int x, int y)
+        {
+            ConfigureTextBox(textBox, x, y, 280);
+            textBox.PlaceholderText = "HH:MM:SS";
+            textBox.MaxLength = 8;
         }
     }
 }

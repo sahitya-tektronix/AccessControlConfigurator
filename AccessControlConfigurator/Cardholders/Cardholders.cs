@@ -253,10 +253,23 @@ namespace AccessControlConfigurator.Controls
             btnRefresh.Location = new Point(btnDelete.Right + spacing, top);
             btnBack.Location = new Point(btnRefresh.Right + spacing, top);
 
-            btnClearFilters.Location = new Point(topPanel.ClientSize.Width - btnClearFilters.Width - rightPadding, 5);
-            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, 3);
-            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 6, 5);
-            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 9);
+            int searchGroupWidth =
+                btnClearFilters.Width + 6 +
+                btnSearch.Width + 6 +
+                txtSearch.Width + 8 +
+                lblSearchRight.Width;
+
+            int availableRight = topPanel.ClientSize.Width - rightPadding;
+            bool wrapSearch = (btnBack.Right + spacing + searchGroupWidth) > availableRight;
+            int searchTop = wrapSearch ? (top + btnAdd.Height + 6) : top;
+
+            btnClearFilters.Location = new Point(availableRight - btnClearFilters.Width, searchTop + 3);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 6, searchTop + 1);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 6, searchTop + 3);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 7);
+
+            if (topPanel != null)
+                topPanel.Height = wrapSearch ? 72 : 36;
 
             txtEmailFilter.Location = new Point(filterPanel.ClientSize.Width - txtEmailFilter.Width - 12, 4);
             lblEmailFilter.Location = new Point(txtEmailFilter.Left - lblEmailFilter.Width - 8, 8);

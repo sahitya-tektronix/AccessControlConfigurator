@@ -22,6 +22,7 @@ namespace AccessControlSystem
     public class AcrMappingDto
     {
         public int acrId { get; set; }
+        public string acrName { get; set; }
         public int? timeZoneId { get; set; }
     }
 }

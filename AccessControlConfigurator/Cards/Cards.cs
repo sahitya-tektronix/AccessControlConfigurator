@@ -31,6 +31,7 @@ namespace AccessControlConfigurator
         {
 
             InitializeComponent();
+            ApplyButtonStyles();
 
             Load += Cards_Load;
             dgvCards.Enabled = true;
@@ -637,6 +638,10 @@ namespace AccessControlConfigurator
             Hide("vacDays");
             Hide("issueCode");
             Hide("isDeleted");
+            Hide("startDateTime");
+            Hide("endDateTime");
+            Hide("status");
+            Hide("user_Level_MAX_ULVL");
 
             var headerMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 
@@ -851,10 +856,25 @@ namespace AccessControlConfigurator
             btnRefresh.Location = new Point(btnSync.Right + spacing, top);
             btnBack.Location = new Point(btnRefresh.Right + spacing, top);
 
-            btnClearFilters.Location = new Point(headerPanel.ClientSize.Width - btnClearFilters.Width - rightPadding, 12);
-            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 8, 12);
-            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, 13);
-            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, 17);
+            int searchGroupWidth =
+                btnClearFilters.Width + 8 +
+                btnSearch.Width + 8 +
+                txtSearch.Width + 8 +
+                lblSearchRight.Width;
+
+            int availableRight = headerPanel.ClientSize.Width - rightPadding;
+            bool wrapSearch = (btnBack.Right + spacing + searchGroupWidth) > availableRight;
+            int searchTop = wrapSearch ? (top + btnAdd.Height + 8) : top;
+
+            btnClearFilters.Location = new Point(availableRight - btnClearFilters.Width, searchTop);
+            btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 8, searchTop);
+            txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, searchTop + 1);
+            lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 5);
+
+            if (mainLayout != null && mainLayout.RowStyles.Count > 0)
+            {
+                mainLayout.RowStyles[0].Height = wrapSearch ? 96F : 60F;
+            }
 
         }
 
@@ -906,6 +926,16 @@ namespace AccessControlConfigurator
 
             ApplyCardFilter();
 
+        }
+
+        private void ApplyButtonStyles()
+        {
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnBack, 90);
         }
 
     }

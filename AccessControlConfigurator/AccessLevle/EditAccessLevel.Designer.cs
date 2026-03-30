@@ -1,154 +1,202 @@
 ﻿using System.Drawing;
+
 using System.Windows.Forms;
 
+using AccessControlConfigurator.Helpers;
+
 namespace AccessControlConfigurator
+
 {
+
     partial class EditAccessLevelForm
+
     {
+
         private Panel headerPanel;
+
         private Label lblHeader;
+
         private Label lblName;
-        private Label lblDoor;
-        private Label lblTimeZone;
+
+        private Label lblDoors;
 
         private TextBox txtName;
+
         //private TextBox txtDescription;
 
-        private ComboBox cmbAcr;
-        private ComboBox cmbTimeZone;
+        private DataGridView dgvDoorTimezones;
 
         private Button btnupdate;
+
         private Button btnCancel;
 
         private void InitializeComponent()
+
         {
+
             headerPanel = new Panel();
+
             lblHeader = new Label();
+
             lblName = new Label();
-            lblDoor = new Label();
-            lblTimeZone = new Label();
+
+            lblDoors = new Label();
+
             txtName = new TextBox();
-            cmbAcr = new ComboBox();
-            cmbTimeZone = new ComboBox();
+
+            dgvDoorTimezones = new DataGridView();
+
             btnupdate = new Button();
+
             btnCancel = new Button();
+
             headerPanel.SuspendLayout();
+
             SuspendLayout();
-            // 
-            // headerPanel
-            // 
-            headerPanel.BackColor = Color.FromArgb(45, 62, 80);
+
+            // ==================== HEADER PANEL ====================
+
+            UIStyleHelper.StyleHeaderPanel(headerPanel);
+
             headerPanel.Controls.Add(lblHeader);
-            headerPanel.Dock = DockStyle.Top;
-            headerPanel.Location = new Point(0, 0);
-            headerPanel.Name = "headerPanel";
-            headerPanel.Size = new Size(380, 60);
-            headerPanel.TabIndex = 0;
-            // 
-            // lblHeader
-            // 
-            lblHeader.AutoSize = true;
-            lblHeader.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblHeader.ForeColor = Color.White;
-            lblHeader.Location = new Point(85, 15);
-            lblHeader.Name = "lblHeader";
-            lblHeader.Size = new Size(232, 32);
-            lblHeader.TabIndex = 0;
+
+            // ==================== HEADER LABEL ====================
+
             lblHeader.Text = "EDIT ACCESS LEVEL";
-            // 
-            // lblName
-            // 
-            lblName.Font = new Font("Segoe UI", 10F);
-            lblName.Location = new Point(40, 90);
-            lblName.Name = "lblName";
-            lblName.Size = new Size(100, 23);
-            lblName.TabIndex = 1;
+
+            lblHeader.AutoSize = false;
+
+            lblHeader.Dock = DockStyle.Fill;
+
+            lblHeader.TextAlign = ContentAlignment.MiddleCenter;
+
+            lblHeader.Font = UIStyleHelper.StandardFonts.HeaderFont;
+
+            lblHeader.ForeColor = UIStyleHelper.StandardColors.HeaderForeground;
+
+            // ==================== CONTENT LABELS ====================
+
+            UIStyleHelper.StyleLabel(lblName);
+
+            UIStyleHelper.StyleLabel(lblDoors);
+
             lblName.Text = "Access Level";
-            // 
-            // lblDoor
-            // 
-            lblDoor.Font = new Font("Segoe UI", 10F);
-            lblDoor.Location = new Point(40, 163);
-            lblDoor.Name = "lblDoor";
-            lblDoor.Size = new Size(100, 23);
-            lblDoor.TabIndex = 5;
-            lblDoor.Text = "Door (ACR)";
-            // 
-            // lblTimeZone
-            // 
-            lblTimeZone.Font = new Font("Segoe UI", 10F);
-            lblTimeZone.Location = new Point(40, 259);
-            lblTimeZone.Name = "lblTimeZone";
-            lblTimeZone.Size = new Size(100, 23);
-            lblTimeZone.TabIndex = 7;
-            lblTimeZone.Text = "Time Zone";
-            // 
-            // txtName
-            // 
-            txtName.Location = new Point(40, 115);
+
+            lblDoors.Text = "Doors and Time Zones";
+
+            // ==================== INPUT FIELDS ====================
+
+            UIStyleHelper.StyleTextBox(txtName);
+
             txtName.Name = "txtName";
-            txtName.Size = new Size(300, 27);
-            txtName.TabIndex = 2;
-            // 
-            // cmbAcr
-            // 
-            cmbAcr.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbAcr.Location = new Point(40, 209);
-            cmbAcr.Name = "cmbAcr";
-            cmbAcr.Size = new Size(300, 28);
-            cmbAcr.TabIndex = 6;
-            // 
-            // cmbTimeZone
-            // 
-            cmbTimeZone.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbTimeZone.Location = new Point(40, 297);
-            cmbTimeZone.Name = "cmbTimeZone";
-            cmbTimeZone.Size = new Size(300, 28);
-            cmbTimeZone.TabIndex = 8;
-            // 
-            // btnupdate
-            // 
-            btnupdate.BackColor = Color.Green;
-            btnupdate.ForeColor = Color.White;
-            btnupdate.Location = new Point(80, 360);
-            btnupdate.Name = "btnupdate";
-            btnupdate.Size = new Size(100, 35);
-            btnupdate.TabIndex = 9;
+
+            dgvDoorTimezones.Name = "dgvDoorTimezones";
+
+            // ==================== BUTTONS ====================
+
+            UIStyleHelper.StyleButton(btnupdate, UIStyleHelper.ButtonStyle.Success);
+
+            UIStyleHelper.StyleButton(btnCancel, UIStyleHelper.ButtonStyle.Danger, isSmall: true);
+
             btnupdate.Text = "Update";
-            btnupdate.UseVisualStyleBackColor = false;
+
+            btnupdate.Name = "btnupdate";
+
             btnupdate.Click += btnupdate_ClickAsync;
-            // 
-            // btnCancel
-            // 
-            btnCancel.BackColor = Color.Red;
-            btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(200, 360);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(100, 35);
-            btnCancel.TabIndex = 10;
+
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = false;
+
+            btnCancel.Name = "btnCancel";
+
             btnCancel.Click += btnCancel_Click;
-            // 
-            // EditAccessLevelForm
-            // 
-            ClientSize = new Size(380, 430);
-            Controls.Add(headerPanel);
-            Controls.Add(lblName);
-            Controls.Add(txtName);
-            Controls.Add(lblDoor);
-            Controls.Add(cmbAcr);
-            Controls.Add(lblTimeZone);
-            Controls.Add(cmbTimeZone);
-            Controls.Add(btnupdate);
-            Controls.Add(btnCancel);
+
+            // ==================== FORM LAYOUT ====================
+
+            ClientSize = new Size(500, 520);
+
             Name = "EditAccessLevelForm";
-            StartPosition = FormStartPosition.CenterParent;
+
             Text = "Edit Access Level";
+
+            AutoScaleDimensions = new SizeF(6F, 13F);
+
+            AutoScaleMode = AutoScaleMode.Font;
+
+            StartPosition = FormStartPosition.CenterParent;
+
+            FormBorderStyle = FormBorderStyle.Sizable;
+
+            MinimumSize = new Size(400, 400);
+
+            // Position controls
+
+            int padding = UIStyleHelper.StandardSizes.Padding;
+
+            int verticalSpacing = UIStyleHelper.StandardSizes.VerticalSpacing;
+
+            int inputWidth = 300;
+
+            int gridWidth = ClientSize.Width - (padding * 2) - 40;
+
+            int gridHeight = 240;
+
+            lblName.Location = new Point(padding + 20, 80);
+
+            lblName.Size = new Size(inputWidth, UIStyleHelper.StandardSizes.LabelHeight);
+
+            txtName.Location = new Point(padding + 20, lblName.Bottom + 5);
+
+            txtName.Size = new Size(inputWidth, UIStyleHelper.StandardSizes.InputFieldHeight);
+
+            lblDoors.Location = new Point(padding + 20, txtName.Bottom + verticalSpacing);
+
+            lblDoors.Size = new Size(inputWidth + 140, UIStyleHelper.StandardSizes.LabelHeight);
+
+            dgvDoorTimezones.Location = new Point(padding + 20, lblDoors.Bottom + 5);
+
+            dgvDoorTimezones.Size = new Size(gridWidth, gridHeight);
+
+            // Button panel
+
+            int buttonY = dgvDoorTimezones.Bottom + verticalSpacing;
+
+            int buttonSpacing = 10;
+
+            int totalButtonWidth = UIStyleHelper.StandardSizes.ButtonWidth + UIStyleHelper.StandardSizes.SmallButtonWidth + buttonSpacing;
+
+            int buttonStartX = (ClientSize.Width - totalButtonWidth) / 2;
+
+            btnupdate.Location = new Point(buttonStartX, buttonY);
+
+            btnCancel.Location = new Point(btnupdate.Right + buttonSpacing, buttonY);
+
+            // Add all controls
+
+            Controls.Add(headerPanel);
+
+            Controls.Add(lblName);
+
+            Controls.Add(txtName);
+
+            Controls.Add(lblDoors);
+
+            Controls.Add(dgvDoorTimezones);
+
+            Controls.Add(btnupdate);
+
+            Controls.Add(btnCancel);
+
             headerPanel.ResumeLayout(false);
+
             headerPanel.PerformLayout();
+
             ResumeLayout(false);
+
             PerformLayout();
+
         }
+
     }
+
 }
+
