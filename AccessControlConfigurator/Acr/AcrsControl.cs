@@ -43,6 +43,9 @@ namespace AccessControlConfigurator
             cmbControllerId.SelectedIndexChanged += (s, e) => ApplyFilters();
             cmbSioNumber.SelectedIndexChanged += (s, e) => ApplyFilters();
             cmbReader.SelectedIndexChanged += (s, e) => ApplyFilters();
+            cmbAcrName.SelectedIndexChanged += (s, e) => ApplyFilters();
+            cmbControllerName.SelectedIndexChanged += (s, e) => ApplyFilters();
+            cmbSioName.SelectedIndexChanged += (s, e) => ApplyFilters();
             btnClearFilters.Click += btnClearFilters_Click;
 
             dgvAcrs.CellBeginEdit += (s, e) => e.Cancel = true;
@@ -129,6 +132,12 @@ namespace AccessControlConfigurator
                 cmbControllerId.SelectedIndex = 0;
                 cmbSioNumber.SelectedIndex = 0;
                 cmbReader.SelectedIndex = 0;
+                if (cmbAcrName.Items.Count > 0)
+                    cmbAcrName.SelectedIndex = 0;
+                if (cmbControllerName.Items.Count > 0)
+                    cmbControllerName.SelectedIndex = 0;
+                if (cmbSioName.Items.Count > 0)
+                    cmbSioName.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
@@ -165,7 +174,9 @@ namespace AccessControlConfigurator
                 string id = a.id.ToString();
                 string name = (a.name ?? "").ToLower();
                 string controller = a.controllerID.ToString();
+                string controllerName = (a.controllerName ?? "").ToLower();
                 string sio = a.sioNumber.ToString();
+                string sioName = (a.sioName ?? "").ToLower();
                 string acr = a.acrNumber.ToString();
                 string reader = $"reader {a.readerNumber}".ToLower();
                 string readerNum = a.readerNumber.ToString();
@@ -175,7 +186,9 @@ namespace AccessControlConfigurator
                 return id.Contains(searchText) ||
                        name.Contains(searchText) ||
                        controller.Contains(searchText) ||
+                       controllerName.Contains(searchText) ||
                        sio.Contains(searchText) ||
+                       sioName.Contains(searchText) ||
                        acr.Contains(searchText) ||
                        reader.Contains(searchText) ||
                        readerNum.Contains(searchText) ||
@@ -199,13 +212,15 @@ namespace AccessControlConfigurator
                     a.id,
                     a.name,
                     a.controllerID,
+                    a.controllerName ?? string.Empty,
                     a.sioNumber,
+                    a.sioName ?? string.Empty,
                     $"Reader {a.readerNumber}",
                     a.acrNumber,
                     onlineText
                 );
 
-                dgvAcrs.Rows[rowIndex].Cells[6].Style.ForeColor =
+                dgvAcrs.Rows[rowIndex].Cells[8].Style.ForeColor =
                     isOnline ? Color.Green : Color.Red;
             }
         }
@@ -225,6 +240,12 @@ namespace AccessControlConfigurator
                 cmbSioNumber.SelectedIndex = 0;
             if (cmbReader.Items.Count > 0)
                 cmbReader.SelectedIndex = 0;
+            if (cmbAcrName.Items.Count > 0)
+                cmbAcrName.SelectedIndex = 0;
+            if (cmbControllerName.Items.Count > 0)
+                cmbControllerName.SelectedIndex = 0;
+            if (cmbSioName.Items.Count > 0)
+                cmbSioName.SelectedIndex = 0;
 
             PopulateGrid(_allData);
         }
@@ -360,6 +381,39 @@ namespace AccessControlConfigurator
 
             readers.Insert(0, "All");
             cmbReader.DataSource = readers;
+
+            // ACR Name
+            var acrNames = _allData
+                .Select(x => x.name ?? string.Empty)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x)
+                .ToList();
+
+            acrNames.Insert(0, "All");
+            cmbAcrName.DataSource = acrNames;
+
+            // Controller Name
+            var controllerNames = _allData
+                .Select(x => x.controllerName ?? string.Empty)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x)
+                .ToList();
+
+            controllerNames.Insert(0, "All");
+            cmbControllerName.DataSource = controllerNames;
+
+            // Sio Name
+            var sioNames = _allData
+                .Select(x => x.sioName ?? string.Empty)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x)
+                .ToList();
+
+            sioNames.Insert(0, "All");
+            cmbSioName.DataSource = sioNames;
         }
         private void ApplyFilters()
         {
@@ -368,6 +422,9 @@ namespace AccessControlConfigurator
             string controller = cmbControllerId.SelectedItem?.ToString();
             string sio = cmbSioNumber.SelectedItem?.ToString();
             string reader = cmbReader.SelectedItem?.ToString();
+            string acrName = cmbAcrName.SelectedItem?.ToString();
+            string controllerName = cmbControllerName.SelectedItem?.ToString();
+            string sioName = cmbSioName.SelectedItem?.ToString();
 
             if (!string.IsNullOrEmpty(controller) && controller != "All")
                 filtered = filtered.Where(x => x.controllerID.ToString() == controller);
@@ -377,6 +434,15 @@ namespace AccessControlConfigurator
 
             if (!string.IsNullOrEmpty(reader) && reader != "All")
                 filtered = filtered.Where(x => $"Reader {x.readerNumber}" == reader);
+
+            if (!string.IsNullOrEmpty(acrName) && acrName != "All")
+                filtered = filtered.Where(x => string.Equals(x.name ?? string.Empty, acrName, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrEmpty(controllerName) && controllerName != "All")
+                filtered = filtered.Where(x => string.Equals(x.controllerName ?? string.Empty, controllerName, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrEmpty(sioName) && sioName != "All")
+                filtered = filtered.Where(x => string.Equals(x.sioName ?? string.Empty, sioName, StringComparison.OrdinalIgnoreCase));
 
             PopulateGrid(filtered.ToList());
         }
@@ -411,6 +477,14 @@ namespace AccessControlConfigurator
             cmbControllerId.Location = new Point(lblSio.Left - cmbControllerId.Width - 16, filterTop);
             lblController.Location = new Point(cmbControllerId.Left - lblController.Width - 8, filterTop + 4);
 
+            int filterTop2 = filterTop + cmbReader.Height + 6;
+            cmbControllerName.Location = new Point(topPanel.ClientSize.Width - cmbControllerName.Width - rightPadding, filterTop2);
+            lblControllerName.Location = new Point(cmbControllerName.Left - lblControllerName.Width - 8, filterTop2 + 4);
+            cmbSioName.Location = new Point(lblControllerName.Left - cmbSioName.Width - 16, filterTop2);
+            lblSioName.Location = new Point(cmbSioName.Left - lblSioName.Width - 8, filterTop2 + 4);
+            cmbAcrName.Location = new Point(lblSioName.Left - cmbAcrName.Width - 16, filterTop2);
+            lblAcrName.Location = new Point(cmbAcrName.Left - lblAcrName.Width - 8, filterTop2 + 4);
+
             bool wrapFilters = lblController.Left <= btnBack.Right + spacing;
             if (wrapFilters)
             {
@@ -421,9 +495,17 @@ namespace AccessControlConfigurator
                 lblSio.Location = new Point(cmbSioNumber.Left - lblSio.Width - 8, filterTop + 4);
                 cmbControllerId.Location = new Point(lblSio.Left - cmbControllerId.Width - 16, filterTop);
                 lblController.Location = new Point(cmbControllerId.Left - lblController.Width - 8, filterTop + 4);
+
+                filterTop2 = filterTop + cmbReader.Height + 6;
+                cmbControllerName.Location = new Point(topPanel.ClientSize.Width - cmbControllerName.Width - rightPadding, filterTop2);
+                lblControllerName.Location = new Point(cmbControllerName.Left - lblControllerName.Width - 8, filterTop2 + 4);
+                cmbSioName.Location = new Point(lblControllerName.Left - cmbSioName.Width - 16, filterTop2);
+                lblSioName.Location = new Point(cmbSioName.Left - lblSioName.Width - 8, filterTop2 + 4);
+                cmbAcrName.Location = new Point(lblSioName.Left - cmbAcrName.Width - 16, filterTop2);
+                lblAcrName.Location = new Point(cmbAcrName.Left - lblAcrName.Width - 8, filterTop2 + 4);
             }
 
-            topPanel.Height = wrapFilters ? cmbReader.Bottom + 10 : 50;
+            topPanel.Height = Math.Max(50, cmbControllerName.Bottom + 10);
 
             int searchTop = topPanel.Bottom + 8;
             btnClearFilters.Location = new Point(Width - btnClearFilters.Width - 10, searchTop);

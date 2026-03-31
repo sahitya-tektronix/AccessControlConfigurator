@@ -13,6 +13,7 @@ namespace AccessControlSystem.Models.Cards
         public long cardNumber { get; set; }   // FIXED
 
         public int? accessLevelId { get; set; }
+        public string accessLevelName { get; set; }
 
         public int issueCode { get; set; }
 

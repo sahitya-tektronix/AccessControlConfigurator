@@ -14,8 +14,10 @@ namespace AccessControlSystem.Models.Acr
         public int id { get; set; }
       
         public int controllerID { get; set; }
+        public string controllerName { get; set; }
 
         public int sioNumber { get; set; }
+        public string sioName { get; set; }
 
         public string name { get; set; }
 

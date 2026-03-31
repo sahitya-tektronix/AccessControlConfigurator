@@ -17,10 +17,16 @@ namespace AccessControlConfigurator
         private ComboBox cmbControllerId;
         private ComboBox cmbSioNumber;
         private ComboBox cmbReader;
+        private ComboBox cmbControllerName;
+        private ComboBox cmbSioName;
+        private ComboBox cmbAcrName;
 
         private Label lblController;
         private Label lblSio;
         private Label lblReader;
+        private Label lblControllerName;
+        private Label lblSioName;
+        private Label lblAcrName;
 
         protected override void Dispose(bool disposing)
         {
@@ -46,6 +52,12 @@ namespace AccessControlConfigurator
             cmbSioNumber = new ComboBox();
             lblReader = new Label();
             cmbReader = new ComboBox();
+            lblAcrName = new Label();
+            cmbAcrName = new ComboBox();
+            lblControllerName = new Label();
+            cmbControllerName = new ComboBox();
+            lblSioName = new Label();
+            cmbSioName = new ComboBox();
             lblSearchRight = new Label();
             txtSearch = new TextBox();
             btnSearch = new Button();
@@ -57,6 +69,8 @@ namespace AccessControlConfigurator
             dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn6 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn7 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn8 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn9 = new DataGridViewTextBoxColumn();
             topPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAcrs).BeginInit();
             SuspendLayout();
@@ -86,6 +100,12 @@ namespace AccessControlConfigurator
             topPanel.Controls.Add(cmbSioNumber);
             topPanel.Controls.Add(lblReader);
             topPanel.Controls.Add(cmbReader);
+            topPanel.Controls.Add(lblAcrName);
+            topPanel.Controls.Add(cmbAcrName);
+            topPanel.Controls.Add(lblSioName);
+            topPanel.Controls.Add(cmbSioName);
+            topPanel.Controls.Add(lblControllerName);
+            topPanel.Controls.Add(cmbControllerName);
             topPanel.Dock = DockStyle.Top;
             topPanel.Location = new Point(0, 40);
             topPanel.Name = "topPanel";
@@ -185,6 +205,63 @@ namespace AccessControlConfigurator
             cmbReader.Size = new Size(100, 28);
             cmbReader.TabIndex = 8;
             // 
+            // lblAcrName
+            // 
+            lblAcrName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblAcrName.AutoSize = true;
+            lblAcrName.Location = new Point(240, 40);
+            lblAcrName.Name = "lblAcrName";
+            lblAcrName.Size = new Size(74, 20);
+            lblAcrName.TabIndex = 9;
+            lblAcrName.Text = "ACR Name";
+            // 
+            // cmbAcrName
+            // 
+            cmbAcrName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbAcrName.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbAcrName.Location = new Point(320, 36);
+            cmbAcrName.Name = "cmbAcrName";
+            cmbAcrName.Size = new Size(140, 28);
+            cmbAcrName.TabIndex = 10;
+            // 
+            // lblSioName
+            // 
+            lblSioName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblSioName.AutoSize = true;
+            lblSioName.Location = new Point(470, 40);
+            lblSioName.Name = "lblSioName";
+            lblSioName.Size = new Size(70, 20);
+            lblSioName.TabIndex = 11;
+            lblSioName.Text = "Sio Name";
+            // 
+            // cmbSioName
+            // 
+            cmbSioName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbSioName.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSioName.Location = new Point(550, 36);
+            cmbSioName.Name = "cmbSioName";
+            cmbSioName.Size = new Size(120, 28);
+            cmbSioName.TabIndex = 12;
+            // 
+            // lblControllerName
+            // 
+            lblControllerName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblControllerName.AutoSize = true;
+            lblControllerName.Location = new Point(680, 40);
+            lblControllerName.Name = "lblControllerName";
+            lblControllerName.Size = new Size(117, 20);
+            lblControllerName.TabIndex = 13;
+            lblControllerName.Text = "Controller Name";
+            // 
+            // cmbControllerName
+            // 
+            cmbControllerName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cmbControllerName.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbControllerName.Location = new Point(800, 36);
+            cmbControllerName.Name = "cmbControllerName";
+            cmbControllerName.Size = new Size(190, 28);
+            cmbControllerName.TabIndex = 14;
+            // 
             // lblSearchRight
             // 
             lblSearchRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -224,7 +301,7 @@ namespace AccessControlConfigurator
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             dgvAcrs.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvAcrs.ColumnHeadersHeight = 35;
-            dgvAcrs.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7 });
+            dgvAcrs.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn8, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn9, dataGridViewTextBoxColumn5, dataGridViewTextBoxColumn6, dataGridViewTextBoxColumn7 });
             dgvAcrs.Dock = DockStyle.Fill;
             dgvAcrs.Location = new Point(0, 85);
             dgvAcrs.Name = "dgvAcrs";
@@ -251,11 +328,23 @@ namespace AccessControlConfigurator
             dataGridViewTextBoxColumn3.MinimumWidth = 6;
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             // 
+            // dataGridViewTextBoxColumn8
+            // 
+            dataGridViewTextBoxColumn8.HeaderText = "Controller Name";
+            dataGridViewTextBoxColumn8.MinimumWidth = 6;
+            dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+            // 
             // dataGridViewTextBoxColumn4
             // 
             dataGridViewTextBoxColumn4.HeaderText = "Sio Number";
             dataGridViewTextBoxColumn4.MinimumWidth = 6;
             dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            // 
+            // dataGridViewTextBoxColumn9
+            // 
+            dataGridViewTextBoxColumn9.HeaderText = "Sio Name";
+            dataGridViewTextBoxColumn9.MinimumWidth = 6;
+            dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
             // 
             // dataGridViewTextBoxColumn5
             // 
@@ -311,5 +400,7 @@ namespace AccessControlConfigurator
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
     }
 }

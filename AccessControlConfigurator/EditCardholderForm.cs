@@ -1,6 +1,7 @@
 ﻿using System;
 
 using System.Collections.Generic;
+using System.Globalization;
 
 using System.Windows.Forms;
 
@@ -104,13 +105,10 @@ namespace AccessControlConfigurator
 
                 }
 
-                var startUtc = DateTime.SpecifyKind(dtStart.Value, DateTimeKind.Local)
-
-                    .ToUniversalTime();
-
-                var endUtc = DateTime.SpecifyKind(dtEnd.Value, DateTimeKind.Local)
-
-                    .ToUniversalTime();
+                var startLocal = DateTime.SpecifyKind(dtStart.Value, DateTimeKind.Local);
+                var endLocal = DateTime.SpecifyKind(dtEnd.Value, DateTimeKind.Local);
+                var startUtc = startLocal.ToUniversalTime();
+                var endUtc = endLocal.ToUniversalTime();
 
                 if (endUtc <= startUtc)
 
@@ -130,9 +128,8 @@ namespace AccessControlConfigurator
 
                     cardNumber = cardNumber,
 
-                    startDateTime = startUtc.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-
-                    endDateTime = endUtc.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                    startDateTime = startLocal.ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture),
+                    endDateTime = endLocal.ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture),
 
                     accessLevelIds = new List<int> { 1 }
 
@@ -223,4 +220,3 @@ namespace AccessControlConfigurator
     }
 
 }
-

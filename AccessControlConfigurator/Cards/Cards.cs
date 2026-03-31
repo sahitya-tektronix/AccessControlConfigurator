@@ -479,6 +479,7 @@ namespace AccessControlConfigurator
                             c.cardNumber,
 
                             c.accessLevelId,
+                            c.accessLevelName,
 
                             c.issueCode,
 
@@ -642,6 +643,7 @@ namespace AccessControlConfigurator
             Hide("endDateTime");
             Hide("status");
             Hide("user_Level_MAX_ULVL");
+            Hide("lastModified");
 
             var headerMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 
@@ -652,6 +654,7 @@ namespace AccessControlConfigurator
                 ["cardNumber"] = "Card Number",
 
                 ["accessLevelId"] = "Access Level ID",
+                ["accessLevelName"] = "Access Level Name",
 
                 ["issueCode"] = "Issue Code",
 
@@ -704,6 +707,7 @@ namespace AccessControlConfigurator
                 col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 col.DefaultCellStyle.Alignment =
                     string.Equals(key, "cardNumber", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(key, "accessLevelName", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(key, "actTimeLocal", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(key, "dactTimeLocal", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(key, "createdAt", StringComparison.OrdinalIgnoreCase) ||
@@ -815,6 +819,7 @@ namespace AccessControlConfigurator
             SetWidth("id", 80);
             SetWidth("cardNumber", 160);
             SetWidth("accessLevelId", 150);
+            SetWidth("accessLevelName", 180);
             SetWidth("actTime", 160);
             SetWidth("dactTime", 165);
             SetWidth("actTimeLocal", 185);

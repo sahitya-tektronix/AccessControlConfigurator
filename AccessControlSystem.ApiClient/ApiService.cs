@@ -827,10 +827,11 @@ namespace AccessControlSystem.Services
             return await _httpClient.GetFromJsonAsync<List<WiegandDto>>("api/wiegand-formats?includeDeleted=false");
         }
 
-        // GET BY ID
-        public async Task<WiegandDto> GetByIdAsync(int id)
+        // GET BY FORMAT NUMBER
+        public async Task<WiegandDto> GetByFormatNumberAsync(int formatNumber)
         {
-            return await _httpClient.GetFromJsonAsync<WiegandDto>($"api/wiegand-formats/{id}");
+            return await _httpClient.GetFromJsonAsync<WiegandDto>(
+                $"api/wiegand-formats/GetByFormatNumber/{formatNumber}");
         }
 
         // CREATE
@@ -840,17 +841,19 @@ namespace AccessControlSystem.Services
             return res.IsSuccessStatusCode;
         }
 
-        // UPDATE
-        public async Task<bool> UpdateWiegandFormatAsync(int id, UpdateWiegandFormatRequest dto)
+        // UPDATE BY FORMAT NUMBER
+        public async Task<bool> UpdateWiegandFormatByFormatNumberAsync(int formatNumber, UpdateWiegandFormatRequest dto)
         {
-            var res = await _httpClient.PutAsJsonAsync($"api/wiegand-formats/{id}", dto);
+            var res = await _httpClient.PutAsJsonAsync(
+                $"api/wiegand-formats/UpdateByFormatNumber/{formatNumber}", dto);
             return res.IsSuccessStatusCode;
         }
 
-        // DELETE (if needed later)
-        public async Task<bool> DeleteAsync(int id)
+        // DELETE BY FORMAT NUMBER (if needed later)
+        public async Task<bool> DeleteByFormatNumberAsync(int formatNumber)
         {
-            var res = await _httpClient.DeleteAsync($"api/wiegand-formats/{id}");
+            var res = await _httpClient.DeleteAsync(
+                $"api/wiegand-formats/DeleteByFormatNumber/{formatNumber}");
             return res.IsSuccessStatusCode;
         }
     }
