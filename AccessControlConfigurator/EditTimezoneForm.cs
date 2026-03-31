@@ -1,10 +1,9 @@
 ﻿using AccessControlSystem.Models;
 using AccessControlSystem.Services;
-using AccessControlConfigurator.Helpers;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace AccessControlConfigurator
 {
@@ -17,52 +16,139 @@ namespace AccessControlConfigurator
         {
             InitializeComponent();
             _timezone = timezone;
+
             ConfigureTextEntry();
 
+            // ✅ Load values (NUMERIC only)
             txtName.Text = timezone.name;
             txtNumber.Text = timezone.number.ToString();
             txtMode.Text = timezone.mode.ToString();
-            txtActTime.Text = UIStyleHelper.FormatTimeFromSeconds(timezone.actTime);
-            txtDeactTime.Text = UIStyleHelper.FormatTimeFromSeconds(timezone.deactTime);
+            txtActTime.Text = timezone.actTime.ToString();
+            txtDeactTime.Text = timezone.deactTime.ToString();
             txtIntervals.Text = timezone.intervals.ToString();
             txtIDays.Text = timezone.iDays.ToString();
             txtIStart.Text = timezone.iStart.ToString();
             txtIEnd.Text = timezone.iEnd.ToString();
         }
 
+        // =========================
+        // NUMERIC INPUT RESTRICTION
+        // =========================
+        private void ConfigureTextEntry()
+        {
+            foreach (var txt in new[]
+            {
+                txtNumber, txtMode, txtIntervals,
+                txtIDays, txtIStart, txtIEnd,
+                txtActTime, txtDeactTime
+            })
+            {
+                txt.KeyPress += NumericTextBox_KeyPress;
+                txt.KeyDown += NumericTextBox_KeyDown;
+
+                // ❌ Disable right-click paste
+                txt.ContextMenuStrip = new ContextMenuStrip();
+            }
+        }
+
+        private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow only digits
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void NumericTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Block Ctrl+V paste
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        // =========================
+        // VALIDATION METHOD
+        // =========================
+        private bool ValidateNumeric(TextBox txt, string fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(txt.Text))
+            {
+                MessageBox.Show($"{fieldName} is required");
+                txt.Focus();
+                return false;
+            }
+
+            if (!int.TryParse(txt.Text, out _))
+            {
+                MessageBox.Show($"{fieldName} must be a number");
+                txt.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        // =========================
+        // SAVE BUTTON
+        // =========================
         private async void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                if (!TryGetInt(txtNumber.Text, "Number", out var number) ||
-                    !TryGetInt(txtMode.Text, "Mode", out var mode) ||
-                    !TryGetInt(txtIntervals.Text, "Intervals", out var intervals) ||
-                    !TryGetInt(txtIDays.Text, "Break Days", out var iDays) ||
-                    !TryGetInt(txtIStart.Text, "Break Start", out var iStart) ||
-                    !TryGetInt(txtIEnd.Text, "Break End", out var iEnd))
+                // ✅ Name validation
+                if (string.IsNullOrWhiteSpace(txtName.Text))
+                {
+                    MessageBox.Show("Name is required");
+                    txtName.Focus();
+                    return;
+                }
+
+                // ✅ Numeric validation
+                if (!ValidateNumeric(txtNumber, "Number") ||
+                    !ValidateNumeric(txtMode, "Mode") ||
+                    !ValidateNumeric(txtIntervals, "Intervals") ||
+                    !ValidateNumeric(txtIDays, "Break Days") ||
+                    !ValidateNumeric(txtIStart, "Break Start") ||
+                    !ValidateNumeric(txtIEnd, "Break End") ||
+                    !ValidateNumeric(txtActTime, "Start Time") ||
+                    !ValidateNumeric(txtDeactTime, "End Time"))
                 {
                     return;
                 }
 
+                // ✅ Convert values
+                int number = int.Parse(txtNumber.Text);
+                int mode = int.Parse(txtMode.Text);
+                int intervals = int.Parse(txtIntervals.Text);
+                int iDays = int.Parse(txtIDays.Text);
+                int iStart = int.Parse(txtIStart.Text);
+                int iEnd = int.Parse(txtIEnd.Text);
+                int actTime = int.Parse(txtActTime.Text);
+                int deactTime = int.Parse(txtDeactTime.Text);
+
+                // ✅ Logical validation
+                if (deactTime <= actTime)
+                {
+                    MessageBox.Show("End Time must be greater than Start Time");
+                    txtDeactTime.Focus();
+                    return;
+                }
+
+                // ✅ Range validation (optional)
+                if (actTime < 0 || deactTime > 86400)
+                {
+                    MessageBox.Show("Time must be between 0 and 86400 seconds");
+                    return;
+                }
+
+                // ✅ Unique validation
                 if (!await ValidateUniqueFieldsAsync(number, txtName.Text?.Trim(), _timezone.id))
                     return;
 
-                if (!TryGetTimeSeconds(txtActTime.Text, "Start Time", out var actTime) ||
-                    !TryGetTimeSeconds(txtDeactTime.Text, "End Time", out var deactTime))
-                {
-                    return;
-                }
-
-                if (deactTime <= actTime)
-                {
-                    MessageBox.Show(
-                        "Please select a correct end time. End time must be greater than start time.",
-                        "Invalid Time Range",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                    return;
-                }
-
+                // ✅ Update DTO
                 var updateDto = new TimezoneUpdateRequest
                 {
                     id = _timezone.id,
@@ -81,8 +167,8 @@ namespace AccessControlConfigurator
 
                 MessageBox.Show("Timezone Updated Successfully");
 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
             catch (Exception ex)
             {
@@ -90,51 +176,9 @@ namespace AccessControlConfigurator
             }
         }
 
-        private static bool TryGetInt(string raw, string label, out int value)
-        {
-            value = 0;
-            if (!int.TryParse(raw?.Trim(), out value))
-            {
-                MessageBox.Show($"Invalid {label}");
-                return false;
-            }
-
-            return true;
-        }
-
-        private void ConfigureTextEntry()
-        {
-            foreach (var textBox in new[] { txtNumber, txtMode, txtIntervals, txtIDays, txtIStart, txtIEnd })
-                textBox.KeyPress += NumericTextBox_KeyPress;
-
-            txtActTime.KeyPress += TimeTextBox_KeyPress;
-            txtDeactTime.KeyPress += TimeTextBox_KeyPress;
-        }
-
-        private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
-        }
-
-        private void TimeTextBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != ':')
-                e.Handled = true;
-        }
-
-        private static bool TryGetTimeSeconds(string raw, string label, out int value)
-        {
-            value = 0;
-            if (!UIStyleHelper.TryParseTimeToSeconds(raw?.Trim(), out value))
-            {
-                MessageBox.Show($"{label} must be in HH:MM:SS format.");
-                return false;
-            }
-
-            return true;
-        }
-
+        // =========================
+        // UNIQUE VALIDATION
+        // =========================
         private async Task<bool> ValidateUniqueFieldsAsync(int number, string name, int? currentId)
         {
             var existing = await _apiService.GetTimezones();
@@ -147,8 +191,9 @@ namespace AccessControlConfigurator
             }
 
             if (!string.IsNullOrWhiteSpace(name) &&
-                existing.Any(t => string.Equals((t.name ?? string.Empty).Trim(), name, StringComparison.OrdinalIgnoreCase) &&
-                                  (!currentId.HasValue || t.id != currentId.Value)))
+                existing.Any(t =>
+                    string.Equals((t.name ?? "").Trim(), name, StringComparison.OrdinalIgnoreCase) &&
+                    (!currentId.HasValue || t.id != currentId.Value)))
             {
                 MessageBox.Show("Timezone name must be unique.");
                 txtName.Focus();

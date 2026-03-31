@@ -13,6 +13,7 @@ namespace AccessControlConfigurator
     public partial class EventsControl : UserControl
     {
         private WebSocketService _ws;
+        private ApiService _api = new ApiService();
         private List<EventRow> _allData = new List<EventRow>();
         private readonly System.Windows.Forms.Timer _refreshTimer;
         private bool _isWebSocketConnecting;
@@ -296,6 +297,17 @@ namespace AccessControlConfigurator
             };
 
             _allData.Add(row);
+
+            // Save to backend
+            var evt = new EventDto
+            {
+                CardNumber = cardNumber,
+                PersonName = cardStatus,
+                DoorName = door,
+                Time = eventTime,
+                Result = status
+            };
+            _ = Task.Run(() => _api.SaveEventAsync(evt));
 
             if (_allData.Count > 1000)
                 _allData.RemoveAt(0);

@@ -15,6 +15,14 @@ namespace AccessControlConfigurator
     {
         private readonly ApiService _apiService = new ApiService();
         private List<EventReportItem> _allRows = new List<EventReportItem>();
+        private int _pageNumber = 1;
+        private int _pageSize = 500;
+        private int _totalPages = 1;
+        private int _totalCount = 0;
+        private bool _filterByCreatedDate = false;
+        private DateTime? _startDate;
+        private DateTime? _endDate;
+        private List<string> _cardNumbers = new List<string>();
 
         public EventReportControl()
         {
@@ -22,12 +30,18 @@ namespace AccessControlConfigurator
             InitializeComponent();
             InitializeGrid();
             InitializeColumnsChooser();
+            InitializePagination();
 
             btnReload.Click += async (s, e) => await LoadEventsAsync();
             btnExportExcel.Click += (s, e) => ExportExcel();
             btnExportPdf.Click += (s, e) => ExportPdf();
+            btnApplyFilters.Click += async (s, e) => await ApplyDateFiltersAsync();
+            btnSearchCardNumbers.Click += async (s, e) => await ApplyCardNumberFilterAsync();
+            btnClearFilters.Click += async (s, e) => await ClearFiltersAsync();
 
             Load += async (s, e) => await LoadEventsAsync();
+            Resize += (s, e) => AlignHeaderControls();
+            Load += (s, e) => AlignHeaderControls();
         }
 
         private void InitializeGrid()
@@ -72,6 +86,7 @@ namespace AccessControlConfigurator
                 _allRows = response.data ?? new List<EventReportItem>();
 
                 BindGrid(_allRows);
+                UpdatePagination(response.pagination);
             }
             catch (Exception ex)
             {
@@ -83,9 +98,12 @@ namespace AccessControlConfigurator
         {
             return new EventReportFilterRequest
             {
-                pageNumber = 1,
-                pageSize = 100,
-                isFilterByCreatedDate = false
+                pageNumber = _pageNumber,
+                pageSize = _pageSize,
+                isFilterByCreatedDate = _filterByCreatedDate,
+                startDate = _startDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                endDate = _endDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                cardNumbers = _cardNumbers
             };
         }
 
@@ -95,7 +113,7 @@ namespace AccessControlConfigurator
             foreach (var row in data)
             {
                 dgvEvents.Rows.Add(
-                    row.eventDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                    FormatDateTime(row.eventDateTime),
                     row.cardNumber,
                     row.cardHolder,
                     row.controllerName,
@@ -104,7 +122,7 @@ namespace AccessControlConfigurator
                     row.eventDetails,
                     row.scpId,
                     row.acrNumber,
-                    row.createdAt.ToString("yyyy-MM-dd HH:mm:ss"));
+                    FormatDateTime(row.createdAt));
             }
 
             ApplyColumnVisibility();
@@ -145,9 +163,7 @@ namespace AccessControlConfigurator
 
                 rows.Add(new EventReportItem
                 {
-                    eventDateTime = DateTime.TryParse(row.Cells["EventDateTime"].Value?.ToString(), out var t)
-                        ? t
-                        : DateTime.MinValue,
+                    eventDateTime = row.Cells["EventDateTime"].Value?.ToString(),
                     cardNumber = row.Cells["CardNumber"].Value?.ToString(),
                     cardHolder = row.Cells["CardHolder"].Value?.ToString(),
                     controllerName = row.Cells["ControllerName"].Value?.ToString(),
@@ -156,9 +172,7 @@ namespace AccessControlConfigurator
                     eventDetails = row.Cells["EventDetails"].Value?.ToString(),
                     scpId = TryGetInt(row.Cells["ScpId"].Value?.ToString()),
                     acrNumber = TryGetInt(row.Cells["AcrNumber"].Value?.ToString()),
-                    createdAt = DateTime.TryParse(row.Cells["CreatedAt"].Value?.ToString(), out var created)
-                        ? created
-                        : DateTime.MinValue
+                    createdAt = row.Cells["CreatedAt"].Value?.ToString()
                 });
             }
 
@@ -277,7 +291,7 @@ namespace AccessControlConfigurator
         {
             return header switch
             {
-                "Event Time" => row.eventDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                "Event Time" => FormatDateTime(row.eventDateTime),
                 "Card Number" => row.cardNumber ?? string.Empty,
                 "Card Holder" => row.cardHolder ?? string.Empty,
                 "Controller Name" => row.controllerName ?? string.Empty,
@@ -286,7 +300,7 @@ namespace AccessControlConfigurator
                 "Event Details" => row.eventDetails ?? string.Empty,
                 "SCP ID" => row.scpId.ToString(),
                 "ACR Number" => row.acrNumber.ToString(),
-                "Created At" => row.createdAt.ToString("yyyy-MM-dd HH:mm:ss"),
+                "Created At" => FormatDateTime(row.createdAt),
                 _ => string.Empty
             };
         }
@@ -294,6 +308,180 @@ namespace AccessControlConfigurator
         private static int TryGetInt(string value)
         {
             return int.TryParse(value, out var parsed) ? parsed : 0;
+        }
+
+        private static string FormatDateTime(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            return DateTime.TryParse(value, out var parsed)
+                ? parsed.ToString("yyyy-MM-dd HH:mm:ss")
+                : value;
+        }
+
+        private void InitializePagination()
+        {
+            cmbPageSize.Items.Clear();
+            cmbPageSize.Items.AddRange(new object[] { 50, 100, 200, 500 });
+            cmbPageSize.SelectedItem = _pageSize;
+            cmbPageSize.SelectedIndexChanged += async (s, e) =>
+            {
+                if (cmbPageSize.SelectedItem is int size)
+                {
+                    _pageSize = size;
+                    _pageNumber = 1;
+                    await LoadEventsAsync();
+                }
+            };
+
+            btnPrevPage.Click += async (s, e) =>
+            {
+                if (_pageNumber <= 1)
+                    return;
+
+                _pageNumber--;
+                await LoadEventsAsync();
+            };
+
+            btnNextPage.Click += async (s, e) =>
+            {
+                if (_pageNumber >= _totalPages)
+                    return;
+
+                _pageNumber++;
+                await LoadEventsAsync();
+            };
+
+            UpdatePagination(null);
+        }
+
+        private void UpdatePagination(EventReportPagination pagination)
+        {
+            if (pagination != null)
+            {
+                _pageNumber = pagination.pageNumber;
+                _pageSize = pagination.pageSize;
+                _totalPages = Math.Max(1, pagination.totalPages);
+                _totalCount = pagination.totalCount;
+            }
+            else
+            {
+                _totalPages = Math.Max(1, _totalPages);
+            }
+
+            lblPageInfo.Text = $"Page {_pageNumber} of {_totalPages}";
+            btnPrevPage.Enabled = _pageNumber > 1;
+            btnNextPage.Enabled = _pageNumber < _totalPages;
+
+            if (cmbPageSize.SelectedItem is int size && size != _pageSize)
+                cmbPageSize.SelectedItem = _pageSize;
+        }
+
+        private void AlignHeaderControls()
+        {
+            if (panelHeader == null || panelActions == null || panelPagination == null)
+                return;
+
+            int rightPadding = 14;
+            int spacing = 12;
+            int paginationWidth = panelPagination.Width;
+
+            panelPagination.Left = panelHeader.ClientSize.Width - rightPadding - paginationWidth;
+
+            int maxActionsWidth = panelPagination.Left - panelActions.Left - spacing;
+            panelActions.Width = Math.Max(200, maxActionsWidth);
+
+            int filterTop = chkFilterByCreatedDate.Top;
+            int filterLeft = chkFilterByCreatedDate.Left;
+            int rowRight = panelHeader.ClientSize.Width - rightPadding;
+            int iconWidth = btnSearchCardNumbers.Width;
+            int clearWidth = btnClearFilters.Width;
+            int cardInputWidth = 160;
+
+            int cardInputRight = rowRight;
+            btnClearFilters.Left = cardInputRight - clearWidth;
+            btnSearchCardNumbers.Left = btnClearFilters.Left - spacing - iconWidth;
+            txtCardNumbers.Width = cardInputWidth;
+            txtCardNumbers.Left = btnSearchCardNumbers.Left - spacing - txtCardNumbers.Width;
+            lblCardNumbers.Left = txtCardNumbers.Left - spacing - lblCardNumbers.Width;
+
+            if (lblCardNumbers.Left < dtEndDate.Right + spacing)
+            {
+                txtCardNumbers.Width = Math.Max(120, rowRight - dtEndDate.Right - spacing * 4 - iconWidth - clearWidth - lblCardNumbers.Width);
+                txtCardNumbers.Left = rowRight - clearWidth - spacing - iconWidth - spacing - txtCardNumbers.Width;
+                btnSearchCardNumbers.Left = txtCardNumbers.Right + spacing;
+                btnClearFilters.Left = btnSearchCardNumbers.Right + spacing;
+                lblCardNumbers.Left = txtCardNumbers.Left - spacing - lblCardNumbers.Width;
+            }
+        }
+
+        private async System.Threading.Tasks.Task ApplyDateFiltersAsync()
+        {
+            _filterByCreatedDate = chkFilterByCreatedDate.Checked;
+            _startDate = DateTime.SpecifyKind(dtStartDate.Value, DateTimeKind.Local).ToUniversalTime();
+            _endDate = DateTime.SpecifyKind(dtEndDate.Value, DateTimeKind.Local).ToUniversalTime();
+
+            if (_endDate <= _startDate)
+            {
+                MessageBox.Show("End date must be greater than start date.");
+                return;
+            }
+
+            _pageNumber = 1;
+            await LoadEventsAsync();
+        }
+
+        private async System.Threading.Tasks.Task ApplyCardNumberFilterAsync()
+        {
+            var raw = txtCardNumbers.Text;
+            _cardNumbers = ParseCardNumbers(raw);
+
+            if (_cardNumbers.Count == 0)
+            {
+                MessageBox.Show("Enter at least one card number.");
+                txtCardNumbers.Focus();
+                return;
+            }
+
+            if (_cardNumbers.Any(n => !long.TryParse(n, out _)))
+            {
+                MessageBox.Show("Card numbers must be numeric.");
+                txtCardNumbers.Focus();
+                return;
+            }
+            _pageNumber = 1;
+            await LoadEventsAsync();
+        }
+
+        private static List<string> ParseCardNumbers(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                return new List<string>();
+
+            return raw
+                .Split(new[] { ',', ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private async System.Threading.Tasks.Task ClearFiltersAsync()
+        {
+            chkFilterByCreatedDate.Checked = false;
+            txtCardNumbers.Text = string.Empty;
+            _filterByCreatedDate = false;
+            _cardNumbers = new List<string>();
+
+            var now = DateTime.Now;
+            dtStartDate.Value = now.AddDays(-1);
+            dtEndDate.Value = now;
+            _startDate = DateTime.SpecifyKind(dtStartDate.Value, DateTimeKind.Local).ToUniversalTime();
+            _endDate = DateTime.SpecifyKind(dtEndDate.Value, DateTimeKind.Local).ToUniversalTime();
+
+            _pageNumber = 1;
+            await LoadEventsAsync();
         }
 
     }

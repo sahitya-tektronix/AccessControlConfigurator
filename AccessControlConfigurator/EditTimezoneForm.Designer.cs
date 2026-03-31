@@ -150,7 +150,7 @@ namespace AccessControlConfigurator
         private static void ConfigureTimeTextBox(TextBox textBox, int x, int y)
         {
             ConfigureTextBox(textBox, x, y, 280);
-            textBox.PlaceholderText = "HH:MM:SS";
+            
             textBox.MaxLength = 8;
         }
     }

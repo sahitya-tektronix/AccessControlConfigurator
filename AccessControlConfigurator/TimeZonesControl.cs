@@ -341,22 +341,18 @@ namespace AccessControlConfigurator
                 }
             }
         }
-
         private void dgvTimeZones_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
-            {
                 return;
-            }
 
             var column = dgvTimeZones.Columns[e.ColumnIndex];
             string key = column.DataPropertyName?.ToLower() ?? column.Name.ToLower();
 
-            if ((key == "acttime" || key == "deacttime") &&
-                e.Value != null &&
-                int.TryParse(e.Value.ToString(), out var seconds))
+            // ✅ Show raw numbers (NO time format)
+            if ((key == "acttime" || key == "deacttime") && e.Value != null)
             {
-                e.Value = Helpers.UIStyleHelper.FormatTimeFromSeconds(seconds);
+                e.Value = e.Value.ToString();
                 e.FormattingApplied = true;
             }
         }

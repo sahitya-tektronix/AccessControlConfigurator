@@ -24,6 +24,22 @@ namespace AccessControlConfigurator
         private Button btnExportPdf;
         private Button btnExportExcel;
         private Button btnReload;
+        private Panel panelPagination;
+        private Button btnPrevPage;
+        private Button btnNextPage;
+        private Label lblPageInfo;
+        private Label lblPageSize;
+        private ComboBox cmbPageSize;
+        private CheckBox chkFilterByCreatedDate;
+        private Label lblStartDate;
+        private Label lblEndDate;
+        private DateTimePicker dtStartDate;
+        private DateTimePicker dtEndDate;
+        private Button btnApplyFilters;
+        private Label lblCardNumbers;
+        private TextBox txtCardNumbers;
+        private Button btnSearchCardNumbers;
+        private Button btnClearFilters;
 
         // ── Body ─────────────────────────────────────────────────────────────
         private DataGridView dgvEvents;
@@ -57,6 +73,22 @@ namespace AccessControlConfigurator
             btnExportPdf = new Button();
             btnExportExcel = new Button();
             btnReload = new Button();
+            panelPagination = new Panel();
+            btnPrevPage = new Button();
+            btnNextPage = new Button();
+            lblPageInfo = new Label();
+            lblPageSize = new Label();
+            cmbPageSize = new ComboBox();
+            chkFilterByCreatedDate = new CheckBox();
+            lblStartDate = new Label();
+            lblEndDate = new Label();
+            dtStartDate = new DateTimePicker();
+            dtEndDate = new DateTimePicker();
+            btnApplyFilters = new Button();
+            lblCardNumbers = new Label();
+            txtCardNumbers = new TextBox();
+            btnSearchCardNumbers = new Button();
+            btnClearFilters = new Button();
             dgvEvents = new DataGridView();
 
             // ── Suspend layout ──────────────────────────────────────────────
@@ -71,12 +103,23 @@ namespace AccessControlConfigurator
             // ════════════════════════════════════════════════════════════════
             panelHeader.BackColor = Color.FromArgb(245, 246, 248);
             panelHeader.Dock = DockStyle.Top;
-            panelHeader.Height = 120;
+            panelHeader.Height = 156;
             panelHeader.Padding = new Padding(14, 8, 14, 8);
             panelHeader.Controls.Add(lblTitle);
             panelHeader.Controls.Add(lblChooseColumns);
             panelHeader.Controls.Add(panelColumnChooser);
             panelHeader.Controls.Add(panelActions);
+            panelHeader.Controls.Add(panelPagination);
+            panelHeader.Controls.Add(chkFilterByCreatedDate);
+            panelHeader.Controls.Add(lblStartDate);
+            panelHeader.Controls.Add(dtStartDate);
+            panelHeader.Controls.Add(lblEndDate);
+            panelHeader.Controls.Add(dtEndDate);
+            panelHeader.Controls.Add(btnApplyFilters);
+            panelHeader.Controls.Add(lblCardNumbers);
+            panelHeader.Controls.Add(txtCardNumbers);
+            panelHeader.Controls.Add(btnSearchCardNumbers);
+            panelHeader.Controls.Add(btnClearFilters);
 
             // ── lblTitle ────────────────────────────────────────────────────
             lblTitle.AutoSize = true;
@@ -126,7 +169,7 @@ namespace AccessControlConfigurator
             StyleCheckBox(chkColCreatedAt, "Created At");
 
             // ── panelActions ────────────────────────────────────────────────
-            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             panelActions.AutoSize = false;
             panelActions.FlowDirection = FlowDirection.LeftToRight;
             panelActions.WrapContents = false;
@@ -156,6 +199,93 @@ namespace AccessControlConfigurator
             StyleButton(btnExportPdf, "Export PDF", Color.FromArgb(220, 53, 69), Color.White);
             StyleButton(btnExportExcel, "Export Excel", Color.FromArgb(25, 135, 84), Color.White);
             StyleButton(btnReload, "Reload", Color.FromArgb(13, 110, 253), Color.White);
+
+            // ── panelPagination ────────────────────────────────────────────
+            panelPagination.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            panelPagination.Location = new Point(540, 76);
+            panelPagination.Size = new Size(350, 36);
+
+            btnPrevPage.Text = "Prev";
+            btnPrevPage.Size = new Size(60, 30);
+            btnPrevPage.Location = new Point(0, 3);
+            btnPrevPage.FlatStyle = FlatStyle.Flat;
+            btnPrevPage.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
+
+            btnNextPage.Text = "Next";
+            btnNextPage.Size = new Size(60, 30);
+            btnNextPage.Location = new Point(68, 3);
+            btnNextPage.FlatStyle = FlatStyle.Flat;
+            btnNextPage.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
+
+            lblPageInfo.AutoSize = true;
+            lblPageInfo.Location = new Point(138, 8);
+            lblPageInfo.Font = new Font("Segoe UI", 9F);
+            lblPageInfo.Text = "Page 1 of 1";
+
+            lblPageSize.AutoSize = true;
+            lblPageSize.Location = new Point(232, 8);
+            lblPageSize.Font = new Font("Segoe UI", 9F);
+            lblPageSize.Text = "Size";
+
+            cmbPageSize.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbPageSize.Location = new Point(270, 4);
+            cmbPageSize.Size = new Size(70, 27);
+
+            panelPagination.Controls.Add(btnPrevPage);
+            panelPagination.Controls.Add(btnNextPage);
+            panelPagination.Controls.Add(lblPageInfo);
+            panelPagination.Controls.Add(lblPageSize);
+            panelPagination.Controls.Add(cmbPageSize);
+
+            // ── Filters row ────────────────────────────────────────────────
+            chkFilterByCreatedDate.AutoSize = true;
+            chkFilterByCreatedDate.Location = new Point(14, 120);
+            chkFilterByCreatedDate.Text = "Filter by Created Date";
+
+            lblStartDate.AutoSize = true;
+            lblStartDate.Location = new Point(190, 121);
+            lblStartDate.Text = "Start";
+
+            dtStartDate.Format = DateTimePickerFormat.Custom;
+            dtStartDate.CustomFormat = "yyyy-MM-dd HH:mm";
+            dtStartDate.ShowUpDown = true;
+            dtStartDate.Location = new Point(230, 118);
+            dtStartDate.Size = new Size(150, 27);
+
+            lblEndDate.AutoSize = true;
+            lblEndDate.Location = new Point(390, 121);
+            lblEndDate.Text = "End";
+
+            dtEndDate.Format = DateTimePickerFormat.Custom;
+            dtEndDate.CustomFormat = "yyyy-MM-dd HH:mm";
+            dtEndDate.ShowUpDown = true;
+            dtEndDate.Location = new Point(425, 118);
+            dtEndDate.Size = new Size(150, 27);
+
+            btnApplyFilters.Text = "Apply";
+            btnApplyFilters.Size = new Size(70, 28);
+            btnApplyFilters.Location = new Point(585, 118);
+            btnApplyFilters.FlatStyle = FlatStyle.Flat;
+            btnApplyFilters.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
+
+            lblCardNumbers.AutoSize = true;
+            lblCardNumbers.Location = new Point(665, 121);
+            lblCardNumbers.Text = "Card Number";
+
+            txtCardNumbers.Location = new Point(715, 118);
+            txtCardNumbers.Size = new Size(180, 27);
+
+            btnSearchCardNumbers.Text = "🔍";
+            btnSearchCardNumbers.Size = new Size(34, 28);
+            btnSearchCardNumbers.Location = new Point(900, 118);
+            btnSearchCardNumbers.FlatStyle = FlatStyle.Flat;
+            btnSearchCardNumbers.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
+
+            btnClearFilters.Text = "Clear";
+            btnClearFilters.Size = new Size(60, 28);
+            btnClearFilters.Location = new Point(940, 118);
+            btnClearFilters.FlatStyle = FlatStyle.Flat;
+            btnClearFilters.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
 
             // ════════════════════════════════════════════════════════════════
             // dgvEvents  (fills remaining space under the header)
@@ -200,6 +330,8 @@ namespace AccessControlConfigurator
             panelColumnChooser.ResumeLayout(false);
             panelColumnChooser.PerformLayout();
             panelActions.ResumeLayout(false);
+            panelPagination.ResumeLayout(false);
+            panelPagination.PerformLayout();
             panelHeader.ResumeLayout(false);
             panelHeader.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvEvents).EndInit();

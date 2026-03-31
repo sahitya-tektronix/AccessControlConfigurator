@@ -448,10 +448,10 @@ namespace AccessControlConfigurator.Forms
             if (controller == null)
                 return "Unknown";
 
-            if (!controller.IsOnline)
-                return "Offline";
+            if (controller.IsOnline)
+                return "Online";
 
-            return ToControllerSyncStateLabel(controller.Status);
+            return "Offline";
         }
 
         private static string ToControllerSyncStateLabel(int state)

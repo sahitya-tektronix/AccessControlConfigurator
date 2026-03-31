@@ -275,7 +275,7 @@ namespace AccessControlConfigurator
                         defaultAcrName = string.IsNullOrWhiteSpace(form.AcrData.defaultAcrName)
                             ? form.AcrData.name
                             : form.AcrData.defaultAcrName,
-                        acrNumber = li.acrNumber,
+                        acrNumber = form.AcrData.acrNumber,
                         defaultMode = form.AcrData.defaultMode,
                         readerNumber = li.readerNumber,
                         readerType = 2201,
@@ -283,7 +283,7 @@ namespace AccessControlConfigurator
                         controllerID = li.controllerID,
                         sioNumber = li.sioNumber,
                         strikeNumber = form.AcrData.strikeNumber,
-                        doorNumber = li.doorNumber,
+                        doorNumber = form.AcrData.doorNumber,
                         rex0Number = form.AcrData.rex0Number,
                         rexNumber = form.AcrData.rexNumber
                     };

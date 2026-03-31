@@ -86,12 +86,8 @@ namespace AccessControlConfigurator.Forms
                     MacAddress = txtMac.Text.Trim(),
                     IpAddress = txtIp.Text.Trim(),
 
-                    Port = 5000,
                     TimeZoneId = 1,
                     LocationId = 1,
-
-                    SubnetMask = "255.255.255.0",
-                    DefaultGateway = "192.168.1.1",
 
                     InternalPort0IsEnabled = true,
                     InternalPort0BaudRate = 0,

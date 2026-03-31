@@ -146,12 +146,14 @@ namespace AccessControlConfigurator
             textBox.Location = new Point(x, y);
             textBox.Size = new Size(width, 30);
         }
-
         private static void ConfigureTimeTextBox(TextBox textBox, int x, int y)
         {
             ConfigureTextBox(textBox, x, y, 280);
-            textBox.PlaceholderText = "HH:MM:SS";
-            textBox.MaxLength = 8;
+
+            // textBox.PlaceholderText = "HH:MM:SS";
+
+            // (limit length if needed)
+            textBox.MaxLength = 10;
         }
     }
 }

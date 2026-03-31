@@ -76,17 +76,15 @@ namespace AccessControlConfigurator.Forms
             // 
             // lblTitle
             // 
-            UIStyleHelper.StyleLabel(lblTitle, UIStyleHelper.LabelStyle.Title);
             lblTitle.AutoSize = true;
             lblTitle.Location = new Point(24, 20);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(175, 28);
+            lblTitle.Size = new Size(124, 20);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Edit ACR Settings";
             // 
             // lblName
             // 
-            UIStyleHelper.StyleLabel(lblName);
             lblName.Location = new Point(24, 70);
             lblName.Name = "lblName";
             lblName.Size = new Size(120, 23);
@@ -95,15 +93,13 @@ namespace AccessControlConfigurator.Forms
             // 
             // txtName
             // 
-            UIStyleHelper.StyleTextBox(txtName);
             txtName.Location = new Point(170, 66);
             txtName.Name = "txtName";
-            txtName.Size = new Size(240, 30);
+            txtName.Size = new Size(240, 27);
             txtName.TabIndex = 2;
             // 
             // lblAcrNumber
             // 
-            UIStyleHelper.StyleLabel(lblAcrNumber);
             lblAcrNumber.Location = new Point(24, 108);
             lblAcrNumber.Name = "lblAcrNumber";
             lblAcrNumber.Size = new Size(120, 23);
@@ -112,17 +108,15 @@ namespace AccessControlConfigurator.Forms
             // 
             // numAcrNumber
             // 
-            UIStyleHelper.StyleNumericUpDown(numAcrNumber);
             numAcrNumber.Enabled = false;
             numAcrNumber.Location = new Point(170, 104);
             numAcrNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numAcrNumber.Name = "numAcrNumber";
-            numAcrNumber.Size = new Size(240, 30);
+            numAcrNumber.Size = new Size(240, 27);
             numAcrNumber.TabIndex = 4;
             // 
             // lblDefaultMode
             // 
-            UIStyleHelper.StyleLabel(lblDefaultMode);
             lblDefaultMode.Location = new Point(24, 146);
             lblDefaultMode.Name = "lblDefaultMode";
             lblDefaultMode.Size = new Size(120, 23);
@@ -131,16 +125,14 @@ namespace AccessControlConfigurator.Forms
             // 
             // numDefaultMode
             // 
-            UIStyleHelper.StyleNumericUpDown(numDefaultMode);
             numDefaultMode.Location = new Point(170, 142);
             numDefaultMode.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numDefaultMode.Name = "numDefaultMode";
-            numDefaultMode.Size = new Size(240, 30);
+            numDefaultMode.Size = new Size(240, 27);
             numDefaultMode.TabIndex = 6;
             // 
             // lblReaderNumber
             // 
-            UIStyleHelper.StyleLabel(lblReaderNumber);
             lblReaderNumber.Location = new Point(24, 184);
             lblReaderNumber.Name = "lblReaderNumber";
             lblReaderNumber.Size = new Size(120, 23);
@@ -149,17 +141,15 @@ namespace AccessControlConfigurator.Forms
             // 
             // numReaderNumber
             // 
-            UIStyleHelper.StyleNumericUpDown(numReaderNumber);
             numReaderNumber.Enabled = false;
             numReaderNumber.Location = new Point(170, 180);
             numReaderNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numReaderNumber.Name = "numReaderNumber";
-            numReaderNumber.Size = new Size(240, 30);
+            numReaderNumber.Size = new Size(240, 27);
             numReaderNumber.TabIndex = 8;
             // 
             // lblReaderType
             // 
-            UIStyleHelper.StyleLabel(lblReaderType);
             lblReaderType.Location = new Point(24, 222);
             lblReaderType.Name = "lblReaderType";
             lblReaderType.Size = new Size(120, 23);
@@ -168,15 +158,13 @@ namespace AccessControlConfigurator.Forms
             // 
             // cbReaderType
             // 
-            UIStyleHelper.StyleComboBox(cbReaderType);
             cbReaderType.Location = new Point(170, 218);
             cbReaderType.Name = "cbReaderType";
-            cbReaderType.Size = new Size(240, 31);
+            cbReaderType.Size = new Size(240, 28);
             cbReaderType.TabIndex = 10;
             // 
             // lblReaderDirection
             // 
-            UIStyleHelper.StyleLabel(lblReaderDirection);
             lblReaderDirection.Location = new Point(24, 260);
             lblReaderDirection.Name = "lblReaderDirection";
             lblReaderDirection.Size = new Size(120, 23);
@@ -185,15 +173,13 @@ namespace AccessControlConfigurator.Forms
             // 
             // cbReaderDirection
             // 
-            UIStyleHelper.StyleComboBox(cbReaderDirection);
             cbReaderDirection.Location = new Point(170, 256);
             cbReaderDirection.Name = "cbReaderDirection";
-            cbReaderDirection.Size = new Size(240, 31);
+            cbReaderDirection.Size = new Size(240, 28);
             cbReaderDirection.TabIndex = 12;
             // 
             // lblStrikeNumber
             // 
-            UIStyleHelper.StyleLabel(lblStrikeNumber);
             lblStrikeNumber.Location = new Point(24, 298);
             lblStrikeNumber.Name = "lblStrikeNumber";
             lblStrikeNumber.Size = new Size(120, 23);
@@ -202,16 +188,14 @@ namespace AccessControlConfigurator.Forms
             // 
             // numStrikeNumber
             // 
-            UIStyleHelper.StyleNumericUpDown(numStrikeNumber);
             numStrikeNumber.Location = new Point(170, 294);
             numStrikeNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numStrikeNumber.Name = "numStrikeNumber";
-            numStrikeNumber.Size = new Size(240, 30);
+            numStrikeNumber.Size = new Size(240, 27);
             numStrikeNumber.TabIndex = 14;
             // 
             // lblDoorNumber
             // 
-            UIStyleHelper.StyleLabel(lblDoorNumber);
             lblDoorNumber.Location = new Point(24, 336);
             lblDoorNumber.Name = "lblDoorNumber";
             lblDoorNumber.Size = new Size(120, 23);
@@ -220,17 +204,15 @@ namespace AccessControlConfigurator.Forms
             // 
             // numDoorNumber
             // 
-            UIStyleHelper.StyleNumericUpDown(numDoorNumber);
-            numDoorNumber.Enabled = false;
+            numDoorNumber.Enabled =true;
             numDoorNumber.Location = new Point(170, 332);
             numDoorNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numDoorNumber.Name = "numDoorNumber";
-            numDoorNumber.Size = new Size(240, 30);
+            numDoorNumber.Size = new Size(240, 27);
             numDoorNumber.TabIndex = 16;
             // 
             // lblRexNumber
             // 
-            UIStyleHelper.StyleLabel(lblRexNumber);
             lblRexNumber.Location = new Point(24, 374);
             lblRexNumber.Name = "lblRexNumber";
             lblRexNumber.Size = new Size(120, 23);
@@ -239,16 +221,14 @@ namespace AccessControlConfigurator.Forms
             // 
             // numRexNumber
             // 
-            UIStyleHelper.StyleNumericUpDown(numRexNumber);
             numRexNumber.Location = new Point(170, 370);
             numRexNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numRexNumber.Name = "numRexNumber";
-            numRexNumber.Size = new Size(240, 30);
+            numRexNumber.Size = new Size(240, 27);
             numRexNumber.TabIndex = 18;
             // 
             // btnSave
             // 
-            UIStyleHelper.StyleButton(btnSave, UIStyleHelper.ButtonStyle.Primary);
             btnSave.Location = new Point(185, 10);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(100, 35);
@@ -259,7 +239,6 @@ namespace AccessControlConfigurator.Forms
             // 
             // btnCancel
             // 
-            UIStyleHelper.StyleButton(btnCancel, UIStyleHelper.ButtonStyle.Default);
             btnCancel.Location = new Point(300, 10);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 35);
@@ -270,7 +249,7 @@ namespace AccessControlConfigurator.Forms
             // 
             // bottomPanel
             // 
-            bottomPanel.BackColor = UIStyleHelper.StandardColors.LightBackground;
+            bottomPanel.BackColor = Color.WhiteSmoke;
             bottomPanel.Controls.Add(btnSave);
             bottomPanel.Controls.Add(btnCancel);
             bottomPanel.Dock = DockStyle.Bottom;

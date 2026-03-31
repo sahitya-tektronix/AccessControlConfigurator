@@ -194,6 +194,19 @@ namespace AccessControlSystem.Services
             }
         }
 
+        public async Task<bool> SaveEventAsync(EventDto evt)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/events", evt);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<EventReportResponse> GetEventReportAsync(EventReportFilterRequest request)
         {
             var response = await _httpClient.PostAsJsonAsync(
