@@ -1,3 +1,4 @@
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.ApiClient;
 using AccessControlSystem.Models;
 using AccessControlSystem.Services;
@@ -153,7 +154,7 @@ namespace AccessControlConfigurator.Forms
             }
             catch (Exception ex)
             {
-                ShowMessage(ex.Message);
+                ShowMessage(ControllerErrorHelper.GetMessage(ex));
             }
         }
 
@@ -237,7 +238,7 @@ namespace AccessControlConfigurator.Forms
             }
             catch (Exception ex)
             {
-                ShowMessage(ex.Message);
+                ShowMessage(ControllerErrorHelper.GetMessage(ex));
             }
         }
 
@@ -328,12 +329,12 @@ namespace AccessControlConfigurator.Forms
                     }
                     else
                     {
-                        MessageBox.Show(result);
+                        MessageBox.Show(ControllerErrorHelper.GetMessage(result));
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ControllerErrorHelper.GetMessage(ex));
                 }
             }
         }
@@ -434,7 +435,7 @@ namespace AccessControlConfigurator.Forms
                 return;
             }
 
-            MessageBox.Show(msg.Replace("\"", ""));
+            MessageBox.Show(ControllerErrorHelper.GetMessage(msg).Replace("\"", ""));
         }
 
         private void btnClearFilters_Click(object sender, EventArgs e)

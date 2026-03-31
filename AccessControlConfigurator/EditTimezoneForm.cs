@@ -1,4 +1,5 @@
-﻿using AccessControlSystem.Models;
+using AccessControlConfigurator.Helpers;
+using AccessControlSystem.Models;
 using AccessControlSystem.Services;
 using System;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace AccessControlConfigurator
 
             ConfigureTextEntry();
 
-            // ✅ Load values (NUMERIC only)
+            // ? Load values (NUMERIC only)
             txtName.Text = timezone.name;
             txtNumber.Text = timezone.number.ToString();
             txtMode.Text = timezone.mode.ToString();
@@ -46,7 +47,7 @@ namespace AccessControlConfigurator
                 txt.KeyPress += NumericTextBox_KeyPress;
                 txt.KeyDown += NumericTextBox_KeyDown;
 
-                // ❌ Disable right-click paste
+                // ? Disable right-click paste
                 txt.ContextMenuStrip = new ContextMenuStrip();
             }
         }
@@ -98,7 +99,7 @@ namespace AccessControlConfigurator
         {
             try
             {
-                // ✅ Name validation
+                // ? Name validation
                 if (string.IsNullOrWhiteSpace(txtName.Text))
                 {
                     MessageBox.Show("Name is required");
@@ -106,7 +107,7 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                // ✅ Numeric validation
+                // ? Numeric validation
                 if (!ValidateNumeric(txtNumber, "Number") ||
                     !ValidateNumeric(txtMode, "Mode") ||
                     !ValidateNumeric(txtIntervals, "Intervals") ||
@@ -119,7 +120,7 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                // ✅ Convert values
+                // ? Convert values
                 int number = int.Parse(txtNumber.Text);
                 int mode = int.Parse(txtMode.Text);
                 int intervals = int.Parse(txtIntervals.Text);
@@ -129,7 +130,7 @@ namespace AccessControlConfigurator
                 int actTime = int.Parse(txtActTime.Text);
                 int deactTime = int.Parse(txtDeactTime.Text);
 
-                // ✅ Logical validation
+                // ? Logical validation
                 if (deactTime <= actTime)
                 {
                     MessageBox.Show("End Time must be greater than Start Time");
@@ -137,18 +138,18 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                // ✅ Range validation (optional)
+                // ? Range validation (optional)
                 if (actTime < 0 || deactTime > 86400)
                 {
                     MessageBox.Show("Time must be between 0 and 86400 seconds");
                     return;
                 }
 
-                // ✅ Unique validation
+                // ? Unique validation
                 if (!await ValidateUniqueFieldsAsync(number, txtName.Text?.Trim(), _timezone.id))
                     return;
 
-                // ✅ Update DTO
+                // ? Update DTO
                 var updateDto = new TimezoneUpdateRequest
                 {
                     id = _timezone.id,
@@ -172,7 +173,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(TimezoneErrorHelper.GetMessage(ex));
             }
         }
 

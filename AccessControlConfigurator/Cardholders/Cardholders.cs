@@ -102,7 +102,7 @@ namespace AccessControlConfigurator.Controls
 
             {
 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(CardholderErrorHelper.GetMessage(ex));
 
             }
 
@@ -248,7 +248,7 @@ namespace AccessControlConfigurator.Controls
 
             {
 
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show(CardholderErrorHelper.GetMessage(ex, "Delete failed."));
 
             }
 

@@ -1,4 +1,4 @@
-﻿using AccessControlSystem;
+using AccessControlSystem;
 
 using AccessControlSystem.Models;
 
@@ -396,7 +396,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show("Error updating access level: " + ex.Message);
+                MessageBox.Show(AccessLevelErrorHelper.GetMessage(ex));
 
             }
 
@@ -405,4 +405,5 @@ namespace AccessControlConfigurator
     }
 
 }
+
 

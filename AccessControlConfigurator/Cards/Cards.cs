@@ -1,5 +1,6 @@
 ﻿using AccessControlSystem.Models.Cards;
 
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Services;
 
 using System;
@@ -201,7 +202,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(CardErrorHelper.GetMessage(ex));
 
             }
 
@@ -286,7 +287,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show("Delete failed: " + ex.Message);
+                MessageBox.Show(CardErrorHelper.GetMessage(ex, "Delete failed."));
 
             }
 
@@ -388,7 +389,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show("Sync failed\n" + ex.Message);
+                MessageBox.Show(CardErrorHelper.GetMessage(ex, "Sync failed."));
 
             }
 
@@ -521,7 +522,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(CardErrorHelper.GetMessage(ex));
 
             }
 

@@ -1,7 +1,6 @@
-﻿using AccessControlSystem.Forms;
-
+using AccessControlConfigurator.Helpers;
+using AccessControlSystem.Forms;
 using AccessControlSystem.Models;
-
 using AccessControlSystem.Services;
 
 using System;
@@ -120,7 +119,7 @@ namespace AccessControlConfigurator.Forms
 
             {
 
-                // ✅ SKIP FOR DISCOVERED CONTROLLERS
+                // ? SKIP FOR DISCOVERED CONTROLLERS
 
                 if (!_controller.IsEnabled)
 
@@ -160,7 +159,7 @@ namespace AccessControlConfigurator.Forms
 
             {
 
-                MessageBox.Show("Failed to load SIOs: " + ex.Message);
+                MessageBox.Show(SioErrorHelper.GetMessage(ex, "Failed to load SIOs."));
 
             }
 
@@ -285,7 +284,7 @@ namespace AccessControlConfigurator.Forms
 
             txtId.ReadOnly = true;
 
-            txtIP.ReadOnly = false;   // ✅ editable
+            txtIP.ReadOnly = false;   // ? editable
 
             txtName.ReadOnly = false;
 
@@ -307,7 +306,7 @@ namespace AccessControlConfigurator.Forms
 
                 {
 
-                    // ✅ Handle both bool and string safely
+                    // ? Handle both bool and string safely
 
                     bool isOnline = false;
 
@@ -417,7 +416,7 @@ namespace AccessControlConfigurator.Forms
 
                     {
 
-                        MessageBox.Show("Delete failed: " + ex.Message);
+                        MessageBox.Show(SioErrorHelper.GetMessage(ex));
 
                     }
 
@@ -517,7 +516,11 @@ namespace AccessControlConfigurator.Forms
 
                     {
 
-                        MessageBox.Show("Add failed:\n" + addResult.Error);
+                        MessageBox.Show(
+                            ControllerErrorHelper.GetMessage(addResult.Error),
+                            "Add failed",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
 
                         return;
 
@@ -525,7 +528,7 @@ namespace AccessControlConfigurator.Forms
 
                 }
 
-                else // EXISTING → UPDATE
+                else // EXISTING ? UPDATE
 
                 {
 
@@ -535,7 +538,11 @@ namespace AccessControlConfigurator.Forms
 
                     {
 
-                        MessageBox.Show("Update failed:\n" + updateResult.Error);
+                        MessageBox.Show(
+                            ControllerErrorHelper.GetMessage(updateResult.Error),
+                            "Update failed",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
 
                         return;
 
@@ -555,7 +562,7 @@ namespace AccessControlConfigurator.Forms
 
             {
 
-                MessageBox.Show("Save failed:\n" + ex.Message);
+                MessageBox.Show(ControllerErrorHelper.GetMessage(ex, "Save failed."));
 
             }
 
@@ -656,4 +663,5 @@ namespace AccessControlConfigurator.Forms
     }
 
 }
+
 

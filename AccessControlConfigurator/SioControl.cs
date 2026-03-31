@@ -1,4 +1,5 @@
-﻿using AccessControlConfigurator;
+using AccessControlConfigurator.Helpers;
+using AccessControlConfigurator;
 
 using AccessControlConfigurator.Forms;
 
@@ -260,9 +261,9 @@ namespace AccessControlSystem.Forms
                 if (HasDuplicateAddress(request.sios, out int duplicateAddress))
                 {
                     MessageBox.Show(
-                        $"⚠ Conflict Detected!\n\n" +
+                        $"? Conflict Detected!\n\n" +
                         $"Interface Panel Address {duplicateAddress} is selected in both RS-485 ports.\n\n" +
-                        $"👉 Only one port can use the same address.\n" +
+                        $"?? Only one port can use the same address.\n" +
                         $"Please uncheck it from one side and try again.",
                         "Validation Error",
                         MessageBoxButtons.OK,
@@ -296,7 +297,7 @@ namespace AccessControlSystem.Forms
 
             {
 
-                MessageBox.Show("Save failed:\n" + ex.Message);
+                MessageBox.Show(SioErrorHelper.GetMessage(ex));
 
             }
 
@@ -399,7 +400,7 @@ namespace AccessControlSystem.Forms
         {
             duplicateAddress = -1;
 
-            var addresses = new Dictionary<int, int>(); // address → port
+            var addresses = new Dictionary<int, int>(); // address ? port
 
             foreach (var item in list)
             {
@@ -604,7 +605,7 @@ namespace AccessControlSystem.Forms
 
             var saved = await _api.GetControllerSiosAsync(controllerId);
 
-            // ✅ ADD THIS BLOCK
+            // ? ADD THIS BLOCK
 
             bool isOnboard = false;
 
@@ -612,7 +613,7 @@ namespace AccessControlSystem.Forms
 
             {
 
-                // 👉 YOUR RULE:
+                // ?? YOUR RULE:
 
                 // SIO = 32 AND InterfacePanelAddress = 0
 
@@ -705,4 +706,5 @@ namespace AccessControlSystem.Forms
     }
 
 }
+
 

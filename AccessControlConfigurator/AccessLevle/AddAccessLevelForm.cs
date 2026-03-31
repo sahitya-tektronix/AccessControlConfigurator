@@ -1,4 +1,4 @@
-﻿using AccessControlSystem.Models;
+using AccessControlSystem.Models;
 
 using AccessControlSystem.Models.AccessLevelDto.AccessLevelDto;
 
@@ -140,7 +140,7 @@ namespace AccessControlConfigurator
 
             dgvDoorTimezones.Columns.Clear();
 
-            // ✅ Enable column fill so no blank space appears on the right
+            // ? Enable column fill so no blank space appears on the right
 
             dgvDoorTimezones.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
@@ -168,7 +168,7 @@ namespace AccessControlConfigurator
 
                 ReadOnly = true,
 
-                FillWeight = 50   // ✅ 50% of grid width
+                FillWeight = 50   // ? 50% of grid width
 
             };
 
@@ -182,7 +182,7 @@ namespace AccessControlConfigurator
 
                 DisplayStyle = DataGridViewComboBoxDisplayStyle.ComboBox,
 
-                FillWeight = 50   // ✅ 50% of grid width
+                FillWeight = 50   // ? 50% of grid width
 
             };
 
@@ -302,13 +302,13 @@ namespace AccessControlConfigurator
 
             lblDoors.Location = new Point(padding + 20, txtName.Bottom + verticalSpacing);
 
-            // ✅ Label width now also stretches full grid width
+            // ? Label width now also stretches full grid width
 
             lblDoors.Size = new Size(ClientSize.Width - (padding * 2) - 40, UIStyleHelper.StandardSizes.LabelHeight);
 
             int gridTop = lblDoors.Bottom + 5;
 
-            // ✅ Grid stretches full form width minus padding
+            // ? Grid stretches full form width minus padding
 
             int gridWidth = ClientSize.Width - (padding * 2) - 40;
 
@@ -426,7 +426,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show("Error creating access level: " + ex.Message);
+                MessageBox.Show(AccessLevelErrorHelper.GetMessage(ex));
 
             }
 
@@ -445,4 +445,5 @@ namespace AccessControlConfigurator
     }
 
 }
+
 

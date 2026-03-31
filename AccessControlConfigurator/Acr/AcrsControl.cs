@@ -1,4 +1,5 @@
-﻿using AccessControlConfigurator.Forms;
+using AccessControlConfigurator.Helpers;
+using AccessControlConfigurator.Forms;
 using AccessControlSystem.Models;
 using AccessControlSystem.Models.Acr;
 using AccessControlSystem.Services;
@@ -37,7 +38,9 @@ namespace AccessControlConfigurator
             _sioList = sioList;
             _selectedSio = selectedSio;
 
-            LoadFilters(); // ✅ MUST
+            SetAdvancedFiltersVisible(false);
+
+            LoadFilters(); // ? MUST
             ApplyButtonStyles();
 
             cmbControllerId.SelectedIndexChanged += (s, e) => ApplyFilters();
@@ -61,7 +64,7 @@ namespace AccessControlConfigurator
             topPanel.SizeChanged += (s, e) => AlignToolbar();
 
 
-            // ⌨️ Enter key search
+            // ?? Enter key search
             txtSearch.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
@@ -80,6 +83,16 @@ namespace AccessControlConfigurator
                 if (e.RowIndex >= 0)
                     dgvAcrs.Rows[e.RowIndex].Selected = true;
             };
+        }
+
+        private void SetAdvancedFiltersVisible(bool visible)
+        {
+            lblAcrName.Visible = visible;
+            cmbAcrName.Visible = visible;
+            lblSioName.Visible = visible;
+            cmbSioName.Visible = visible;
+            lblControllerName.Visible = visible;
+            cmbControllerName.Visible = visible;
         }
 
         private void ConfigureGrid()
@@ -126,9 +139,9 @@ namespace AccessControlConfigurator
 
                 PopulateGrid(_allData);
 
-                LoadFilters(); // ✅ fill dropdowns
+                LoadFilters(); // ? fill dropdowns
 
-                // ✅ default selection
+                // ? default selection
                 cmbControllerId.SelectedIndex = 0;
                 cmbSioNumber.SelectedIndex = 0;
                 cmbReader.SelectedIndex = 0;
@@ -153,7 +166,7 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show(AcrErrorHelper.GetMessage(ex));
             }
         }
 
@@ -265,18 +278,18 @@ namespace AccessControlConfigurator
         {
             try
             {
-                // ✅ Check selection
+                // ? Check selection
                 if (dgvAcrs.SelectedRows.Count == 0)
                 {
                     MessageBox.Show("Select ACR first");
                     return;
                 }
 
-                // ✅ Get ID from first column (SAFE & CORRECT)
+                // ? Get ID from first column (SAFE & CORRECT)
                 int acrId = Convert.ToInt32(
                     dgvAcrs.SelectedRows[0].Cells[0].Value);
 
-                // ✅ Find selected data
+                // ? Find selected data
                 var li = acrData.FirstOrDefault(x => x.id == acrId);
 
                 if (li == null)
@@ -285,7 +298,7 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                // ✅ Open edit form
+                // ? Open edit form
                 var form = new EditAcrForm(li);
 
                 if (form.ShowDialog() == DialogResult.OK)
@@ -309,14 +322,14 @@ namespace AccessControlConfigurator
                         rexNumber = form.AcrData.rexNumber
                     };
 
-                    // ✅ Update API
+                    // ? Update API
                     await _api.UpdateAcrAsync(
                         li.controllerID,
                         li.sioNumber,
                         li.id,
                         updatePayload);
 
-                    // ✅ Refresh grid
+                    // ? Refresh grid
                     await LoadAcrs();
 
                     MessageBox.Show("ACR updated successfully!");
@@ -337,7 +350,7 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show(AcrErrorHelper.GetMessage(ex));
             }
         
         }
@@ -477,13 +490,17 @@ namespace AccessControlConfigurator
             cmbControllerId.Location = new Point(lblSio.Left - cmbControllerId.Width - 16, filterTop);
             lblController.Location = new Point(cmbControllerId.Left - lblController.Width - 8, filterTop + 4);
 
+            bool showAdvancedFilters = cmbControllerName.Visible;
             int filterTop2 = filterTop + cmbReader.Height + 6;
-            cmbControllerName.Location = new Point(topPanel.ClientSize.Width - cmbControllerName.Width - rightPadding, filterTop2);
-            lblControllerName.Location = new Point(cmbControllerName.Left - lblControllerName.Width - 8, filterTop2 + 4);
-            cmbSioName.Location = new Point(lblControllerName.Left - cmbSioName.Width - 16, filterTop2);
-            lblSioName.Location = new Point(cmbSioName.Left - lblSioName.Width - 8, filterTop2 + 4);
-            cmbAcrName.Location = new Point(lblSioName.Left - cmbAcrName.Width - 16, filterTop2);
-            lblAcrName.Location = new Point(cmbAcrName.Left - lblAcrName.Width - 8, filterTop2 + 4);
+            if (showAdvancedFilters)
+            {
+                cmbControllerName.Location = new Point(topPanel.ClientSize.Width - cmbControllerName.Width - rightPadding, filterTop2);
+                lblControllerName.Location = new Point(cmbControllerName.Left - lblControllerName.Width - 8, filterTop2 + 4);
+                cmbSioName.Location = new Point(lblControllerName.Left - cmbSioName.Width - 16, filterTop2);
+                lblSioName.Location = new Point(cmbSioName.Left - lblSioName.Width - 8, filterTop2 + 4);
+                cmbAcrName.Location = new Point(lblSioName.Left - cmbAcrName.Width - 16, filterTop2);
+                lblAcrName.Location = new Point(cmbAcrName.Left - lblAcrName.Width - 8, filterTop2 + 4);
+            }
 
             bool wrapFilters = lblController.Left <= btnBack.Right + spacing;
             if (wrapFilters)
@@ -497,15 +514,20 @@ namespace AccessControlConfigurator
                 lblController.Location = new Point(cmbControllerId.Left - lblController.Width - 8, filterTop + 4);
 
                 filterTop2 = filterTop + cmbReader.Height + 6;
-                cmbControllerName.Location = new Point(topPanel.ClientSize.Width - cmbControllerName.Width - rightPadding, filterTop2);
-                lblControllerName.Location = new Point(cmbControllerName.Left - lblControllerName.Width - 8, filterTop2 + 4);
-                cmbSioName.Location = new Point(lblControllerName.Left - cmbSioName.Width - 16, filterTop2);
-                lblSioName.Location = new Point(cmbSioName.Left - lblSioName.Width - 8, filterTop2 + 4);
-                cmbAcrName.Location = new Point(lblSioName.Left - cmbAcrName.Width - 16, filterTop2);
-                lblAcrName.Location = new Point(cmbAcrName.Left - lblAcrName.Width - 8, filterTop2 + 4);
+                if (showAdvancedFilters)
+                {
+                    cmbControllerName.Location = new Point(topPanel.ClientSize.Width - cmbControllerName.Width - rightPadding, filterTop2);
+                    lblControllerName.Location = new Point(cmbControllerName.Left - lblControllerName.Width - 8, filterTop2 + 4);
+                    cmbSioName.Location = new Point(lblControllerName.Left - cmbSioName.Width - 16, filterTop2);
+                    lblSioName.Location = new Point(cmbSioName.Left - lblSioName.Width - 8, filterTop2 + 4);
+                    cmbAcrName.Location = new Point(lblSioName.Left - cmbAcrName.Width - 16, filterTop2);
+                    lblAcrName.Location = new Point(cmbAcrName.Left - lblAcrName.Width - 8, filterTop2 + 4);
+                }
             }
 
-            topPanel.Height = Math.Max(50, cmbControllerName.Bottom + 10);
+            topPanel.Height = showAdvancedFilters
+                ? Math.Max(50, cmbControllerName.Bottom + 10)
+                : Math.Max(50, cmbReader.Bottom + 10);
 
             int searchTop = topPanel.Bottom + 8;
             btnClearFilters.Location = new Point(Width - btnClearFilters.Width - 10, searchTop);
@@ -555,3 +577,4 @@ namespace AccessControlConfigurator
         }
     }
 }
+

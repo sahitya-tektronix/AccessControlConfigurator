@@ -1,4 +1,5 @@
 ﻿using AccessControlSystem.Models;
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Services;
 using System;
 using System.Text.RegularExpressions;
@@ -118,7 +119,7 @@ namespace AccessControlConfigurator.Forms
                 else
                 {
                     MessageBox.Show(
-                        GetUserFriendlyError(result.Error),
+                        ControllerErrorHelper.GetMessage(result.Error),
                         "Warning",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
@@ -134,19 +135,5 @@ namespace AccessControlConfigurator.Forms
             }
         }
 
-        // ✅ Clean Error Messages
-        private string GetUserFriendlyError(string error)
-        {
-            if (string.IsNullOrWhiteSpace(error))
-                return "Something went wrong. Please try again.";
-
-            if (error.Contains("controller_limit_exceeded"))
-                return "Only one controller is allowed.";
-
-            if (error.Contains("duplicate_mac_address"))
-                return "MAC Address already exists.";
-
-            return "Failed to add controller. Please try again.";
-        }
     }
 }

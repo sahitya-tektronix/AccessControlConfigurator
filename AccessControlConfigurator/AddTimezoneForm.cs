@@ -1,4 +1,5 @@
-﻿using AccessControlSystem.Models;
+using AccessControlConfigurator.Helpers;
+using AccessControlSystem.Models;
 using AccessControlSystem.Services;
 using System;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace AccessControlConfigurator
         {
             InitializeComponent();
 
-            // ❌ REMOVE time format defaults
+            // ? REMOVE time format defaults
             txtActTime.Text = "";
             txtDeactTime.Text = "";
 
@@ -29,7 +30,7 @@ namespace AccessControlConfigurator
         {
             try
             {
-                // ✅ Validate numeric fields
+                // ? Validate numeric fields
                 if (!TryGetInt(txtNumber.Text, "Number", out var number) ||
                     !TryGetInt(txtMode.Text, "Mode", out var mode) ||
                     !TryGetInt(txtIntervals.Text, "Intervals", out var intervals) ||
@@ -37,14 +38,14 @@ namespace AccessControlConfigurator
                     !TryGetInt(txtIStart.Text, "iStart", out var iStart) ||
                     !TryGetInt(txtIEnd.Text, "iEnd", out var iEnd) ||
 
-                    // ✅ Start / End Time as NUMBER
+                    // ? Start / End Time as NUMBER
                     !TryGetInt(txtActTime.Text, "Start Time", out var actTime) ||
                     !TryGetInt(txtDeactTime.Text, "End Time", out var deactTime))
                 {
                     return;
                 }
 
-                // ✅ Name validation
+                // ? Name validation
                 if (string.IsNullOrWhiteSpace(txtName.Text))
                 {
                     MessageBox.Show("Name is required");
@@ -52,11 +53,11 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                // ✅ Unique validation
+                // ? Unique validation
                 if (!await ValidateUniqueFieldsAsync(number, txtName.Text?.Trim(), null))
                     return;
 
-                // ✅ Logical validation
+                // ? Logical validation
                 if (deactTime <= actTime)
                 {
                     MessageBox.Show(
@@ -67,7 +68,7 @@ namespace AccessControlConfigurator
                     return;
                 }
 
-                // ✅ Create DTO
+                // ? Create DTO
                 var dto = new TimezoneCreateRequest
                 {
                     number = number,
@@ -90,7 +91,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(TimezoneErrorHelper.GetMessage(ex));
             }
         }
 
@@ -123,7 +124,7 @@ namespace AccessControlConfigurator
         // =========================
         private void ConfigureTextEntry()
         {
-            // ✅ All numeric fields
+            // ? All numeric fields
             foreach (var textBox in new[]
             {
                 txtNumber, txtMode, txtIntervals, txtIDays, txtIStart, txtIEnd,
@@ -136,7 +137,7 @@ namespace AccessControlConfigurator
 
         private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // ✅ Allow only numbers + backspace
+            // ? Allow only numbers + backspace
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
@@ -171,3 +172,4 @@ namespace AccessControlConfigurator
         }
     }
 }
+

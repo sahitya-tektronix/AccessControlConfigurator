@@ -138,12 +138,14 @@
             btnFind.Name = "btnFind";
             btnFind.Size = new Size(41, 24);
             btnFind.Text = "Find";
+            btnFind.Visible = false;
             // 
             // btnOpenDoor
             // 
             btnOpenDoor.Name = "btnOpenDoor";
             btnOpenDoor.Size = new Size(87, 24);
             btnOpenDoor.Text = "Open Door";
+            btnOpenDoor.Visible = false;
             // 
             // splitMain
             // 
