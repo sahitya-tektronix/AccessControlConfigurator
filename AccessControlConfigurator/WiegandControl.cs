@@ -204,7 +204,7 @@ namespace AccessControlConfigurator
             if (!TryEditWiegand(updateDto, item.FormatNumber, isEdit: true, existingFormats: _data, out var edited))
                 return;
 
-            var ok = await _apiService.UpdateWiegandFormatAsync(item.FormatNumber, edited);
+            var ok = await _apiService.UpdateWiegandFormatByFormatNumberAsync(item.FormatNumber, edited);
             if (!ok)
             {
                 MessageBox.Show("Failed to update Wiegand format");
@@ -232,7 +232,7 @@ namespace AccessControlConfigurator
             if (confirm != DialogResult.Yes)
                 return;
 
-            var ok = await _apiService.DeleteAsync(item.FormatNumber);
+            var ok = await _apiService.DeleteByFormatNumberAsync(item.FormatNumber);
             if (!ok)
             {
                 MessageBox.Show("Failed to delete Wiegand format");

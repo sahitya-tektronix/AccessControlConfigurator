@@ -68,6 +68,7 @@
             pnlPageContainer = new Panel();
             pnlMain = new Panel();
             statusBar = new StatusStrip();
+            statusBar.Visible = false;
             lblServer = new ToolStripStatusLabel();
             lblUser = new ToolStripStatusLabel();
             menuMain.SuspendLayout();
