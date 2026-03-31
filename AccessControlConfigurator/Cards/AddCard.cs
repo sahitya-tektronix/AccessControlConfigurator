@@ -1,5 +1,6 @@
 ﻿using AccessControlSystem.Models;
 using AccessControlSystem.Models.Cards;
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Services;
 using System;
 using System.Windows.Forms;
@@ -51,25 +52,11 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-
-                string msg = ex.Message;
-
-                // 🔥 Handle duplicate card properly
-                if (msg.Contains("duplicate_card_number") ||
-                    msg.Contains("already exists"))
-                {
-                    MessageBox.Show("Card number already exists!",
-                        "Duplicate Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    MessageBox.Show("Something went wrong",
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                }
+                MessageBox.Show(
+                    CardErrorHelper.GetMessage(ex),
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
         }
 

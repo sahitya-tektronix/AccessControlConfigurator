@@ -1,4 +1,5 @@
-﻿using AccessControlConfigurator.Forms;
+using AccessControlConfigurator.Helpers;
+using AccessControlConfigurator.Forms;
 
 using AccessControlSystem;
 
@@ -156,7 +157,7 @@ namespace AccessControlConfigurator
 
                 dgvAccessLevels.DataSource = gridData;
 
-                // 🔥 SAFE COLUMN SETTING
+                // ?? SAFE COLUMN SETTING
 
                 if (dgvAccessLevels.Columns.Contains("accessLevelId"))
                     dgvAccessLevels.Columns["accessLevelId"].Visible = false;
@@ -185,7 +186,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(AccessLevelErrorHelper.GetMessage(ex));
 
             }
 
@@ -316,7 +317,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(AccessLevelErrorHelper.GetMessage(ex));
 
             }
 
@@ -425,7 +426,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(AccessLevelErrorHelper.GetMessage(ex));
 
             }
 
@@ -580,4 +581,5 @@ namespace AccessControlConfigurator
     }
 
 }
+
 

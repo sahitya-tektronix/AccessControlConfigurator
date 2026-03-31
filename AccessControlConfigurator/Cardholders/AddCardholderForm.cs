@@ -1,4 +1,5 @@
 ﻿using AccessControlSystem.Models;
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Services;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(CardholderErrorHelper.GetMessage(ex));
             }
         }
 

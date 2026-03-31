@@ -1,5 +1,6 @@
 ﻿using AccessControlSystem;
 using AccessControlSystem.Models.Cards;
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Services;
 using System;
 using System.Collections.Generic;
@@ -138,7 +139,7 @@ namespace AccessControlConfigurator
                 }
                 else
                 {
-                    MessageBox.Show(GetUserFriendlyError(error), "Warning",
+                    MessageBox.Show(CardErrorHelper.GetMessage(error), "Warning",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
@@ -147,30 +148,6 @@ namespace AccessControlConfigurator
                 MessageBox.Show("Unexpected error occurred. Please try again.", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        // ✅ USER FRIENDLY ERROR HANDLER
-        private string GetUserFriendlyError(string error)
-        {
-            if (string.IsNullOrWhiteSpace(error))
-                return "Update failed. Please check your inputs.";
-
-            if (error.Contains("EndDateTime must be greater"))
-                return "End Date must be greater than Start Date";
-
-            if (error.Contains("invalid_card_time_range"))
-                return "Invalid date/time selection";
-
-            if (error.Contains("cardholder_not_found"))
-                return "Invalid Cardholder ID";
-
-            if (error.Contains("duplicate_card_number"))
-                return "Card number already exists";
-
-            if (error.Contains("card_not_found"))
-                return "Card not found";
-
-            return "Something went wrong. Please try again.";
         }
 
         // ✅ CANCEL BUTTON

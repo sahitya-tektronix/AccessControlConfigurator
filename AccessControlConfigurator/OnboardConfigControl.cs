@@ -1,4 +1,5 @@
-﻿using AccessControlConfigurator.Forms;
+using AccessControlConfigurator.Helpers;
+using AccessControlConfigurator.Forms;
 using AccessControlSystem.Models;
 using AccessControlSystem.Models.Acr;
 using AccessControlSystem.Services;
@@ -297,7 +298,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(AcrErrorHelper.GetMessage(ex));
             }
         }
 
@@ -323,3 +324,4 @@ namespace AccessControlConfigurator
         }
     }
 }
+

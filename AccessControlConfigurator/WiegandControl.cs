@@ -1,4 +1,5 @@
 ﻿using AccessControlSystem.Models;
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Services;
 using System;
 using System.Collections.Generic;
@@ -112,7 +113,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(WiegandErrorHelper.GetMessage(ex));
             }
         }
         private void btnSearch_Click(object sender, EventArgs e)
@@ -164,10 +165,13 @@ namespace AccessControlConfigurator
             if (!TryEditWiegand(dto, isEdit: false, existingFormats: _data, out var createDto))
                 return;
 
-            var ok = await _apiService.CreateWiegandFormatAsync(createDto);
-            if (!ok)
+            try
             {
-                MessageBox.Show("Failed to create Wiegand format");
+                await _apiService.CreateWiegandFormatAsync(createDto);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(WiegandErrorHelper.GetMessage(ex));
                 return;
             }
 
@@ -204,10 +208,13 @@ namespace AccessControlConfigurator
             if (!TryEditWiegand(updateDto, item.FormatNumber, isEdit: true, existingFormats: _data, out var edited))
                 return;
 
-            var ok = await _apiService.UpdateWiegandFormatByFormatNumberAsync(item.FormatNumber, edited);
-            if (!ok)
+            try
             {
-                MessageBox.Show("Failed to update Wiegand format");
+                await _apiService.UpdateWiegandFormatByFormatNumberAsync(item.FormatNumber, edited);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(WiegandErrorHelper.GetMessage(ex));
                 return;
             }
 
@@ -232,10 +239,13 @@ namespace AccessControlConfigurator
             if (confirm != DialogResult.Yes)
                 return;
 
-            var ok = await _apiService.DeleteByFormatNumberAsync(item.FormatNumber);
-            if (!ok)
+            try
             {
-                MessageBox.Show("Failed to delete Wiegand format");
+                await _apiService.DeleteByFormatNumberAsync(item.FormatNumber);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(WiegandErrorHelper.GetMessage(ex));
                 return;
             }
 

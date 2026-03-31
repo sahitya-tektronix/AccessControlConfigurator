@@ -278,52 +278,42 @@ namespace AccessControlSystem.Services
         }
         public async Task<List<SioModel>> GetSiosAsync(int controllerId)
         {
-            try
+            string url = $"api/controllers/{controllerId}/sios";
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
             {
-                string url = $"api/controllers/{controllerId}/sios";
+                string error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase})."
+                    : error);
+            }
 
-                var response = await _httpClient.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
 
-                if (!response.IsSuccessStatusCode)
+            return System.Text.Json.JsonSerializer.Deserialize<List<SioModel>>(
+                json,
+                new System.Text.Json.JsonSerializerOptions
                 {
-                    string error = await response.Content.ReadAsStringAsync();
-                    throw new Exception("Server error: " + error);
-                }
-
-                var json = await response.Content.ReadAsStringAsync();
-
-                return System.Text.Json.JsonSerializer.Deserialize<List<SioModel>>(
-                    json,
-                    new System.Text.Json.JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to load SIOs: " + ex.Message);
-            }
+                    PropertyNameCaseInsensitive = true
+                });
         }
         public async Task<bool> SaveSioBulkAsync(int controllerId, SioBulkConfigDto request)
         {
-            try
+            string url = $"api/controllers/{controllerId}/sios/bulk";
+
+            var response = await _httpClient.PostAsJsonAsync(url, request);
+
+            if (!response.IsSuccessStatusCode)
             {
-                string url = $"api/controllers/{controllerId}/sios/bulk";
-
-                var response = await _httpClient.PostAsJsonAsync(url, request);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    string error = await response.Content.ReadAsStringAsync();
-                    throw new Exception("Server error: " + error);
-                }
-
-                return true;
+                string error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase})."
+                    : error);
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to save SIO settings: " + ex.Message);
-            }
+
+            return true;
         }
         public async Task<List<SioItemDto>> GetControllerSiosAsync(int controllerId)
         {
@@ -352,8 +342,13 @@ namespace AccessControlSystem.Services
             var response = await _httpClient.DeleteAsync(
                 $"api/controllers/{controllerId}/sios/{sioId}");
 
-            response.EnsureSuccessStatusCode();
-
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase})."
+                    : error);
+            }
         }
         public async Task<(bool Success, string Error)> UpdateControllerAsync(int id, AddUpdateControllerRequestDto dto)
         {
@@ -428,21 +423,7 @@ namespace AccessControlSystem.Services
             if (string.IsNullOrWhiteSpace(content))
                 return "Delete failed. No message from server.";
 
-            try
-            {
-                // ✅ Parse ProblemDetails JSON
-                var obj = Newtonsoft.Json.Linq.JObject.Parse(content);
-
-                // Priority: detail → title → fallback
-                return obj["detail"]?.ToString()
-                    ?? obj["title"]?.ToString()
-                    ?? content;
-            }
-            catch
-            {
-                // fallback if not JSON
-                return content.Trim('"');
-            }
+            return content.Trim();
         }
 
         //public async Task<List<ControllerStatusDto>> GetControllersOnlineStatus()
@@ -467,7 +448,13 @@ namespace AccessControlSystem.Services
 
             var response = await _httpClient.PostAsJsonAsync(url, acr);
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase})."
+                    : error);
+            }
         }
 
         //put
@@ -490,21 +477,19 @@ namespace AccessControlSystem.Services
    
         public async Task<bool> DeleteAcrAsync(int controllerId, int sioNumber, int acrId)
         {
-            try
+            string url = $"api/controllers/{controllerId}/sios/{sioNumber}/acrs/{acrId}";
+
+            var response = await _httpClient.DeleteAsync(url);
+
+            if (!response.IsSuccessStatusCode)
             {
-                string url = $"api/controllers/{controllerId}/sios/{sioNumber}/acrs/{acrId}";
-
-                var response = await _httpClient.DeleteAsync(url);
-
-                if (!response.IsSuccessStatusCode)
-                    return false;
-
-                return true;
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase})."
+                    : error);
             }
-            catch
-            {
-                return false;
-            }
+
+            return true;
         }
         public async Task<List<AcrDto>> GetAcrs(int controllerId, int sioNumber)
         {
@@ -557,7 +542,13 @@ namespace AccessControlSystem.Services
                 "Api/Acrs/Search",
                 request);
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase})."
+                    : error);
+            }
 
             var result = await response.Content.ReadFromJsonAsync<AcrSearchResponse>();
 
@@ -603,7 +594,14 @@ namespace AccessControlSystem.Services
         }
         public async Task DeleteAccessLevel(int id)
         {
-            await _httpClient.DeleteAsync($"api/access-levels/{id}");
+            var response = await _httpClient.DeleteAsync($"api/access-levels/{id}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"API Error: {response.StatusCode}"
+                    : error);
+            }
         }
 
         public async Task SyncAccessLevels()
@@ -624,18 +622,37 @@ namespace AccessControlSystem.Services
         public async Task CreateTimezone(TimezoneCreateRequest dto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/timezones", dto);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"API Error: {response.StatusCode}"
+                    : error);
+            }
         }
 
         public async Task UpdateTimezone(int id, TimezoneUpdateRequest dto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/timezones/{id}", dto);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"API Error: {response.StatusCode}"
+                    : error);
+            }
         }
 
     public async Task DeleteTimezone(int id)
     {
-        await _httpClient.DeleteAsync($"api/timezones/{id}");
+        var response = await _httpClient.DeleteAsync($"api/timezones/{id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            throw new Exception(string.IsNullOrWhiteSpace(error)
+                ? $"API Error: {response.StatusCode}"
+                : error);
+        }
     }
 
     public async Task SyncTimezonesToHID()
@@ -735,7 +752,13 @@ namespace AccessControlSystem.Services
         {
             var response = await _httpClient.DeleteAsync($"api/cards/{cardNumber}");
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"API Error: {response.StatusCode}"
+                    : error);
+            }
 
             return response.IsSuccessStatusCode;
         }
@@ -838,7 +861,15 @@ namespace AccessControlSystem.Services
         public async Task<bool> CreateWiegandFormatAsync(CreateWiegandFormatRequest dto)
         {
             var res = await _httpClient.PostAsJsonAsync("api/wiegand-formats", dto);
-            return res.IsSuccessStatusCode;
+            if (!res.IsSuccessStatusCode)
+            {
+                var error = await res.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)res.StatusCode} ({res.ReasonPhrase})."
+                    : error);
+            }
+
+            return true;
         }
 
         // UPDATE BY FORMAT NUMBER
@@ -846,7 +877,15 @@ namespace AccessControlSystem.Services
         {
             var res = await _httpClient.PutAsJsonAsync(
                 $"api/wiegand-formats/UpdateByFormatNumber/{formatNumber}", dto);
-            return res.IsSuccessStatusCode;
+            if (!res.IsSuccessStatusCode)
+            {
+                var error = await res.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)res.StatusCode} ({res.ReasonPhrase})."
+                    : error);
+            }
+
+            return true;
         }
 
         // DELETE BY FORMAT NUMBER (if needed later)
@@ -854,7 +893,15 @@ namespace AccessControlSystem.Services
         {
             var res = await _httpClient.DeleteAsync(
                 $"api/wiegand-formats/DeleteByFormatNumber/{formatNumber}");
-            return res.IsSuccessStatusCode;
+            if (!res.IsSuccessStatusCode)
+            {
+                var error = await res.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"Response status code does not indicate success: {(int)res.StatusCode} ({res.ReasonPhrase})."
+                    : error);
+            }
+
+            return true;
         }
     }
 

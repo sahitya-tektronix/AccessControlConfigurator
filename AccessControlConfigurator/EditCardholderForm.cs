@@ -5,8 +5,8 @@ using System.Globalization;
 
 using System.Windows.Forms;
 
+using AccessControlConfigurator.Helpers;
 using AccessControlSystem.Models;
-
 using AccessControlSystem.Services;
 
 namespace AccessControlConfigurator
@@ -203,7 +203,7 @@ namespace AccessControlConfigurator
 
             {
 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(CardholderErrorHelper.GetMessage(ex));
 
             }
 

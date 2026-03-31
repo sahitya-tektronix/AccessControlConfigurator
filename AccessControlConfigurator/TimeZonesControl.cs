@@ -1,4 +1,5 @@
-﻿using AccessControlSystem.Models;
+using AccessControlConfigurator.Helpers;
+using AccessControlSystem.Models;
 using AccessControlSystem.Services;
 using System;
 using System.Collections.Generic;
@@ -87,7 +88,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(TimezoneErrorHelper.GetMessage(ex));
             }
         }
 
@@ -136,7 +137,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(TimezoneErrorHelper.GetMessage(ex));
             }
         }
 
@@ -169,7 +170,7 @@ namespace AccessControlConfigurator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(TimezoneErrorHelper.GetMessage(ex));
             }
         }
 
@@ -238,7 +239,7 @@ namespace AccessControlConfigurator
                     col.HeaderText = map[key];
                 }
 
-                // ❌ REMOVE unwanted duplicate columns
+                // ? REMOVE unwanted duplicate columns
                 if (string.Equals(key, "code", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(key, "encscptimezoneex", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(key, "timezoneid", StringComparison.OrdinalIgnoreCase))
@@ -349,7 +350,7 @@ namespace AccessControlConfigurator
             var column = dgvTimeZones.Columns[e.ColumnIndex];
             string key = column.DataPropertyName?.ToLower() ?? column.Name.ToLower();
 
-            // ✅ Show raw numbers (NO time format)
+            // ? Show raw numbers (NO time format)
             if ((key == "acttime" || key == "deacttime") && e.Value != null)
             {
                 e.Value = e.Value.ToString();
@@ -382,7 +383,7 @@ namespace AccessControlConfigurator
                     t.iEnd.ToString().Contains(searchText);
             }).ToList();
 
-            // ✅ No popup (professional UX)
+            // ? No popup (professional UX)
             dgvTimeZones.DataSource = null;
             dgvTimeZones.DataSource = filtered.ToList();
             FormatGridHeaders();
@@ -496,3 +497,4 @@ namespace AccessControlConfigurator
         }
     }
 }
+
