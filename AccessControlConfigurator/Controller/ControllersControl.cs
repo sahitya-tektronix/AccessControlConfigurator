@@ -68,61 +68,101 @@ namespace AccessControlConfigurator.Forms
 
         private void AlignSearchControls()
         {
-            int rightPadding = 20;
-            int spacing = 5;
+            if (topPanel == null || topPanel.IsDisposed)
+                return;
 
-            int leftGroupRight = new Control[] { btnDiscover, btnSync, btnSyncOnline, btnAdd, btnback, labelC }
+            int rightPadding = 20;
+            int leftPadding = 15;
+            int spacing = 6;
+            int rowSpacing = 8;
+
+            int minSearchWidth = 90;
+            int maxSearchWidth = 220;
+
+            // Left side controls maximum right edge
+            int leftGroupRight = new Control[] { btnAdd, btnDiscover, btnSync, btnSyncOnline, btnback, labelC }
+                .Where(c => c != null && !c.IsDisposed && c.Visible)
                 .Select(c => c.Right)
-                .DefaultIfEmpty(0)
+                .DefaultIfEmpty(leftPadding)
                 .Max();
 
-            int availableRight = topPanel.ClientSize.Width - rightPadding;
-            int fixedGroupWidth =
-                btnClearfillter.Width + spacing +
+            // Search row total width except textbox
+            int nonSearchWidth =
+                lblSearchRight.Width + spacing +
                 btnSearch.Width + spacing +
-                lblSearchRight.Width + spacing;
+                btnClearfillter.Width;
 
-            int maxSearchWidth = availableRight - leftGroupRight - fixedGroupWidth;
-            int minSearchWidth = 100;
-            int maxAllowedWidth = 260;
+            // Available width for textbox in same row
+            int availableWidthForSearch =
+                topPanel.ClientSize.Width - rightPadding - leftGroupRight - spacing - nonSearchWidth - spacing;
 
-            bool wrapSearch = maxSearchWidth < minSearchWidth;
-            int searchTop = wrapSearch ? (btnAdd.Bottom + 6) : txtSearch.Top;
+            bool moveToNextRow = availableWidthForSearch < minSearchWidth;
 
-            int searchWidth = Math.Max(minSearchWidth, Math.Min(maxSearchWidth, maxAllowedWidth));
+            int searchRowTop;
+            if (moveToNextRow)
+            {
+                searchRowTop = btnAdd.Bottom + rowSpacing;
+                availableWidthForSearch =
+                    topPanel.ClientSize.Width - leftPadding - rightPadding - nonSearchWidth - spacing;
+            }
+            else
+            {
+                searchRowTop = btnAdd.Top;
+            }
+
+            int searchWidth = Math.Max(minSearchWidth, Math.Min(availableWidthForSearch, maxSearchWidth));
+
+            // Right aligned placement
+            btnClearfillter.Left = topPanel.ClientSize.Width - rightPadding - btnClearfillter.Width;
+            btnSearch.Left = btnClearfillter.Left - spacing - btnSearch.Width;
             txtSearch.Width = searchWidth;
+            txtSearch.Left = btnSearch.Left - spacing - txtSearch.Width;
+            lblSearchRight.Left = txtSearch.Left - spacing - lblSearchRight.Width;
 
-            btnClearfillter.Left = availableRight - btnClearfillter.Width;
-            btnSearch.Left = btnClearfillter.Left - btnSearch.Width - spacing;
-            txtSearch.Left = btnSearch.Left - txtSearch.Width - spacing;
-            lblSearchRight.Left = txtSearch.Left - lblSearchRight.Width - spacing;
-
-            if (!wrapSearch)
+            // Safety: if still overlapping in first row, force second row
+            if (!moveToNextRow && lblSearchRight.Left <= leftGroupRight + spacing)
             {
-                int minSearchLeft = leftGroupRight + spacing;
-                if (lblSearchRight.Left < minSearchLeft)
-                {
-                    wrapSearch = true;
-                    searchTop = btnAdd.Bottom + 6;
+                moveToNextRow = true;
+                searchRowTop = btnAdd.Bottom + rowSpacing;
 
-                    btnClearfillter.Left = availableRight - btnClearfillter.Width;
-                    btnSearch.Left = btnClearfillter.Left - btnSearch.Width - spacing;
-                    txtSearch.Left = btnSearch.Left - txtSearch.Width - spacing;
-                    lblSearchRight.Left = txtSearch.Left - lblSearchRight.Width - spacing;
-                }
+                availableWidthForSearch =
+                    topPanel.ClientSize.Width - leftPadding - rightPadding - nonSearchWidth - spacing;
+
+                searchWidth = Math.Max(minSearchWidth, Math.Min(availableWidthForSearch, maxSearchWidth));
+
+                btnClearfillter.Left = topPanel.ClientSize.Width - rightPadding - btnClearfillter.Width;
+                btnSearch.Left = btnClearfillter.Left - spacing - btnSearch.Width;
+                txtSearch.Width = searchWidth;
+                txtSearch.Left = btnSearch.Left - spacing - txtSearch.Width;
+                lblSearchRight.Left = txtSearch.Left - spacing - lblSearchRight.Width;
             }
 
-            btnSearch.Top = searchTop;
-            btnClearfillter.Top = searchTop;
-            txtSearch.Top = searchTop + 2;
-            lblSearchRight.Top = searchTop + (txtSearch.Height / 2) - (lblSearchRight.Height / 2) + 2;
-
-            if (topPanel != null)
+            // Extra safety: never allow controls outside left side
+            if (lblSearchRight.Left < leftPadding)
             {
-                int minTopHeight = 70;
-                int wrappedHeight = searchTop + btnSearch.Height + 10;
-                topPanel.Height = wrapSearch ? Math.Max(minTopHeight, wrappedHeight) : minTopHeight;
+                int shiftRight = leftPadding - lblSearchRight.Left;
+                lblSearchRight.Left += shiftRight;
+                txtSearch.Left += shiftRight;
+                btnSearch.Left += shiftRight;
+                btnClearfillter.Left += shiftRight;
             }
+
+            // Vertical alignment
+            btnSearch.Top = searchRowTop;
+            btnClearfillter.Top = searchRowTop;
+            txtSearch.Top = searchRowTop + ((btnSearch.Height - txtSearch.Height) / 2);
+            lblSearchRight.Top = searchRowTop + ((btnSearch.Height - lblSearchRight.Height) / 2);
+
+            // Increase panel height when wrapped to second row
+            int normalHeight = Math.Max(btnAdd.Bottom + 10, 70);
+            int wrappedHeight = btnSearch.Bottom + 10;
+            topPanel.Height = moveToNextRow ? wrappedHeight : normalHeight;
+
+            // Keep search controls visible above other controls
+            lblSearchRight.BringToFront();
+            txtSearch.BringToFront();
+            btnSearch.BringToFront();
+            btnClearfillter.BringToFront();
         }
 
         private void FixHeaderStyle()

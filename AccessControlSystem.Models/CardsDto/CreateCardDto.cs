@@ -13,9 +13,9 @@ namespace AccessControlSystem.Models.Cards
 
         public int accessLevelId { get; set; }
 
-        public DateTime startDateTime { get; set; }
+        public DateTime? startDateTime { get; set; }
 
-        public DateTime endDateTime { get; set; }
+        public DateTime? endDateTime { get; set; }
 
         public int? assignCardholder { get; set; }
        // public ControllerSyncState SyncState { get; set; }

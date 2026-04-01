@@ -16,6 +16,8 @@
 
         private System.Windows.Forms.DateTimePicker dtStart;
         private System.Windows.Forms.DateTimePicker dtEnd;
+        private System.Windows.Forms.Button btnClearStart;
+        private System.Windows.Forms.Button btnClearEnd;
 
         private System.Windows.Forms.Button btnUpdate;
         private System.Windows.Forms.Button btnCancel;
@@ -32,6 +34,8 @@
             txtCardholder = new TextBox();
             dtStart = new DateTimePicker();
             dtEnd = new DateTimePicker();
+            btnClearStart = new Button();
+            btnClearEnd = new Button();
             btnUpdate = new Button();
             btnCancel = new Button();
             cbAccessLevel = new ComboBox();
@@ -104,15 +108,33 @@
             // 
             dtStart.Location = new Point(150, 148);
             dtStart.Name = "dtStart";
-            dtStart.Size = new Size(200, 27);
+            dtStart.Size = new Size(140, 27);
             dtStart.TabIndex = 8;
             // 
             // dtEnd
             // 
             dtEnd.Location = new Point(150, 198);
             dtEnd.Name = "dtEnd";
-            dtEnd.Size = new Size(200, 27);
+            dtEnd.Size = new Size(140, 27);
             dtEnd.TabIndex = 10;
+            // 
+            // btnClearStart
+            // 
+            btnClearStart.Location = new Point(300, 148);
+            btnClearStart.Name = "btnClearStart";
+            btnClearStart.Size = new Size(70, 27);
+            btnClearStart.TabIndex = 9;
+            btnClearStart.Text = "Clear";
+            btnClearStart.UseVisualStyleBackColor = true;
+            // 
+            // btnClearEnd
+            // 
+            btnClearEnd.Location = new Point(300, 198);
+            btnClearEnd.Name = "btnClearEnd";
+            btnClearEnd.Size = new Size(70, 27);
+            btnClearEnd.TabIndex = 11;
+            btnClearEnd.Text = "Clear";
+            btnClearEnd.UseVisualStyleBackColor = true;
             // 
             // btnUpdate
             // 
@@ -160,8 +182,10 @@
             Controls.Add(txtCardholder);
             Controls.Add(lblStart);
             Controls.Add(dtStart);
+            Controls.Add(btnClearStart);
             Controls.Add(lblEnd);
             Controls.Add(dtEnd);
+            Controls.Add(btnClearEnd);
             Controls.Add(btnUpdate);
             Controls.Add(btnCancel);
             Name = "EditCardForm";

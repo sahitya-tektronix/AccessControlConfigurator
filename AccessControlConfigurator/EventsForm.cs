@@ -19,6 +19,7 @@ namespace AccessControlConfigurator
         private bool _isWebSocketConnecting;
         private bool _isWebSocketConnected;
         private bool _isDisposed;
+        private string _timeDisplayMode = "Local";
 
         public EventsControl()
         {
@@ -43,6 +44,7 @@ namespace AccessControlConfigurator
             cmbEventTypeFilter.SelectedIndexChanged += (s, e) => ApplyFilters();
             cmbScpFilter.SelectedIndexChanged += (s, e) => ApplyFilters();
             btnClearFilters.Click += btnClearFilters_Click;
+            InitializeTimeDisplay();
             //dgvEvents.DataSource = _allData;
 
 
@@ -59,7 +61,31 @@ namespace AccessControlConfigurator
             _refreshTimer = new System.Windows.Forms.Timer();
             _refreshTimer.Interval = 250;
             _refreshTimer.Tick += RefreshTimer_Tick;
+            Resize += (s, e) => AdjustFilterLayout();
+            AdjustFilterLayout();
 
+        }
+
+        private void AdjustFilterLayout()
+        {
+            if (filterPanel == null || filterRightPanel == null)
+                return;
+
+            int padding = filterPanel.Padding.Top + filterPanel.Padding.Bottom;
+            int desired = filterRightPanel.PreferredSize.Height + padding + 10;
+            filterPanel.Height = Math.Max(44, desired);
+        }
+
+        private void InitializeTimeDisplay()
+        {
+            cmbTimeDisplay.Items.Clear();
+            cmbTimeDisplay.Items.AddRange(new object[] { "Local", "UTC" });
+            cmbTimeDisplay.SelectedIndex = 0;
+            cmbTimeDisplay.SelectedIndexChanged += (s, e) =>
+            {
+                _timeDisplayMode = cmbTimeDisplay.SelectedItem?.ToString() ?? "Local";
+                ApplyFilters();
+            };
         }
 
         private void InitializeEventGrid()
@@ -281,7 +307,7 @@ namespace AccessControlConfigurator
                 description = rawMessage;
             }
 
-            time = eventTime.ToString("HH:mm:ss.fff");
+            time = FormatEventTime(eventTime);
             var row = new EventRow
             {
                 Time = time,
@@ -325,7 +351,7 @@ namespace AccessControlConfigurator
                 return;
             }
 
-            dgvEvents.Rows.Add(time, eventType, scp, cardNumber, cardStatus, door, status, commandTag, description, timestamp);
+            dgvEvents.Rows.Add(FormatEventTime(timestamp), eventType, scp, cardNumber, cardStatus, door, status, commandTag, description, timestamp);
 
             // Sort latest first
             dgvEvents.Sort(dgvEvents.Columns["timestamp"], ListSortDirection.Descending);
@@ -358,7 +384,7 @@ namespace AccessControlConfigurator
             foreach (var row in data)
             {
                 dgvEvents.Rows.Add(
-                    row.Time,
+                    FormatEventTime(row.Timestamp),
                     row.EventType,
                     row.Scp,
                     row.CardNumber,
@@ -465,7 +491,7 @@ namespace AccessControlConfigurator
             {
                 filtered = filtered.Where(r =>
                     string.Join(" ",
-                        r.Time,
+                        FormatEventTime(r.Timestamp),
                         r.EventType,
                         r.Scp,
                         r.CardNumber,
@@ -615,6 +641,18 @@ namespace AccessControlConfigurator
             {
                 cmbScpFilter.SelectedIndex = 0;
             }
+        }
+
+        private string FormatEventTime(DateTime time)
+        {
+            if (time == DateTime.MinValue)
+                return string.Empty;
+
+            var dto = new DateTimeOffset(DateTime.SpecifyKind(time, DateTimeKind.Local));
+            if (string.Equals(_timeDisplayMode, "UTC", StringComparison.OrdinalIgnoreCase))
+                return dto.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+            return dto.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss");
         }
         private class EventRow
         {

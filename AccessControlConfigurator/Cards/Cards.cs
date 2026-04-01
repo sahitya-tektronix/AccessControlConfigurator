@@ -26,6 +26,9 @@ namespace AccessControlConfigurator
         private readonly ApiService _apiService = new ApiService();
 
         private List<CardDto> _cards = new List<CardDto>();
+        private string _timeDisplayMode = "UTC";
+        private ComboBox cmbTimeDisplay;
+        private Label lblTimeDisplay;
 
         public Cards()
 
@@ -33,9 +36,11 @@ namespace AccessControlConfigurator
 
             InitializeComponent();
             ApplyButtonStyles();
+            InitializeTimeDisplayDropdown();
 
             Load += Cards_Load;
             dgvCards.Enabled = true;
+            dgvCards.CellFormatting += dgvCards_CellFormatting;
 
             // Click handlers are wired in the designer.
 
@@ -92,6 +97,53 @@ namespace AccessControlConfigurator
             AlignHeaderControls();
             AlignFilterControls();
 
+        }
+
+        private void InitializeTimeDisplayDropdown()
+        {
+            lblTimeDisplay = new Label
+            {
+                AutoSize = true,
+                Text = "Time Display"
+            };
+
+            cmbTimeDisplay = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Width = 90
+            };
+            cmbTimeDisplay.Items.AddRange(new object[] { "UTC", "Local" });
+            cmbTimeDisplay.SelectedIndex = 0;
+            cmbTimeDisplay.SelectedIndexChanged += (s, e) =>
+            {
+                _timeDisplayMode = cmbTimeDisplay.SelectedItem?.ToString() ?? "UTC";
+                RefreshTimeColumns();
+            };
+
+            headerPanel.Controls.Add(lblTimeDisplay);
+            headerPanel.Controls.Add(cmbTimeDisplay);
+        }
+
+        private void dgvCards_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            var columnName = dgvCards.Columns[e.ColumnIndex].Name;
+            if (!string.Equals(columnName, "actTime", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(columnName, "dactTime", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(columnName, "actTimeLocal", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(columnName, "dactTimeLocal", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            if (e.Value == null)
+                return;
+
+            if (long.TryParse(e.Value.ToString(), out var value))
+            {
+                e.Value = FormatUnixTime(value);
+                e.FormattingApplied = true;
+            }
         }
 
         private async void Cards_Load(object sender, EventArgs e)
@@ -791,26 +843,31 @@ namespace AccessControlConfigurator
 
                 {
 
-                    row.Cells["actTimeLocal"].Value =
-
-                        DateTimeOffset.FromUnixTimeSeconds(card.actTime)
-
-                            .LocalDateTime
-
-                            .ToString("yyyy-MM-dd HH:mm:ss");
-
-                    row.Cells["dactTimeLocal"].Value =
-
-                        DateTimeOffset.FromUnixTimeSeconds(card.dactTime)
-
-                            .LocalDateTime
-
-                            .ToString("yyyy-MM-dd HH:mm:ss");
+                    row.Cells["actTimeLocal"].Value = FormatUnixTime(card.actTime);
+                    row.Cells["dactTimeLocal"].Value = FormatUnixTime(card.dactTime);
 
                 }
 
             }
 
+        }
+
+        private string FormatUnixTime(long unixSeconds)
+        {
+            if (unixSeconds <= 0)
+                return string.Empty;
+
+            var dto = DateTimeOffset.FromUnixTimeSeconds(unixSeconds);
+            if (string.Equals(_timeDisplayMode, "Local", StringComparison.OrdinalIgnoreCase))
+                return dto.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+
+            return dto.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        private void RefreshTimeColumns()
+        {
+            EnsureLocalTimeColumns();
+            dgvCards.Refresh();
         }
 
         private void ApplyColumnWidths()
@@ -862,8 +919,12 @@ namespace AccessControlConfigurator
             btnRefresh.Location = new Point(btnSync.Right + spacing, top);
             btnBack.Location = new Point(btnRefresh.Right + spacing, top);
 
+            int timeLabelWidth = lblTimeDisplay?.PreferredWidth ?? 80;
+            int timeComboWidth = cmbTimeDisplay?.Width ?? 90;
             int searchGroupWidth =
                 btnClearFilters.Width + 8 +
+                timeLabelWidth + 8 +
+                timeComboWidth + 8 +
                 btnSearch.Width + 8 +
                 txtSearch.Width + 8 +
                 lblSearchRight.Width;
@@ -872,7 +933,10 @@ namespace AccessControlConfigurator
             bool wrapSearch = (btnBack.Right + spacing + searchGroupWidth) > availableRight;
             int searchTop = wrapSearch ? (top + btnAdd.Height + 8) : top;
 
-            btnClearFilters.Location = new Point(availableRight - btnClearFilters.Width, searchTop);
+            int rightEdge = availableRight;
+            cmbTimeDisplay.Location = new Point(rightEdge - cmbTimeDisplay.Width, searchTop);
+            lblTimeDisplay.Location = new Point(cmbTimeDisplay.Left - 8 - lblTimeDisplay.PreferredWidth, searchTop + 5);
+            btnClearFilters.Location = new Point(lblTimeDisplay.Left - 8 - btnClearFilters.Width, searchTop);
             btnSearch.Location = new Point(btnClearFilters.Left - btnSearch.Width - 8, searchTop);
             txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, searchTop + 1);
             lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 5);
