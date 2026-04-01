@@ -733,6 +733,15 @@ namespace AccessControlSystem.Services
         {
             try
             {
+                var debugPayload = System.Text.Json.JsonSerializer.Serialize(
+                    card,
+                    new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                        WriteIndented = true
+                    });
+                System.Diagnostics.Debug.WriteLine($"UpdateCard payload for id={id}:\n{debugPayload}");
+
                 var response = await _httpClient.PutAsJsonAsync($"api/cards/{id}", card);
 
                 if (!response.IsSuccessStatusCode)

@@ -14,6 +14,7 @@ namespace AccessControlConfigurator
         private readonly ApiService _apiService = new ApiService();
         private int cardId;
         private List<AccessLevelDto> accessLevels = new List<AccessLevelDto>();
+        public bool ClearedDates { get; private set; }
 
         public EditCardForm(CardDto card)
         {
@@ -179,11 +180,11 @@ namespace AccessControlConfigurator
 
                     // ✅ Match Add Card: ISO-8601 with timezone when set; "0" when cleared
                     startDateTime = IsDateSelected(dtStart)
-                        ? BuildFixedOffsetDateTime(dtStart).ToString("yyyy-MM-ddTHH:mm:sszzz")
-                        : "0",
+                        ? BuildFixedOffsetDateTime(dtStart).ToString("yyyy-MM-ddTHH:mm:sszzz", System.Globalization.CultureInfo.InvariantCulture)
+                        : null,
                     endDateTime = IsDateSelected(dtEnd)
-                        ? BuildFixedOffsetDateTime(dtEnd).ToString("yyyy-MM-ddTHH:mm:sszzz")
-                        : "0",
+                        ? BuildFixedOffsetDateTime(dtEnd).ToString("yyyy-MM-ddTHH:mm:sszzz", System.Globalization.CultureInfo.InvariantCulture)
+                        : null,
 
                     // ✅ NULL if empty
                     assignCardholder = string.IsNullOrWhiteSpace(txtCardholder.Text)
@@ -195,6 +196,7 @@ namespace AccessControlConfigurator
 
                 if (success)
                 {
+                    ClearedDates = !hasStart && !hasEnd;
                     MessageBox.Show("Card updated successfully", "Success",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;

@@ -26,6 +26,7 @@ namespace AccessControlConfigurator
         private readonly ApiService _apiService = new ApiService();
 
         private List<CardDto> _cards = new List<CardDto>();
+        private readonly HashSet<long> _deletedCardNumbers = new HashSet<long>();
         private string _timeDisplayMode = "UTC";
         private ComboBox cmbTimeDisplay;
         private Label lblTimeDisplay;
@@ -231,9 +232,7 @@ namespace AccessControlConfigurator
                 // 🔥 STEP 2: filter deleted
 
                 _cards = data
-
-                    .Where(c => c.isDeleted == 0)
-
+                    .Where(c => c.isDeleted == 0 && !_deletedCardNumbers.Contains(c.cardNumber))
                     .ToList();
 
                 // 🔥 STEP 3: bind AFTER filtering
@@ -315,9 +314,8 @@ namespace AccessControlConfigurator
 
                     MessageBoxIcon.Information);
 
-                //  reload fresh data
-
-                await LoadCards();
+                _cards.Remove(card);
+                _deletedCardNumbers.Add(card.cardNumber);
 
                 //  VERY IMPORTANT (reset search)
 
@@ -328,6 +326,7 @@ namespace AccessControlConfigurator
                 dgvCards.DataSource = null;
 
                 dgvCards.DataSource = _cards;
+                ApplyGridSettings();
 
                 dgvCards.Refresh();
 
@@ -395,7 +394,21 @@ namespace AccessControlConfigurator
 
             {
 
-                await LoadCards();
+                if (form.ClearedDates)
+                {
+                    card.actTime = 0;
+                    card.dactTime = 0;
+                    card.startDateTime = null;
+                    card.endDateTime = null;
+
+                    dgvCards.DataSource = null;
+                    dgvCards.DataSource = _cards;
+                    ApplyGridSettings();
+                }
+                else
+                {
+                    await LoadCards();
+                }
 
             }
 
