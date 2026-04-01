@@ -23,11 +23,15 @@ namespace AccessControlConfigurator
         private DateTime? _startDate;
         private DateTime? _endDate;
         private List<string> _cardNumbers = new List<string>();
+        private string _timeDisplayMode = "UTC";
+        private ComboBox cmbTimeDisplay;
+        private Label lblTimeDisplay;
 
         public EventReportControl()
         {
             QuestPDF.Settings.License = LicenseType.Community;
             InitializeComponent();
+            InitializeTimeDisplayDropdown();
             InitializeGrid();
             InitializeColumnsChooser();
             InitializePagination();
@@ -76,6 +80,29 @@ namespace AccessControlConfigurator
             ApplyColumnVisibility();
         }
 
+        private void InitializeTimeDisplayDropdown()
+        {
+            lblTimeDisplay = new Label();
+            lblTimeDisplay.Text = "Time Display";
+            lblTimeDisplay.AutoSize = true;
+
+            cmbTimeDisplay = new ComboBox();
+            cmbTimeDisplay.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTimeDisplay.Items.AddRange(new object[] { "UTC", "Local" });
+            cmbTimeDisplay.SelectedIndex = 0;
+            cmbTimeDisplay.Width = 100;
+            cmbTimeDisplay.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
+            panelHeader.Controls.Add(lblTimeDisplay);
+            panelHeader.Controls.Add(cmbTimeDisplay);
+
+            cmbTimeDisplay.SelectedIndexChanged += (s, e) =>
+            {
+                _timeDisplayMode = cmbTimeDisplay.SelectedItem?.ToString() ?? "UTC";
+                BindGrid(_allRows);
+            };
+        }
+
         private async System.Threading.Tasks.Task LoadEventsAsync()
         {
             try
@@ -110,6 +137,7 @@ namespace AccessControlConfigurator
         private void BindGrid(IEnumerable<EventReportItem> data)
         {
             dgvEvents.Rows.Clear();
+
             foreach (var row in data)
             {
                 dgvEvents.Rows.Add(
@@ -127,7 +155,6 @@ namespace AccessControlConfigurator
 
             ApplyColumnVisibility();
         }
-
 
         private void ApplyColumnVisibility()
         {
@@ -156,6 +183,7 @@ namespace AccessControlConfigurator
         private List<EventReportItem> GetVisibleRows()
         {
             var rows = new List<EventReportItem>();
+
             foreach (DataGridViewRow row in dgvEvents.Rows)
             {
                 if (row.IsNewRow)
@@ -266,8 +294,11 @@ namespace AccessControlConfigurator
                             {
                                 foreach (var column in columns)
                                 {
-                                    header.Cell().Background(Colors.Grey.Lighten3)
-                                        .Padding(4).Text(column.HeaderText).SemiBold();
+                                    header.Cell()
+                                        .Background(Colors.Grey.Lighten3)
+                                        .Padding(4)
+                                        .Text(column.HeaderText)
+                                        .SemiBold();
                                 }
                             });
 
@@ -287,7 +318,7 @@ namespace AccessControlConfigurator
             MessageBox.Show("PDF exported successfully.");
         }
 
-        private static string GetValueByHeader(EventReportItem row, string header)
+        private string GetValueByHeader(EventReportItem row, string header)
         {
             return header switch
             {
@@ -310,14 +341,49 @@ namespace AccessControlConfigurator
             return int.TryParse(value, out var parsed) ? parsed : 0;
         }
 
-        private static string FormatDateTime(string value)
+        private string FormatDateTime(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 return string.Empty;
 
-            return DateTime.TryParse(value, out var parsed)
-                ? parsed.ToString("yyyy-MM-dd HH:mm:ss")
-                : value;
+            try
+            {
+                var normalized = value.Trim();
+
+                bool hasTimezone =
+                    normalized.EndsWith("Z", StringComparison.OrdinalIgnoreCase) ||
+                    HasExplicitOffset(normalized);
+
+                if (!hasTimezone)
+                {
+                    normalized = normalized.Replace(' ', 'T') + "Z";
+                }
+
+                if (!DateTimeOffset.TryParse(normalized, out var parsed))
+                    return value;
+
+                if (string.Equals(_timeDisplayMode, "Local", StringComparison.OrdinalIgnoreCase))
+                    return parsed.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+
+                return parsed.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            catch
+            {
+                return value;
+            }
+        }
+
+        private static bool HasExplicitOffset(string value)
+        {
+            int tIndex = value.IndexOf('T');
+            if (tIndex < 0)
+                tIndex = value.IndexOf(' ');
+
+            if (tIndex < 0 || tIndex >= value.Length - 1)
+                return false;
+
+            string timePart = value.Substring(tIndex + 1);
+            return timePart.Contains("+") || timePart.LastIndexOf('-') > 1;
         }
 
         private void InitializePagination()
@@ -325,6 +391,7 @@ namespace AccessControlConfigurator
             cmbPageSize.Items.Clear();
             cmbPageSize.Items.AddRange(new object[] { 50, 100, 200, 500 });
             cmbPageSize.SelectedItem = _pageSize;
+
             cmbPageSize.SelectedIndexChanged += async (s, e) =>
             {
                 if (cmbPageSize.SelectedItem is int size)
@@ -392,28 +459,66 @@ namespace AccessControlConfigurator
             int maxActionsWidth = panelPagination.Left - panelActions.Left - spacing;
             panelActions.Width = Math.Max(200, maxActionsWidth);
 
-            int filterTop = chkFilterByCreatedDate.Top;
-            int filterLeft = chkFilterByCreatedDate.Left;
+            int rowHeight = 28;
+            int baseFiltersTop = 120;
+            int filtersTop = baseFiltersTop;
             int rowRight = panelHeader.ClientSize.Width - rightPadding;
-            int iconWidth = btnSearchCardNumbers.Width;
-            int clearWidth = btnClearFilters.Width;
-            int cardInputWidth = 160;
 
-            int cardInputRight = rowRight;
-            btnClearFilters.Left = cardInputRight - clearWidth;
-            btnSearchCardNumbers.Left = btnClearFilters.Left - spacing - iconWidth;
-            txtCardNumbers.Width = cardInputWidth;
-            txtCardNumbers.Left = btnSearchCardNumbers.Left - spacing - txtCardNumbers.Width;
+            chkFilterByCreatedDate.Left = 14;
+            chkFilterByCreatedDate.Top = filtersTop + 3;
+
+            lblStartDate.Left = chkFilterByCreatedDate.Right + spacing;
+            lblStartDate.Top = filtersTop + 3;
+            dtStartDate.Left = lblStartDate.Right + spacing;
+            dtStartDate.Top = filtersTop;
+
+            lblEndDate.Left = dtStartDate.Right + spacing;
+            lblEndDate.Top = filtersTop + 3;
+            dtEndDate.Left = lblEndDate.Right + spacing;
+            dtEndDate.Top = filtersTop;
+
+            btnApplyFilters.Left = dtEndDate.Right + spacing;
+            btnApplyFilters.Top = filtersTop;
+
+            int timeBlockWidth = (lblTimeDisplay?.PreferredWidth ?? 80) + spacing + (cmbTimeDisplay?.Width ?? 100);
+            int rightGroupWidth =
+                (lblCardNumbers?.Width ?? 90) +
+                spacing +
+                160 +
+                spacing +
+                btnSearchCardNumbers.Width +
+                spacing +
+                btnClearFilters.Width +
+                spacing +
+                timeBlockWidth;
+
+            int rightGroupLeft = rowRight - rightGroupWidth;
+            int leftGroupRight = btnApplyFilters.Right;
+            bool wrapRightGroup = rightGroupLeft < leftGroupRight + spacing;
+
+            int rightGroupTop = wrapRightGroup ? filtersTop + rowHeight + 8 : filtersTop;
+
+            int timeRight = rowRight;
+            cmbTimeDisplay.Left = timeRight - cmbTimeDisplay.Width;
+            cmbTimeDisplay.Top = rightGroupTop;
+            lblTimeDisplay.Left = cmbTimeDisplay.Left - spacing - lblTimeDisplay.PreferredWidth;
+            lblTimeDisplay.Top = rightGroupTop + 4;
+
+            btnClearFilters.Left = lblTimeDisplay.Left - spacing - btnClearFilters.Width;
+            btnClearFilters.Top = rightGroupTop;
+            btnSearchCardNumbers.Left = btnClearFilters.Left - spacing - btnSearchCardNumbers.Width;
+            btnSearchCardNumbers.Top = rightGroupTop;
+
+            int cardInputRight = btnSearchCardNumbers.Left - spacing;
+            int cardInputWidth = Math.Max(120, cardInputRight - spacing - (lblCardNumbers?.Width ?? 90));
+            txtCardNumbers.Width = Math.Min(220, cardInputWidth);
+            txtCardNumbers.Left = cardInputRight - txtCardNumbers.Width;
+            txtCardNumbers.Top = rightGroupTop;
             lblCardNumbers.Left = txtCardNumbers.Left - spacing - lblCardNumbers.Width;
+            lblCardNumbers.Top = rightGroupTop + 4;
 
-            if (lblCardNumbers.Left < dtEndDate.Right + spacing)
-            {
-                txtCardNumbers.Width = Math.Max(120, rowRight - dtEndDate.Right - spacing * 4 - iconWidth - clearWidth - lblCardNumbers.Width);
-                txtCardNumbers.Left = rowRight - clearWidth - spacing - iconWidth - spacing - txtCardNumbers.Width;
-                btnSearchCardNumbers.Left = txtCardNumbers.Right + spacing;
-                btnClearFilters.Left = btnSearchCardNumbers.Right + spacing;
-                lblCardNumbers.Left = txtCardNumbers.Left - spacing - lblCardNumbers.Width;
-            }
+            int bottom = rightGroupTop + rowHeight + 8;
+            panelHeader.Height = Math.Max(156, bottom);
         }
 
         private async System.Threading.Tasks.Task ApplyDateFiltersAsync()
@@ -450,6 +555,7 @@ namespace AccessControlConfigurator
                 txtCardNumbers.Focus();
                 return;
             }
+
             _pageNumber = 1;
             await LoadEventsAsync();
         }
@@ -483,6 +589,5 @@ namespace AccessControlConfigurator
             _pageNumber = 1;
             await LoadEventsAsync();
         }
-
     }
 }

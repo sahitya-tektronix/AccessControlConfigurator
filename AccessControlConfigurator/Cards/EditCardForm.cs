@@ -19,14 +19,10 @@ namespace AccessControlConfigurator
         {
             InitializeComponent();
 
-            // ✅ DateTime Picker Settings
-            dtStart.Format = DateTimePickerFormat.Custom;
-            dtStart.CustomFormat = "dd MMM yyyy HH:mm";
-            dtStart.ShowUpDown = true;
-
-            dtEnd.Format = DateTimePickerFormat.Custom;
-            dtEnd.CustomFormat = "dd MMM yyyy HH:mm";
-            dtEnd.ShowUpDown = true;
+            ConfigureOptionalDate(dtStart);
+            ConfigureOptionalDate(dtEnd);
+            btnClearStart.Click += (s, e) => ClearOptionalDate(dtStart);
+            btnClearEnd.Click += (s, e) => ClearOptionalDate(dtEnd);
 
             cardId = card.id;
 
@@ -34,25 +30,84 @@ namespace AccessControlConfigurator
             txtCardNumber.Text = card.cardNumber.ToString();
 
             // ✅ Convert UNIX → Local DateTime
-            if (long.TryParse(card.startDateTime, out long startUnix))
-                dtStart.Value = DateTimeOffset.FromUnixTimeSeconds(startUnix).LocalDateTime;
-
-            if (long.TryParse(card.endDateTime, out long endUnix))
-                dtEnd.Value = DateTimeOffset.FromUnixTimeSeconds(endUnix).LocalDateTime;
-
-            // ✅ Ensure valid default
-            if (dtEnd.Value <= dtStart.Value)
-                dtEnd.Value = dtStart.Value.AddHours(1);
-
-            // ✅ Auto-fix End Date when Start changes
-            dtStart.ValueChanged += (s, e) =>
+            if (TryParseCardDate(card.startDateTime, card.actTime, out var startDate))
             {
-                if (dtEnd.Value <= dtStart.Value)
-                    dtEnd.Value = dtStart.Value.AddHours(1);
-            };
+                dtStart.Value = startDate.LocalDateTime;
+                dtStart.CustomFormat = "yyyy-MM-dd HH:mm";
+            }
+            else
+            {
+                ClearOptionalDate(dtStart);
+            }
+
+            if (TryParseCardDate(card.endDateTime, card.dactTime, out var endDate))
+            {
+                dtEnd.Value = endDate.LocalDateTime;
+                dtEnd.CustomFormat = "yyyy-MM-dd HH:mm";
+            }
+            else
+            {
+                ClearOptionalDate(dtEnd);
+            }
 
             // ✅ Load Access Levels
             _ = LoadAccessLevels(card.accessLevelId ?? 0);
+        }
+
+        private static void ConfigureOptionalDate(DateTimePicker picker)
+        {
+            picker.Format = DateTimePickerFormat.Custom;
+            picker.CustomFormat = " ";
+            picker.ShowCheckBox = false;
+            picker.ValueChanged += (s, e) => UpdateOptionalDateFormat((DateTimePicker)s);
+            picker.DropDown += (s, e) => UpdateOptionalDateFormat((DateTimePicker)s);
+            picker.KeyPress += (s, e) => e.Handled = true;
+        }
+
+        private static void UpdateOptionalDateFormat(DateTimePicker picker)
+        {
+            picker.CustomFormat = "yyyy-MM-dd HH:mm";
+        }
+
+        private static void ClearOptionalDate(DateTimePicker picker)
+        {
+            picker.CustomFormat = " ";
+        }
+
+        private static bool IsDateSelected(DateTimePicker picker)
+        {
+            return picker.CustomFormat != " ";
+        }
+
+        private static DateTimeOffset BuildFixedOffsetDateTime(DateTimePicker picker)
+        {
+            var dt = picker.Value;
+            var offset = TimeSpan.FromHours(4);
+            return new DateTimeOffset(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, offset);
+        }
+
+        private static bool TryParseCardDate(string value, int unixFallback, out DateTimeOffset parsed)
+        {
+            parsed = default;
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                if (long.TryParse(value, out var unix))
+                {
+                    parsed = DateTimeOffset.FromUnixTimeSeconds(unix);
+                    return true;
+                }
+
+                if (DateTimeOffset.TryParse(value, out parsed))
+                    return true;
+            }
+
+            if (unixFallback > 0)
+            {
+                parsed = DateTimeOffset.FromUnixTimeSeconds(unixFallback);
+                return true;
+            }
+
+            return false;
         }
 
         // ✅ Load Access Levels
@@ -95,21 +150,25 @@ namespace AccessControlConfigurator
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                if (dtStart.Value.Date < DateTime.Now.Date)
+                bool hasStart = IsDateSelected(dtStart);
+                bool hasEnd = IsDateSelected(dtEnd);
+                if (hasStart != hasEnd)
                 {
-                    MessageBox.Show("Start Date cannot be in the past",
-                        "Validation",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
+                    MessageBox.Show("Both Start Date and End Date are required.", "Validation",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // ✅ End Date Validation
-                if (dtEnd.Value <= dtStart.Value)
+                if (hasStart && hasEnd)
                 {
-                    MessageBox.Show("End Date must be greater than Start Date", "Validation",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    var startOffset = BuildFixedOffsetDateTime(dtStart);
+                    var endOffset = BuildFixedOffsetDateTime(dtEnd);
+                    if (endOffset <= startOffset)
+                    {
+                        MessageBox.Show("End Date must be greater than Start Date", "Validation",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                 }
 
                 // ✅ Prepare API request
@@ -118,9 +177,13 @@ namespace AccessControlConfigurator
                     cardNumber = cardNumber,
                     accessLevelId = Convert.ToInt32(cbAccessLevel.SelectedValue),
 
-                    // ✅ Correct Date Format
-                    startDateTime = dtStart.Value.ToString("yyyy-MM-ddTHH:mm:sszzz"),
-                    endDateTime = dtEnd.Value.ToString("yyyy-MM-ddTHH:mm:sszzz"),
+                    // ✅ Match Add Card: ISO-8601 with timezone when set; "0" when cleared
+                    startDateTime = IsDateSelected(dtStart)
+                        ? BuildFixedOffsetDateTime(dtStart).ToString("yyyy-MM-ddTHH:mm:sszzz")
+                        : "0",
+                    endDateTime = IsDateSelected(dtEnd)
+                        ? BuildFixedOffsetDateTime(dtEnd).ToString("yyyy-MM-ddTHH:mm:sszzz")
+                        : "0",
 
                     // ✅ NULL if empty
                     assignCardholder = string.IsNullOrWhiteSpace(txtCardholder.Text)

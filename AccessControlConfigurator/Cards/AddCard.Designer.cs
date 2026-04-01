@@ -22,6 +22,8 @@ namespace AccessControlConfigurator
 
         private DateTimePicker dtStart;
         private DateTimePicker dtEnd;
+        private Button btnClearStart;
+        private Button btnClearEnd;
 
         private Button btnSave;
 
@@ -45,6 +47,8 @@ namespace AccessControlConfigurator
             txtAccessLevel = new TextBox();
             dtStart = new DateTimePicker();
             dtEnd = new DateTimePicker();
+            btnClearStart = new Button();
+            btnClearEnd = new Button();
             btnSave = new Button();
             btnCancel = new Button();
             SuspendLayout();
@@ -122,7 +126,7 @@ namespace AccessControlConfigurator
             dtStart.Format = DateTimePickerFormat.Custom;
             dtStart.Location = new Point(180, 175);
             dtStart.Name = "dtStart";
-            dtStart.Size = new Size(250, 27);
+            dtStart.Size = new Size(190, 27);
             dtStart.TabIndex = 6;
             // 
             // dtEnd
@@ -131,8 +135,26 @@ namespace AccessControlConfigurator
             dtEnd.Format = DateTimePickerFormat.Custom;
             dtEnd.Location = new Point(180, 225);
             dtEnd.Name = "dtEnd";
-            dtEnd.Size = new Size(250, 27);
+            dtEnd.Size = new Size(190, 27);
             dtEnd.TabIndex = 8;
+            // 
+            // btnClearStart
+            // 
+            btnClearStart.Location = new Point(380, 175);
+            btnClearStart.Name = "btnClearStart";
+            btnClearStart.Size = new Size(70, 27);
+            btnClearStart.TabIndex = 7;
+            btnClearStart.Text = "Clear";
+            btnClearStart.UseVisualStyleBackColor = true;
+            // 
+            // btnClearEnd
+            // 
+            btnClearEnd.Location = new Point(380, 225);
+            btnClearEnd.Name = "btnClearEnd";
+            btnClearEnd.Size = new Size(70, 27);
+            btnClearEnd.TabIndex = 9;
+            btnClearEnd.Text = "Clear";
+            btnClearEnd.UseVisualStyleBackColor = true;
             // 
             // btnSave
             // 
@@ -169,8 +191,10 @@ namespace AccessControlConfigurator
             Controls.Add(txtAccessLevel);
             Controls.Add(lblStartDate);
             Controls.Add(dtStart);
+            Controls.Add(btnClearStart);
             Controls.Add(lblEndDate);
             Controls.Add(dtEnd);
+            Controls.Add(btnClearEnd);
             Controls.Add(lblCardholder);
             Controls.Add(btnSave);
             Name = "AddCardForm";

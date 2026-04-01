@@ -6,6 +6,7 @@
 
         private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Panel filterPanel;
+        private System.Windows.Forms.FlowLayoutPanel filterRightPanel;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.DataGridView dgvEvents;
 
@@ -13,7 +14,7 @@
         {
             FlowLayoutPanel actionPanel = new FlowLayoutPanel();
             FlowLayoutPanel searchPanel = new FlowLayoutPanel();
-            FlowLayoutPanel filterRightPanel = new FlowLayoutPanel();
+            filterRightPanel = new FlowLayoutPanel();
             topPanel = new Panel();
             filterPanel = new Panel();
             dgvEvents = new DataGridView();
@@ -33,6 +34,8 @@
             lblScpFilter = new Label();
             cmbScpFilter = new ComboBox();
             btnClearFilters = new Button();
+            lblTimeDisplay = new Label();
+            cmbTimeDisplay = new ComboBox();
 
             SuspendLayout();
 
@@ -113,13 +116,13 @@
             // =========================
             filterPanel.BackColor = Color.WhiteSmoke;
             filterPanel.Dock = DockStyle.Top;
-            filterPanel.Height = 44;
+            filterPanel.Height = 72;
 
-            filterRightPanel.Dock = DockStyle.Right;
+            filterRightPanel.Dock = DockStyle.Fill;
             filterRightPanel.FlowDirection = FlowDirection.RightToLeft;
-            filterRightPanel.WrapContents = false;
+            filterRightPanel.WrapContents = true;
             filterRightPanel.Padding = new Padding(0, 7, 12, 0);
-            filterRightPanel.AutoSize = true;
+            filterRightPanel.AutoSize = false;
             filterRightPanel.Margin = new Padding(0);
 
             // SCP ID
@@ -146,7 +149,17 @@
             btnClearFilters.Height = 28;
             btnClearFilters.Margin = new Padding(8, 0, 0, 0);
 
+            cmbTimeDisplay.Size = new Size(110, 28);
+            cmbTimeDisplay.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTimeDisplay.Margin = new Padding(8, 0, 0, 0);
+
+            lblTimeDisplay.Text = "Time Display";
+            lblTimeDisplay.AutoSize = true;
+            lblTimeDisplay.Padding = new Padding(10, 4, 5, 0);
+
             filterRightPanel.Controls.Add(btnClearFilters);
+            filterRightPanel.Controls.Add(cmbTimeDisplay);
+            filterRightPanel.Controls.Add(lblTimeDisplay);
             filterRightPanel.Controls.Add(cmbScpFilter);
             filterRightPanel.Controls.Add(lblScpFilter);
             filterRightPanel.Controls.Add(cmbEventTypeFilter);
@@ -192,6 +205,8 @@
         private Label lblScpFilter;
         private ComboBox cmbScpFilter;
         private Button btnClearFilters;
+        private Label lblTimeDisplay;
+        private ComboBox cmbTimeDisplay;
     }
 }
 
