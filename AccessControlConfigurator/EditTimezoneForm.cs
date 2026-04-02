@@ -111,9 +111,9 @@ namespace AccessControlConfigurator
                 if (!ValidateNumeric(txtNumber, "Number") ||
                     !ValidateNumeric(txtMode, "Mode") ||
                     !ValidateNumeric(txtIntervals, "Intervals") ||
-                    !ValidateNumeric(txtIDays, "Break Days") ||
-                    !ValidateNumeric(txtIStart, "Break Start") ||
-                    !ValidateNumeric(txtIEnd, "Break End") ||
+                    !ValidateNumeric(txtIDays, "iDays") ||
+                    !ValidateNumeric(txtIStart, "iStart") ||
+                    !ValidateNumeric(txtIEnd, "iEnd") ||
                     !ValidateNumeric(txtActTime, "Start Time") ||
                     !ValidateNumeric(txtDeactTime, "End Time"))
                 {

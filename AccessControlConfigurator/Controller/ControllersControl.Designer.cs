@@ -31,6 +31,7 @@ namespace AccessControlConfigurator.Forms
             colEnable = new DataGridViewCheckBoxColumn();
             colEdit = new DataGridViewButtonColumn();
             colDelete = new DataGridViewButtonColumn();
+            colReset = new DataGridViewButtonColumn();      
             topPanel = new Panel();
             btnClearfillter = new Button();
             btnAdd = new Button();
@@ -76,7 +77,7 @@ namespace AccessControlConfigurator.Forms
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dgvControllers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvControllers.ColumnHeadersHeight = 29;
-            dgvControllers.Columns.AddRange(new DataGridViewColumn[] { colId, colName, colMac, colIp, colOnline, colStatus, colLastSyncStart, colLastSyncEnd, colEnable, colEdit, colDelete });
+            dgvControllers.Columns.AddRange(new DataGridViewColumn[] { colId, colName, colMac, colIp, colOnline, colStatus, colLastSyncStart, colLastSyncEnd, colEnable, colEdit, colReset, colDelete });
             dgvControllers.Dock = DockStyle.Fill;
             dgvControllers.EnableHeadersVisualStyles = false;
             dgvControllers.GridColor = Color.White;
@@ -150,6 +151,14 @@ namespace AccessControlConfigurator.Forms
             colEdit.Name = "colEdit";
             colEdit.Text = "✏";
             colEdit.UseColumnTextForButtonValue = true;
+            // 
+            // colReset
+            // 
+            colReset.HeaderText = "";
+            colReset.MinimumWidth = 6;
+            colReset.Name = "colReset";
+            colReset.Text = "⟲";
+            colReset.UseColumnTextForButtonValue = true;
             // 
             // colDelete
             // 
@@ -327,6 +336,7 @@ namespace AccessControlConfigurator.Forms
         private DataGridViewTextBoxColumn colLastSyncEnd;
         private DataGridViewCheckBoxColumn colEnable;
         private DataGridViewButtonColumn colEdit;
+        private DataGridViewButtonColumn colReset;
         private DataGridViewButtonColumn colDelete;
         private Button btnAdd;
         private Button btnClearfillter;

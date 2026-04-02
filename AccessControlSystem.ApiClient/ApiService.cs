@@ -426,6 +426,21 @@ namespace AccessControlSystem.Services
             return content.Trim();
         }
 
+        public async Task<string> ResetController(int id)
+        {
+            // Swagger shows endpoint POST /api/hid/reset with JSON body { "scpId": id }
+            var response = await _httpClient.PostAsJsonAsync("api/hid/reset", new { scpId = id });
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+                return "success";
+
+            if (string.IsNullOrWhiteSpace(content))
+                return "Reset failed. No message from server.";
+
+            return content.Trim();
+        }
+
         //public async Task<List<ControllerStatusDto>> GetControllersOnlineStatus()
         //{
         //    var response = await _httpClient.GetAsync("api/hid/SyncControllersOnlineStatus");
