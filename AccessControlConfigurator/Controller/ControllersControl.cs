@@ -335,6 +335,60 @@ namespace AccessControlConfigurator.Forms
                 var editPage = new EditControllerControl(controller);
                 MainForm.Instance.LoadPage(editPage, false);
             }
+            else if (columnName == "colReset")
+            {
+                ControllerDto controller = null;
+
+                if (dgvControllers.Rows[e.RowIndex].Tag is ControllerDto c)
+                {
+                    controller = c;
+                }
+                else if (dgvControllers.Rows[e.RowIndex].Tag is DiscoverControllerDto d)
+                {
+                    controller = new ControllerDto
+                    {
+                        Id = d.Id,
+                        Name = d.Name,
+                        IpAddress = d.IpAddress,
+                        MacAddress = d.MacAddress,
+                        IsEnabled = d.IsEnabled,
+                        Status = d.Status
+                    };
+                }
+
+                if (controller == null)
+                    return;
+
+                var confirm = MessageBox.Show(
+                    "Are you sure you want to reset this controller?",
+                    "Confirm Reset",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (confirm != DialogResult.Yes)
+                    return;
+
+                try
+                {
+                    var result = await _api.ResetController(controller.Id);
+
+                    if (result == "success")
+                    {
+                        MessageBox.Show("Controller reset successfully.");
+                        await LoadControllersFromApi();
+                    }
+                    else
+                    {
+                        MessageBox.Show(ControllerErrorHelper.GetMessage(result));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ControllerErrorHelper.GetMessage(ex));
+                }
+
+                return;
+            }
             else if (columnName == "colDelete")
             {
                 var controller = dgvControllers.Rows[e.RowIndex].Tag as ControllerDto;
@@ -391,6 +445,7 @@ namespace AccessControlConfigurator.Forms
             colLastSyncEnd.FillWeight = 20;
             colEnable.FillWeight = 10;
             colEdit.FillWeight = 6;
+            colReset.FillWeight = 6;
             colDelete.FillWeight = 6;
         }
 

@@ -68,9 +68,9 @@ namespace AccessControlConfigurator
             ConfigureLabel(lblActTime, "Start Time", 24, 192);
             ConfigureLabel(lblDeactTime, "End Time", 24, 230);
             ConfigureLabel(lblIntervals, "Intervals", 24, 268);
-            ConfigureLabel(lblIDays, "Break Days", 24, 306);
-            ConfigureLabel(lblIStart, "Break Start", 24, 344);
-            ConfigureLabel(lblIEnd, "Break End", 24, 382);
+            ConfigureLabel(lblIDays, "iDays", 24, 306);
+            ConfigureLabel(lblIStart, "iStart", 24, 344);
+            ConfigureLabel(lblIEnd, "iEnd", 24, 382);
             ConfigureTextBox(txtName, 150, 74, 280);
             ConfigureTextBox(txtNumber, 150, 112, 280);
             ConfigureTextBox(txtMode, 150, 150, 280);
