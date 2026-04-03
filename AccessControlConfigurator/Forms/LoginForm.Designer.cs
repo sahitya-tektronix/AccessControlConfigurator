@@ -24,9 +24,11 @@
             txtUsername = new TextBox();
             lblPassword = new Label();
             txtPassword = new TextBox();
+            chkRememberMe = new CheckBox();
             lnkForgot = new LinkLabel();
             btnLogin = new Button();
             btnExit = new Button();
+            btnForgotPassword = new Button();
             pnlMain.SuspendLayout();
             pnlBanner.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picBanner).BeginInit();
@@ -73,7 +75,9 @@
             pnlLogin.Controls.Add(txtUsername);
             pnlLogin.Controls.Add(lblPassword);
             pnlLogin.Controls.Add(txtPassword);
+            pnlLogin.Controls.Add(chkRememberMe);
             pnlLogin.Controls.Add(lnkForgot);
+            pnlLogin.Controls.Add(btnForgotPassword);
             pnlLogin.Controls.Add(btnLogin);
             pnlLogin.Controls.Add(btnExit);
             pnlLogin.Dock = DockStyle.Right;
@@ -126,15 +130,36 @@
             txtPassword.TabIndex = 4;
             txtPassword.UseSystemPasswordChar = true;
             // 
+            // chkRememberMe
+            // 
+            chkRememberMe.AutoSize = true;
+            chkRememberMe.Location = new Point(40, 260);
+            chkRememberMe.Name = "chkRememberMe";
+            chkRememberMe.Size = new Size(115, 24);
+            chkRememberMe.TabIndex = 5;
+            chkRememberMe.Text = "Remember Me";
+            chkRememberMe.UseVisualStyleBackColor = true;
+            // 
             // lnkForgot
             // 
             lnkForgot.AutoSize = true;
-            lnkForgot.Location = new Point(195, 260);
+            lnkForgot.Location = new Point(220, 260);
             lnkForgot.Name = "lnkForgot";
-            lnkForgot.Size = new Size(125, 20);
+            lnkForgot.Size = new Size(100, 20);
             lnkForgot.TabIndex = 6;
             lnkForgot.TabStop = true;
             lnkForgot.Text = "Forgot Password?";
+            lnkForgot.LinkClicked += new LinkLabelLinkClickedEventHandler(lnkForgot_LinkClicked);
+            // 
+            // btnForgotPassword
+            // 
+            btnForgotPassword.Location = new Point(40, 290);
+            btnForgotPassword.Name = "btnForgotPassword";
+            btnForgotPassword.Size = new Size(280, 35);
+            btnForgotPassword.TabIndex = 7;
+            btnForgotPassword.Text = "Reset Password";
+            btnForgotPassword.UseVisualStyleBackColor = true;
+            btnForgotPassword.Click += new System.EventHandler(btnForgotPassword_Click);
             // 
             // btnLogin
             // 
@@ -145,7 +170,7 @@
             btnLogin.Location = new Point(40, 340);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(280, 42);
-            btnLogin.TabIndex = 7;
+            btnLogin.TabIndex = 8;
             btnLogin.Text = "Login";
             btnLogin.UseVisualStyleBackColor = false;
             btnLogin.Click += btnLogin_Click;
@@ -155,7 +180,7 @@
             btnExit.Location = new Point(40, 400);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(280, 35);
-            btnExit.TabIndex = 8;
+            btnExit.TabIndex = 9;
             btnExit.Text = "Exit";
             btnExit.Click += btnExit_Click;
             // 
@@ -188,8 +213,10 @@
         private Label lblPassword;
         private TextBox txtUsername;
         private TextBox txtPassword;
+        private CheckBox chkRememberMe;
         private Button btnLogin;
         private Button btnExit;
+        private Button btnForgotPassword;
         private LinkLabel lnkForgot;
     }
 }
