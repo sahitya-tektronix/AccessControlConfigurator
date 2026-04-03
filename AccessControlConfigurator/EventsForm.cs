@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -105,6 +106,8 @@ namespace AccessControlConfigurator
             // Hidden timestamp column for sorting
             dgvEvents.Columns.Add("timestamp", "Timestamp");
             dgvEvents.Columns["timestamp"].Visible = false;
+            dgvEvents.Columns["timestamp"].ValueType = typeof(DateTime);
+            dgvEvents.Columns["timestamp"].SortMode = DataGridViewColumnSortMode.Automatic;
 
             Helpers.GridStyleHelper.ApplyStandardStyle(dgvEvents);
             dgvEvents.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
@@ -195,6 +198,7 @@ namespace AccessControlConfigurator
             DateTime now = DateTime.Now;
             DateTime eventTime = now;
             string time = now.ToString("HH:mm:ss.fff");
+            string displayTime = string.Empty;
 
             string eventType = "";
             string scp = "";
@@ -219,8 +223,8 @@ namespace AccessControlConfigurator
                 scp = GetString(json, "scpId", "ScpId");
 
                 var timestampRaw = GetString(json, "timestamp", "Timestamp");
-                if (DateTime.TryParse(timestampRaw, out var parsedTimestamp))
-                    eventTime = parsedTimestamp;
+                if (TryParseEventTime(timestampRaw, out var parsedTimestampLocal))
+                    eventTime = parsedTimestampLocal;
 
                 // Nested data object
                 var data = json["data"] as JObject ?? json["Data"] as JObject;
@@ -273,8 +277,8 @@ namespace AccessControlConfigurator
                     }
 
                     var eventDateTimeRaw = GetString(data, "eventDateTime", "EventDateTime");
-                    if (DateTime.TryParse(eventDateTimeRaw, out var parsedEventTime))
-                        eventTime = parsedEventTime;
+                    if (TryParseEventTime(eventDateTimeRaw, out var parsedEventTimeLocal))
+                        eventTime = parsedEventTimeLocal;
 
                     if (string.IsNullOrWhiteSpace(description))
                     {
@@ -305,12 +309,15 @@ namespace AccessControlConfigurator
             {
                 // fallback (non-JSON messages)
                 description = rawMessage;
+                eventTime = DateTime.MinValue;
+                displayTime = FormatEventTime(now);
             }
 
-            time = FormatEventTime(eventTime);
+            if (string.IsNullOrWhiteSpace(displayTime))
+                displayTime = FormatEventTime(eventTime);
             var row = new EventRow
             {
-                Time = time,
+                Time = displayTime,
                 EventType = eventType,
                 Scp = scp,
                 CardNumber = cardNumber,
@@ -381,10 +388,10 @@ namespace AccessControlConfigurator
         {
             dgvEvents.Rows.Clear();
 
-            foreach (var row in data)
+            foreach (var row in data.OrderByDescending(r => r.Timestamp))
             {
                 dgvEvents.Rows.Add(
-                    FormatEventTime(row.Timestamp),
+                    string.IsNullOrWhiteSpace(row.Time) ? FormatEventTime(row.Timestamp) : row.Time,
                     row.EventType,
                     row.Scp,
                     row.CardNumber,
@@ -395,8 +402,6 @@ namespace AccessControlConfigurator
                     row.Description,
                     row.Timestamp);
             }
-
-            dgvEvents.Sort(dgvEvents.Columns["timestamp"], ListSortDirection.Descending);
 
             foreach (DataGridViewRow gridRow in dgvEvents.Rows)
             {
@@ -648,11 +653,44 @@ namespace AccessControlConfigurator
             if (time == DateTime.MinValue)
                 return string.Empty;
 
-            var dto = new DateTimeOffset(DateTime.SpecifyKind(time, DateTimeKind.Local));
+            DateTimeOffset dto;
+            if (time.Kind == DateTimeKind.Utc)
+            {
+                dto = new DateTimeOffset(time, TimeSpan.Zero);
+            }
+            else if (time.Kind == DateTimeKind.Unspecified)
+            {
+                dto = new DateTimeOffset(DateTime.SpecifyKind(time, DateTimeKind.Local));
+            }
+            else
+            {
+                dto = new DateTimeOffset(time);
+            }
+
             if (string.Equals(_timeDisplayMode, "UTC", StringComparison.OrdinalIgnoreCase))
                 return dto.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
 
             return dto.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        private static bool TryParseEventTime(string raw, out DateTime localTime)
+        {
+            localTime = DateTime.MinValue;
+
+            if (string.IsNullOrWhiteSpace(raw))
+                return false;
+
+            if (DateTimeOffset.TryParse(
+                    raw,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                    out var parsed))
+            {
+                localTime = parsed.ToLocalTime().DateTime;
+                return true;
+            }
+
+            return false;
         }
         private class EventRow
         {
