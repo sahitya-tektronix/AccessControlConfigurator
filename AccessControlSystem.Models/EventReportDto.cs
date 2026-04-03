@@ -110,11 +110,14 @@ namespace AccessControlSystem.Models
 
         public object tranTime { get; set; }
 
-        public int scpId { get; set; }
+        //public int scpId { get; set; }
 
-        public int controllerId { get; set; }
+        //public int controllerId { get; set; }
 
-        public int acrNumber { get; set; }
+        //public int acrNumber { get; set; }
+        public long? scpId { get; set; }      // was int?
+        public long? acrNumber { get; set; }  // was int?
+        public long? controllerId { get; set; }
 
         public string createdAt { get; set; }
 
