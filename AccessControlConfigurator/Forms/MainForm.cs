@@ -1,10 +1,14 @@
 ﻿using AccessControlConfigurator.Controls;
+using AccessControlConfigurator.DTOs;
 using AccessControlConfigurator.Forms;
+using AccessControlConfigurator.Helpers;
+using AccessControlConfigurator.Services;
 using AccessControlSystem.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Net.Http;
 using System.Windows.Forms;
 
 namespace AccessControlConfigurator
@@ -21,6 +25,11 @@ namespace AccessControlConfigurator
         private ControllerDto _selectedController;
         private BindingList<SioModel> _sioList;
         private SioModel _selectedSio;
+
+        private readonly UserService _userService = new UserService();
+        private readonly CardholderService _cardholderService = new CardholderService();
+
+        private DataGridView _userDataGridView;
 
         public static MainForm Instance { get; private set; }
 
@@ -40,6 +49,21 @@ namespace AccessControlConfigurator
             btnRefresh.Click += BtnRefresh_Click;
             btnFind.Click += BtnFind_Click;
             btnOpenDoor.Click += BtnOpenDoor_Click;
+            btnLogout.Click += BtnLogout_Click;
+
+            // Load users button for API
+            if (btnLoadUsers != null)
+                btnLoadUsers.Click += BtnLoadUsers_Click;
+
+            // DataGridView for binding user list
+            _userDataGridView = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                ReadOnly = true,
+                AutoGenerateColumns = true,
+                AllowUserToAddRows = false,
+                AllowUserToDeleteRows = false
+            };
 
             // Sidebar Tab Click Events
             tabEvents.Click += BtnEvents_Click;
@@ -63,8 +87,11 @@ namespace AccessControlConfigurator
             StyleButton(tabCardholders, "Cardholders");
             StyleButton(tabWiegand, "Wiegand");
             StyleButton(tabEventReport, "Event Report");
-            
+
+            UpdateStatusBar();
+            ApplyRoleBasedUI();
         }
+
 
         // ================= PAGE LOADER =================
 
@@ -245,6 +272,94 @@ namespace AccessControlConfigurator
         private void BtnOpenDoor_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Open door command will be implemented");
+        }
+
+        // ================= LOGOUT =================
+
+        private void BtnLogout_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to logout?",
+                "Confirm Logout",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                // 🔐 Clear session
+                TokenManager.Token = null;
+                UserSession.Clear();
+                TokenFileManager.DeleteToken();
+
+                // 🔁 Open Login Form
+                var loginForm = new LoginForm();
+                loginForm.Show();
+
+                // ❌ Close current form
+                this.Hide();   // better than Close()
+            }
+        }
+
+        // ================= UPDATE STATUS BAR =================
+
+        private void UpdateStatusBar()
+        {
+            if (lblUser != null)
+            {
+                lblUser.Text = $"User: {UserSession.Username} ({UserSession.Role})";
+            }
+        }
+
+        // ================= ROLE-BASED UI =================
+
+        private void ApplyRoleBasedUI()
+        {
+            if (!UserSession.IsAdmin)
+            {
+                tabAccessLevels.Visible = false;
+                btnOpenDoor.Visible = false;
+            }
+        }
+
+        // ================= LOAD USERS =================
+
+        private async void BtnLoadUsers_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btnLoadUsers.Enabled = false;
+                this.Cursor = Cursors.WaitCursor;
+
+                var users = await _userService.GetUsers();
+                if (users == null || users.Count == 0)
+                {
+                    MessageBox.Show("No users returned from API", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                _userDataGridView.DataSource = users;
+                pnlPageContainer.Controls.Clear();
+                pnlPageContainer.Controls.Add(_userDataGridView);
+            }
+            catch (TokenExpiredException ex)
+            {
+                MessageBox.Show(ex.Message, "Session Expired", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.Close();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(ex.Message, "Unauthorized", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show($"Unable to load users: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading users: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnLoadUsers.Enabled = true;
+                this.Cursor = Cursors.Default;
+            }
         }
 
         // ================= LOAD CONTROLLERS PAGE =================

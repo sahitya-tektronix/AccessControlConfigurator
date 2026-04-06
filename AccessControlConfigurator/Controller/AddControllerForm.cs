@@ -1,8 +1,11 @@
-﻿using AccessControlSystem.Models;
-using AccessControlConfigurator.Helpers;
+﻿using AccessControlSystem.ApiClient;
+using AccessControlSystem.Models;
 using AccessControlSystem.Services;
+using AccessControlConfigurator.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AccessControlConfigurator.Forms
@@ -18,25 +21,45 @@ namespace AccessControlConfigurator.Forms
             btnSave.Click += btnSave_Click;
             btnCancel.Click += (s, e) => this.Close();
 
-            // ✅ Optional: auto uppercase while typing
+            // Auto uppercase MAC while typing
             txtMac.TextChanged += (s, e) =>
             {
                 int pos = txtMac.SelectionStart;
                 txtMac.Text = txtMac.Text.ToUpper();
                 txtMac.SelectionStart = pos;
             };
+
+            // Load timezones when form opens
+            this.Load += async (s, e) => await LoadTimeZonesAsync();
         }
 
-        // ✅ MAC Validation Method
+        // Load timezones into ComboBox from API
+        private async Task LoadTimeZonesAsync()
+        {
+            try
+            {
+                var timezones = await _api.GetTimeZonesAsync();
+                cmbTimeZone.DataSource = timezones;
+                cmbTimeZone.DisplayMember = "Name";
+                cmbTimeZone.ValueMember = "Id";
+            }
+            catch
+            {
+                MessageBox.Show(
+                    "Failed to load time zones.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+        }
+
+        // MAC Validation
         private bool IsValidMac(string mac)
         {
-            return Regex.IsMatch(
-                mac,
-                @"^([A-Z0-9]{2}:){5}([A-Z0-9]{2})$"
-            );
+            return Regex.IsMatch(mac, @"^([A-Z0-9]{2}:){5}([A-Z0-9]{2})$");
         }
 
-        // ✅ IP Validation (Optional but recommended)
+        // IP Validation
         private bool IsValidIp(string ip)
         {
             return System.Net.IPAddress.TryParse(ip, out _);
@@ -46,7 +69,7 @@ namespace AccessControlConfigurator.Forms
         {
             try
             {
-                // ✅ Required Fields
+                // Required Fields
                 if (string.IsNullOrWhiteSpace(txtName.Text) ||
                     string.IsNullOrWhiteSpace(txtMac.Text) ||
                     string.IsNullOrWhiteSpace(txtIp.Text))
@@ -59,7 +82,7 @@ namespace AccessControlConfigurator.Forms
                     return;
                 }
 
-                // ✅ MAC Validation
+                // MAC Validation
                 if (!IsValidMac(txtMac.Text))
                 {
                     MessageBox.Show(
@@ -70,7 +93,7 @@ namespace AccessControlConfigurator.Forms
                     return;
                 }
 
-                // ✅ IP Validation
+                // IP Validation
                 if (!IsValidIp(txtIp.Text))
                 {
                     MessageBox.Show(
@@ -81,13 +104,18 @@ namespace AccessControlConfigurator.Forms
                     return;
                 }
 
+                // Get selected TimeZone Id
+                int selectedTimeZoneId = cmbTimeZone.SelectedValue != null
+                    ? (int)cmbTimeZone.SelectedValue
+                    : 1;
+
                 var dto = new AddUpdateControllerRequestDto
                 {
                     Name = txtName.Text.Trim(),
                     MacAddress = txtMac.Text.Trim(),
                     IpAddress = txtIp.Text.Trim(),
 
-                    TimeZoneId = 1,
+                    TimeZoneId = selectedTimeZoneId,
                     LocationId = 1,
 
                     InternalPort0IsEnabled = true,
@@ -134,6 +162,5 @@ namespace AccessControlConfigurator.Forms
                     MessageBoxIcon.Error);
             }
         }
-
     }
 }

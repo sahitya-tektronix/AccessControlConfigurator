@@ -14,6 +14,8 @@
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripButton btnFind;
         private System.Windows.Forms.ToolStripButton btnOpenDoor;
+        private System.Windows.Forms.ToolStripButton btnLoadUsers;
+        private System.Windows.Forms.ToolStripButton btnLogout;
 
         private System.Windows.Forms.SplitContainer splitMain;
 
@@ -68,6 +70,8 @@
             pnlPageContainer = new Panel();
             pnlMain = new Panel();
             statusBar = new StatusStrip();
+            btnLoadUsers = new ToolStripButton();
+            btnLogout = new ToolStripButton();
             statusBar.Visible = false;
             lblServer = new ToolStripStatusLabel();
             lblUser = new ToolStripStatusLabel();
@@ -115,7 +119,7 @@
             // 
             toolBar.BackColor = Color.FromArgb(220, 225, 235);
             toolBar.ImageScalingSize = new Size(20, 20);
-            toolBar.Items.AddRange(new ToolStripItem[] { btnBack, btnRefresh, btnFind, btnOpenDoor });
+            toolBar.Items.AddRange(new ToolStripItem[] { btnBack, btnRefresh, btnLoadUsers, btnFind, btnOpenDoor, btnLogout });
             toolBar.Location = new Point(0, 28);
             toolBar.Name = "toolBar";
             toolBar.Size = new Size(900, 27);
@@ -146,6 +150,21 @@
             btnOpenDoor.Size = new Size(87, 24);
             btnOpenDoor.Text = "Open Door";
             btnOpenDoor.Visible = false;
+            // 
+            // btnLoadUsers
+            // 
+            btnLoadUsers.Name = "btnLoadUsers";
+            btnLoadUsers.Size = new Size(80, 24);
+            btnLoadUsers.Text = "Load Users";
+            btnLoadUsers.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            // 
+            // btnLogout
+            // 
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(60, 24);
+            btnLogout.Text = "Logout";
+            btnLogout.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            btnLogout.Alignment = ToolStripItemAlignment.Right;
             // 
             // splitMain
             // 

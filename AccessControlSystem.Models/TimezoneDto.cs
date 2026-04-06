@@ -43,5 +43,11 @@ namespace AccessControlSystem.Models
         public int id { get; set; }
     }
 
-    
+    public class TimeZoneDropdownDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+    }
+
+
 }

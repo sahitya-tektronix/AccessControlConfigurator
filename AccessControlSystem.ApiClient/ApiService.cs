@@ -28,7 +28,7 @@ namespace AccessControlSystem.Services
 {
     public class ApiService
     {
-        
+
         //private readonly HttpClient _http;
         // private WebSocketService _ws;
         public event Action<EventDto> OnLiveEvent;
@@ -36,32 +36,32 @@ namespace AccessControlSystem.Services
         private readonly HttpClient _httpClient;
         private readonly HttpClient _client = new HttpClient();
 
-       // private string _baseUrl = "https://teksmartsolutions.com/TekHIDApi/";
-        //private string _baseUrl = "https://teksmartsolutions.com/TekHIDApi/";
-        private string _baseUrl = "https://teksmartsolutions.com/TekHIDAPI/";
-
         private string _token = "";
         private int _selectedControllerId = 0;
         private object response;
-        private readonly string BaseUrl = "http://localhost:7010/";
+
+        // ====== API CONFIGURATION ======
+        // For production: use the live server URL
+        // For local development: use http://localhost:5000/ (ensure backend API is running on this port)
+        private const string PRODUCTION_URL = "https://teksmartsolutions.com/TekHIDAPI/";
+        private const string LOCAL_URL = "http://localhost:5000/";
 
 
         public ApiService()
         {
-
-
             //_http = new HttpClient();
             _httpClient = new HttpClient();
 
-    _httpClient.BaseAddress = new Uri("https://teksmartsolutions.com/TekHIDApi/");
+            // Set BaseAddress to production URL
+            // To use local development, change to LOCAL_URL
+            _httpClient.BaseAddress = new Uri(PRODUCTION_URL);
 
-    _httpClient.Timeout = TimeSpan.FromSeconds(30);
+            _httpClient.Timeout = TimeSpan.FromSeconds(30);
 
-    _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
 
-    _httpClient.DefaultRequestHeaders.Accept.Add(
-        new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            //_http.BaseAddress = new Uri("https://localhost:5001/api/");
+            _httpClient.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task<bool> LoginAsync(string username, string password)
@@ -117,9 +117,9 @@ namespace AccessControlSystem.Services
         }
         public class LoginResponse
         {
-        private int _selectedControllerId;
+            private int _selectedControllerId;
 
-        public string token { get; set; }
+            public string token { get; set; }
         }
 
         public async Task<List<ControllerDto>> GetControllersAsync()
@@ -357,6 +357,24 @@ namespace AccessControlSystem.Services
 
             return (response.IsSuccessStatusCode, text);
         }
+
+        public async Task<List<ControllerTimeZoneDto>> GetTimeZonesAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("api/controller-timezones");
+
+                if (!response.IsSuccessStatusCode)
+                    return new List<ControllerTimeZoneDto>();
+
+                return await response.Content.ReadFromJsonAsync<List<ControllerTimeZoneDto>>();
+            }
+            catch
+            {
+                return new List<ControllerTimeZoneDto>();
+            }
+        }
+
         public async Task<List<DiscoverControllerDto>> DiscoverControllers()
         {
             string url = "api/hid/GetAllDiscoverdControllers";
@@ -489,7 +507,7 @@ namespace AccessControlSystem.Services
                 throw new Exception(error);
             }
         }
-   
+
         public async Task<bool> DeleteAcrAsync(int controllerId, int sioNumber, int acrId)
         {
             string url = $"api/controllers/{controllerId}/sios/{sioNumber}/acrs/{acrId}";
@@ -631,7 +649,7 @@ namespace AccessControlSystem.Services
 
             return response ?? new List<TimezoneDto>();
         }
-        
+
 
 
         public async Task CreateTimezone(TimezoneCreateRequest dto)
@@ -658,22 +676,22 @@ namespace AccessControlSystem.Services
             }
         }
 
-    public async Task DeleteTimezone(int id)
-    {
-        var response = await _httpClient.DeleteAsync($"api/timezones/{id}");
-        if (!response.IsSuccessStatusCode)
+        public async Task DeleteTimezone(int id)
         {
-            var error = await response.Content.ReadAsStringAsync();
-            throw new Exception(string.IsNullOrWhiteSpace(error)
-                ? $"API Error: {response.StatusCode}"
-                : error);
+            var response = await _httpClient.DeleteAsync($"api/timezones/{id}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(string.IsNullOrWhiteSpace(error)
+                    ? $"API Error: {response.StatusCode}"
+                    : error);
+            }
         }
-    }
 
-    public async Task SyncTimezonesToHID()
-    {
-        await _httpClient.PostAsync("api/timezones/SyncTimezonesToHID", null);
-    }
+        public async Task SyncTimezonesToHID()
+        {
+            await _httpClient.PostAsync("api/timezones/SyncTimezonesToHID", null);
+        }
 
         public async Task ApplyHoliday(HolidayApplyDto dto)
         {
@@ -832,7 +850,7 @@ namespace AccessControlSystem.Services
         }
         public async Task<bool> UpdateCardholder(int userId, UpdateCardholderRequest dto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/cardholders/{userId}/UpdateWithCard",  dto);
+            var response = await _httpClient.PutAsJsonAsync($"api/cardholders/{userId}/UpdateWithCard", dto);
 
             var error = await response.Content.ReadAsStringAsync();
 
@@ -866,10 +884,10 @@ namespace AccessControlSystem.Services
 
             return true;
         }
-    
 
-     // GET ALL
-    public async Task<List<WiegandDto>> GetAllAsync()
+
+        // GET ALL
+        public async Task<List<WiegandDto>> GetAllAsync()
         {
             return await _httpClient.GetFromJsonAsync<List<WiegandDto>>("api/wiegand-formats?includeDeleted=false");
         }
@@ -927,11 +945,21 @@ namespace AccessControlSystem.Services
 
             return true;
         }
-    }
 
+        //public async Task<List<TimeZoneDropdownDto>> GetTimeZonesAsync()
+        //{
+        //    // Calls GET /api/controller-timezones  (matches your Swagger screenshot)
+        //    var response = await _httpClient.GetAsync("api/controller-timezones");
+        //    response.EnsureSuccessStatusCode();
+        //    return await response.Content.ReadFromJsonAsync<List<TimeZoneDropdownDto>>();
+        //}
+
+
+    }
 }
 
-    
+
+
 
 
 

@@ -6,6 +6,7 @@ namespace AccessControlSystem.Models
     public class ControllerDto
     {
         public readonly object scpId;
+        public int timeZoneId;
 
         public int Id { get; set; }
 
@@ -29,5 +30,7 @@ namespace AccessControlSystem.Models
         public string Type { get; set; } = "";
 
         public bool IsRegistered { get; set; }
+        public int TimeZoneId { get; set; }
+        //public string TimeZoneId { get; set; } = string.Empty;
     }
 }
