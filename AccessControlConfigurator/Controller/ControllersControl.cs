@@ -79,20 +79,17 @@ namespace AccessControlConfigurator.Forms
             int minSearchWidth = 90;
             int maxSearchWidth = 220;
 
-            // Left side controls maximum right edge
             int leftGroupRight = new Control[] { btnAdd, btnDiscover, btnSync, btnSyncOnline, btnback, labelC }
                 .Where(c => c != null && !c.IsDisposed && c.Visible)
                 .Select(c => c.Right)
                 .DefaultIfEmpty(leftPadding)
                 .Max();
 
-            // Search row total width except textbox
             int nonSearchWidth =
                 lblSearchRight.Width + spacing +
                 btnSearch.Width + spacing +
                 btnClearfillter.Width;
 
-            // Available width for textbox in same row
             int availableWidthForSearch =
                 topPanel.ClientSize.Width - rightPadding - leftGroupRight - spacing - nonSearchWidth - spacing;
 
@@ -112,14 +109,12 @@ namespace AccessControlConfigurator.Forms
 
             int searchWidth = Math.Max(minSearchWidth, Math.Min(availableWidthForSearch, maxSearchWidth));
 
-            // Right aligned placement
             btnClearfillter.Left = topPanel.ClientSize.Width - rightPadding - btnClearfillter.Width;
             btnSearch.Left = btnClearfillter.Left - spacing - btnSearch.Width;
             txtSearch.Width = searchWidth;
             txtSearch.Left = btnSearch.Left - spacing - txtSearch.Width;
             lblSearchRight.Left = txtSearch.Left - spacing - lblSearchRight.Width;
 
-            // Safety: if still overlapping in first row, force second row
             if (!moveToNextRow && lblSearchRight.Left <= leftGroupRight + spacing)
             {
                 moveToNextRow = true;
@@ -137,7 +132,6 @@ namespace AccessControlConfigurator.Forms
                 lblSearchRight.Left = txtSearch.Left - spacing - lblSearchRight.Width;
             }
 
-            // Extra safety: never allow controls outside left side
             if (lblSearchRight.Left < leftPadding)
             {
                 int shiftRight = leftPadding - lblSearchRight.Left;
@@ -147,18 +141,15 @@ namespace AccessControlConfigurator.Forms
                 btnClearfillter.Left += shiftRight;
             }
 
-            // Vertical alignment
             btnSearch.Top = searchRowTop;
             btnClearfillter.Top = searchRowTop;
             txtSearch.Top = searchRowTop + ((btnSearch.Height - txtSearch.Height) / 2);
             lblSearchRight.Top = searchRowTop + ((btnSearch.Height - lblSearchRight.Height) / 2);
 
-            // Increase panel height when wrapped to second row
             int normalHeight = Math.Max(btnAdd.Bottom + 10, 70);
             int wrappedHeight = btnSearch.Bottom + 10;
             topPanel.Height = moveToNextRow ? wrappedHeight : normalHeight;
 
-            // Keep search controls visible above other controls
             lblSearchRight.BringToFront();
             txtSearch.BringToFront();
             btnSearch.BringToFront();
@@ -189,8 +180,15 @@ namespace AccessControlConfigurator.Forms
             try
             {
                 var controllers = await _api.GetControllersAsync();
+
+                if (controllers == null || !controllers.Any())
+                {
+                    PopulateControllersGrid(new List<ControllerDto>());
+                    return;
+                }
+
                 controllerList = controllers.ToList();
-                PopulateControllersGrid(controllers);
+                PopulateControllersGrid(controllerList);
             }
             catch (Exception ex)
             {
@@ -200,9 +198,14 @@ namespace AccessControlConfigurator.Forms
 
         private void PopulateControllersGrid(IEnumerable<ControllerDto> controllers)
         {
+            if (dgvControllers.InvokeRequired)
+            {
+                dgvControllers.Invoke(() => PopulateControllersGrid(controllers));
+                return;
+            }
+
             dgvControllers.SuspendLayout();
             dgvControllers.Rows.Clear();
-            dgvControllers.Refresh();
 
             foreach (var c in controllers)
             {
@@ -237,10 +240,19 @@ namespace AccessControlConfigurator.Forms
                     row.Cells[4].Style.ForeColor = Color.DarkOrange;
                 }
             }
+
+            dgvControllers.ResumeLayout();
         }
 
         private void PopulateDiscoverControllersGrid(IEnumerable<DiscoverControllerDto> controllers)
         {
+            if (dgvControllers.InvokeRequired)
+            {
+                dgvControllers.Invoke(() => PopulateDiscoverControllersGrid(controllers));
+                return;
+            }
+
+            dgvControllers.SuspendLayout();
             dgvControllers.Rows.Clear();
 
             foreach (var c in controllers)
@@ -260,6 +272,8 @@ namespace AccessControlConfigurator.Forms
 
                 dgvControllers.Rows[rowIndex].Tag = c;
             }
+
+            dgvControllers.ResumeLayout();
         }
 
         private async void BDiscover_Click(object sender, EventArgs e)
