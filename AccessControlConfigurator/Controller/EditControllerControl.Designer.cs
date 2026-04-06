@@ -7,7 +7,6 @@
         private System.Windows.Forms.Panel panelHeader;
         private System.Windows.Forms.Label lblHeader;
 
-
         private System.Windows.Forms.Panel panelBody;
         private System.Windows.Forms.GroupBox grpController;
 
@@ -20,6 +19,9 @@
         private System.Windows.Forms.Label lblIP;
         private System.Windows.Forms.Label lblId;
         private System.Windows.Forms.Label lblName;
+        private System.Windows.Forms.Label lblTimeZone;
+
+        private System.Windows.Forms.ComboBox cmbTimeZone;
 
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnAddSIO;
@@ -55,6 +57,8 @@
             txtId = new TextBox();
             lblName = new Label();
             txtName = new TextBox();
+            lblTimeZone = new Label();
+            cmbTimeZone = new ComboBox();
             btnSave = new Button();
             colHardwareId = new DataGridViewTextBoxColumn();
             colSioNumber = new DataGridViewTextBoxColumn();
@@ -73,9 +77,8 @@
             panelAdd.SuspendLayout();
             grpController.SuspendLayout();
             SuspendLayout();
-            // 
+
             // panelHeader
-            // 
             panelHeader.BackColor = Color.WhiteSmoke;
             panelHeader.Controls.Add(btnBack);
             panelHeader.Controls.Add(lblHeader);
@@ -84,9 +87,8 @@
             panelHeader.Name = "panelHeader";
             panelHeader.Size = new Size(1200, 60);
             panelHeader.TabIndex = 1;
-            // 
+
             // btnBack
-            // 
             btnBack.BackColor = Helpers.UIStyleHelper.StandardColors.PrimaryBlue;
             btnBack.ForeColor = Color.White;
             btnBack.Location = new Point(1091, 15);
@@ -97,9 +99,8 @@
             btnBack.Font = Helpers.UIStyleHelper.StandardFonts.ButtonFont;
             btnBack.FlatStyle = FlatStyle.Flat;
             btnBack.UseVisualStyleBackColor = false;
-            // 
+
             // lblHeader
-            // 
             lblHeader.AutoSize = true;
             lblHeader.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             lblHeader.Location = new Point(15, 15);
@@ -107,9 +108,8 @@
             lblHeader.Size = new Size(265, 37);
             lblHeader.TabIndex = 0;
             lblHeader.Text = "Aero Configuration";
-            // 
+
             // panelBody
-            // 
             panelBody.BackColor = Color.White;
             panelBody.Controls.Add(panelGrid);
             panelBody.Controls.Add(panelAdd);
@@ -119,19 +119,17 @@
             panelBody.Name = "panelBody";
             panelBody.Size = new Size(1200, 740);
             panelBody.TabIndex = 0;
-            // 
+
             // panelGrid
-            // 
             panelGrid.Controls.Add(dgvSIO);
             panelGrid.Dock = DockStyle.Fill;
-            panelGrid.Location = new Point(0, 230);
+            panelGrid.Location = new Point(0, 280);
             panelGrid.Name = "panelGrid";
             panelGrid.Padding = new Padding(15);
-            panelGrid.Size = new Size(1200, 510);
+            panelGrid.Size = new Size(1200, 460);
             panelGrid.TabIndex = 0;
-            // 
+
             // dgvSIO
-            // 
             dgvSIO.AllowUserToAddRows = false;
             dgvSIO.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvSIO.ColumnHeadersHeight = 29;
@@ -141,21 +139,19 @@
             dgvSIO.Name = "dgvSIO";
             dgvSIO.RowHeadersVisible = false;
             dgvSIO.RowHeadersWidth = 51;
-            dgvSIO.Size = new Size(1170, 480);
+            dgvSIO.Size = new Size(1170, 430);
             dgvSIO.TabIndex = 0;
-            // 
+
             // panelAdd
-            // 
             panelAdd.Controls.Add(btnAddSIO);
             panelAdd.Dock = DockStyle.Top;
-            panelAdd.Location = new Point(0, 180);
+            panelAdd.Location = new Point(0, 230);
             panelAdd.Name = "panelAdd";
             panelAdd.Padding = new Padding(15, 8, 0, 8);
             panelAdd.Size = new Size(1200, 50);
             panelAdd.TabIndex = 1;
-            // 
+
             // btnAddSIO
-            // 
             btnAddSIO.Dock = DockStyle.Left;
             btnAddSIO.Location = new Point(15, 8);
             btnAddSIO.Name = "btnAddSIO";
@@ -166,9 +162,8 @@
             btnAddSIO.FlatStyle = FlatStyle.Flat;
             btnAddSIO.BackColor = Helpers.UIStyleHelper.StandardColors.SuccessGreen;
             btnAddSIO.ForeColor = Color.White;
-            // 
+
             // grpController
-            // 
             grpController.Controls.Add(lblMac);
             grpController.Controls.Add(txtMac);
             grpController.Controls.Add(lblIP);
@@ -177,163 +172,159 @@
             grpController.Controls.Add(txtId);
             grpController.Controls.Add(lblName);
             grpController.Controls.Add(txtName);
+            grpController.Controls.Add(lblTimeZone);
+            grpController.Controls.Add(cmbTimeZone);
             grpController.Controls.Add(btnSave);
             grpController.Dock = DockStyle.Top;
             grpController.Location = new Point(0, 0);
             grpController.Name = "grpController";
             grpController.Padding = new Padding(15);
-            grpController.Size = new Size(1200, 180);
+            grpController.Size = new Size(1200, 230);
             grpController.TabIndex = 2;
             grpController.TabStop = false;
             grpController.Text = "Controller";
-            // 
+
             // lblMac
-            // 
             lblMac.Location = new Point(20, 35);
             lblMac.Name = "lblMac";
             lblMac.Size = new Size(100, 23);
             lblMac.TabIndex = 0;
             lblMac.Text = "MAC Address";
-            // 
+
             // txtMac
-            // 
             txtMac.Location = new Point(150, 32);
             txtMac.Name = "txtMac";
             txtMac.Size = new Size(220, 27);
             txtMac.TabIndex = 1;
-            // 
+
             // lblIP
-            // 
             lblIP.Location = new Point(420, 35);
             lblIP.Name = "lblIP";
             lblIP.Size = new Size(100, 23);
             lblIP.TabIndex = 2;
             lblIP.Text = "IP Address";
-            // 
+
             // txtIP
-            // 
             txtIP.Location = new Point(520, 32);
             txtIP.Name = "txtIP";
             txtIP.Size = new Size(220, 27);
             txtIP.TabIndex = 3;
-            // 
+
             // lblId
-            // 
             lblId.Location = new Point(20, 72);
             lblId.Name = "lblId";
             lblId.Size = new Size(100, 23);
             lblId.TabIndex = 6;
             lblId.Text = "SCPID";
-            // 
+
             // txtId
-            // 
             txtId.Location = new Point(150, 72);
             txtId.Name = "txtId";
             txtId.Size = new Size(220, 27);
             txtId.TabIndex = 7;
-            // 
+
             // lblName
-            // 
-            lblName.Location = new Point(20, 115);
+            lblName.Location = new Point(20, 112);
             lblName.Name = "lblName";
             lblName.Size = new Size(100, 23);
             lblName.TabIndex = 8;
             lblName.Text = "Name";
-            // 
+
             // txtName
-            // 
-            txtName.Location = new Point(150, 112);
+            txtName.Location = new Point(150, 109);
             txtName.Name = "txtName";
             txtName.Size = new Size(590, 27);
             txtName.TabIndex = 9;
-            // 
+
+            // lblTimeZone
+            lblTimeZone.Location = new Point(20, 152);
+            lblTimeZone.Name = "lblTimeZone";
+            lblTimeZone.Size = new Size(100, 23);
+            lblTimeZone.TabIndex = 10;
+            lblTimeZone.Text = "Time Zone";
+
+            // cmbTimeZone
+            cmbTimeZone.Location = new Point(150, 149);
+            cmbTimeZone.Name = "cmbTimeZone";
+            cmbTimeZone.Size = new Size(590, 27);
+            cmbTimeZone.TabIndex = 11;
+            cmbTimeZone.DropDownStyle = ComboBoxStyle.DropDownList;
+
             // btnSave
-            // 
             btnSave.BackColor = Helpers.UIStyleHelper.StandardColors.SuccessGreen;
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(150, 140);
+            btnSave.Location = new Point(150, 188);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(Helpers.UIStyleHelper.StandardSizes.ButtonWidth, Helpers.UIStyleHelper.StandardSizes.ButtonHeight - 5);
-            btnSave.TabIndex = 10;
+            btnSave.TabIndex = 12;
             btnSave.Text = "Save";
             btnSave.Font = Helpers.UIStyleHelper.StandardFonts.ButtonFont;
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Click += btnSave_Click;
-            // 
+
             // colHardwareId
-            // 
             colHardwareId.DataPropertyName = "Id";
             colHardwareId.HeaderText = "Hardware ID";
             colHardwareId.MinimumWidth = 6;
             colHardwareId.Name = "colHardwareId";
-            // 
+
             // colSioNumber
-            // 
             colSioNumber.DataPropertyName = "SioNumber";
             colSioNumber.HeaderText = "SIO Number";
             colSioNumber.MinimumWidth = 6;
             colSioNumber.Name = "colSioNumber";
-            // 
+
             // colsioname
-            // 
             colsioname.DataPropertyName = "Name";
             colsioname.HeaderText = "Sio Name";
             colsioname.MinimumWidth = 6;
             colsioname.Name = "colsioname";
-            // 
+
             // colType
-            // 
             colType.DataPropertyName = "Type";
             colType.HeaderText = "Type";
             colType.MinimumWidth = 6;
             colType.Name = "colType";
-            // 
+
             // colPort
-            // 
             colPort.DataPropertyName = "Port";
             colPort.HeaderText = "Port";
             colPort.MinimumWidth = 6;
             colPort.Name = "colPort";
-            // 
+
             // colAddress
-            // 
             colAddress.DataPropertyName = "Address";
             colAddress.HeaderText = "Address";
             colAddress.MinimumWidth = 6;
             colAddress.Name = "colAddress";
-            // 
+
             // colStatus
-            // 
             colStatus.DataPropertyName = "Status";
             colStatus.HeaderText = "Status";
             colStatus.MinimumWidth = 6;
             colStatus.Name = "colStatus";
-            // 
+
             // colOnline
-            // 
             colOnline.HeaderText = "Online";
             colOnline.MinimumWidth = 6;
             colOnline.Name = "colOnline";
-            // 
+
             // colEdit
-            // 
             colEdit.HeaderText = "";
             colEdit.MinimumWidth = 6;
             colEdit.Name = "colEdit";
             colEdit.Text = "Edit";
             colEdit.UseColumnTextForButtonValue = true;
-            // 
+
             // colDelete
-            // 
             colDelete.HeaderText = "";
             colDelete.MinimumWidth = 6;
             colDelete.Name = "colDelete";
             colDelete.Text = "Delete";
             colDelete.UseColumnTextForButtonValue = true;
-            // 
+
             // EditControllerControl
-            // 
             BackColor = Color.White;
             Controls.Add(panelBody);
             Controls.Add(panelHeader);
@@ -348,8 +339,8 @@
             grpController.ResumeLayout(false);
             grpController.PerformLayout();
             ResumeLayout(false);
-
         }
+
         private System.Windows.Forms.Button btnBack;
         private DataGridViewTextBoxColumn colHardwareId;
         private DataGridViewTextBoxColumn colSioNumber;
