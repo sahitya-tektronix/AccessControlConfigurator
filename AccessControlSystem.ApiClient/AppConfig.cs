@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace AccessControlSystem.ApiClient
 {
-    namespace AccessControlSystem.ApiClient
+    public static class AppConfig
     {
-        public static class AppConfig
-        {
-            // CHANGE PORT IF YOUR API USES DIFFERENT
-            public static string BaseUrl = "http://localhost:5000/api/";
+        private static readonly AppSettingsService _settings = new AppSettingsService();
 
-            public static bool UseApiLogin { get; internal set; }
-        }
+        public static string ApiBaseUrl => _settings.ApiBaseUrl;
+
+        public static string WebSocketUrl => _settings.WebSocketUrl;
+
+        public static string LicenseKey => _settings.LicenseKey;
+
+        public static void SaveLicenseKey(string key) => _settings.SaveLicenseKey(key);
+
+        public static void ResetLicenseKey() => _settings.ResetLicenseKey();
+
+        public static bool UseApiLogin { get; set; } = false;
+
+        /// <summary>
+        /// Stores the active bearer token so all new ApiService instances can pick it up.
+        /// Set this immediately after a successful login.
+        /// </summary>
+        public static string Token { get; set; } = string.Empty;
     }
 }

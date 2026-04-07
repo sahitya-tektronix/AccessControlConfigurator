@@ -1,4 +1,4 @@
-﻿using AccessControlSystem.ApiClient.AccessControlSystem.ApiClient;
+﻿using AccessControlSystem.ApiClient;
 using AccessControlSystem.Models;
 using AccessControlSystem.Models.AccessLevel;
 using AccessControlSystem.Models.AccessLevelDto;
@@ -62,6 +62,11 @@ namespace AccessControlSystem.Services
 
             _httpClient.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Restore the bearer token stored after login so all new instances are authenticated
+            if (!string.IsNullOrWhiteSpace(AppConfig.Token))
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", AppConfig.Token);
         }
 
         public async Task<bool> LoginAsync(string username, string password)
@@ -104,6 +109,7 @@ namespace AccessControlSystem.Services
                     return false;
 
                 _token = result.token;
+                AppConfig.Token = _token;
 
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", _token);
@@ -792,7 +798,7 @@ namespace AccessControlSystem.Services
         }
         public async Task<bool> DeleteCard(long cardNumber)
         {
-            var response = await _httpClient.DeleteAsync($"api/cards/{cardNumber}");
+            var response = await _httpClient.DeleteAsync($"api/cards/DeleteByCardNumber/{cardNumber}");
 
             if (!response.IsSuccessStatusCode)
             {

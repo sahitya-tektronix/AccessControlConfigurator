@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.Net.Http;
 using System.Windows.Forms;
 
@@ -76,17 +78,20 @@ namespace AccessControlConfigurator
             tabWiegand.Click += BtnWiegand_Click;
             tabEventReport.Click += BtnEventReport_Click;
 
-            // Apply sidebar style
-            StyleButton(tabEvents, "Events");
-            StyleButton(tabControllers, "Controllers");
-            StyleButton(tabAcrs, "ACRs (Doors)");
-            StyleButton(tabTimeZones, "Time Zones");
-            StyleButton(tabAccessLevels, "Access Levels");
+            // Apply sidebar style with icons (Segoe MDL2 Assets glyphs)
+            StyleButton(tabEvents,       "\uE7C3", "Events");
+            StyleButton(tabControllers,  "\uE7EF", "Controllers");
+            StyleButton(tabAcrs,         "\uE785", "ACRs (Doors)");
+            StyleButton(tabTimeZones,    "\uE823", "Time Zones");
+            StyleButton(tabAccessLevels, "\uE8D7", "Access Levels");
+            StyleButton(tabCards,        "\uE8C7", "Cards");
+            StyleButton(tabCardholders,  "\uE77B", "Cardholders");
+            StyleButton(tabWiegand,      "\uE701", "Wiegand");
+            StyleButton(tabEventReport,  "\uE8A0", "Event Report");
 
-            StyleButton(tabCards, "Cards");
-            StyleButton(tabCardholders, "Cardholders");
-            StyleButton(tabWiegand, "Wiegand");
-            StyleButton(tabEventReport, "Event Report");
+            // Hide until feature is ready
+            if (btnLoadUsers != null) btnLoadUsers.Visible = false;
+            tabCardholders.Visible = false;
 
             UpdateStatusBar();
             ApplyRoleBasedUI();
@@ -165,10 +170,17 @@ namespace AccessControlConfigurator
             foreach (Control c in sidebar.Controls)
             {
                 if (c is Button b)
-                    b.BackColor = Color.FromArgb(45, 60, 80);
+                {
+                    b.BackColor = Color.FromArgb(30, 48, 70);
+                    b.ForeColor = Color.FromArgb(200, 215, 235);
+                    b.FlatAppearance.BorderSize = 0;
+                }
             }
 
-            active.BackColor = Color.FromArgb(70, 100, 140);
+            // Active state — left accent border + lighter background
+            active.BackColor = Color.FromArgb(0, 120, 215);
+            active.ForeColor = Color.White;
+            active.FlatAppearance.BorderSize = 0;
         }
 
         // ================= TAB BUTTON EVENTS =================
@@ -372,23 +384,48 @@ namespace AccessControlConfigurator
 
         // ================= BUTTON STYLE =================
 
-        private void StyleButton(Button btn, string text)
+        private void StyleButton(Button btn, string mdl2Glyph, string label)
         {
-            btn.Text = text;
+            btn.Text = "  " + label;
+            btn.Width  = sidebar.ClientSize.Width > 0 ? sidebar.ClientSize.Width : 185;
+            btn.Height = 52;
 
-            btn.Width = sidebar.Width;
-            btn.Height = 45;
+            btn.Image     = RenderMdl2Icon(mdl2Glyph, 20, Color.FromArgb(200, 215, 235));
+            btn.ImageAlign = ContentAlignment.MiddleLeft;
+            btn.TextAlign  = ContentAlignment.MiddleLeft;
+            btn.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btn.Padding   = new Padding(14, 0, 0, 0);
 
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
+            btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(60, 90, 130);
+            btn.FlatAppearance.MouseDownBackColor = Color.FromArgb(80, 115, 160);
 
-            btn.ForeColor = Color.White;
-            btn.BackColor = Color.FromArgb(45, 60, 80);
+            btn.ForeColor = Color.FromArgb(200, 215, 235);
+            btn.BackColor = Color.FromArgb(30, 48, 70);
 
-            btn.TextAlign = ContentAlignment.MiddleLeft;
-            btn.Padding = new Padding(15, 0, 0, 0);
-
-            btn.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            btn.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            btn.Cursor = Cursors.Hand;
+            btn.UseVisualStyleBackColor = false;
         }
+
+        /// <summary>Renders a Segoe MDL2 Assets glyph into a transparent Bitmap.</summary>
+        private static Image RenderMdl2Icon(string glyph, int size, Color color)
+        {
+            var bmp = new Bitmap(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            using var g = Graphics.FromImage(bmp);
+            g.Clear(Color.Transparent);
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            using var font  = new Font("Segoe MDL2 Assets", size - 4, FontStyle.Regular, GraphicsUnit.Pixel);
+            using var brush = new SolidBrush(color);
+            var sf = new StringFormat
+            {
+                Alignment     = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+            g.DrawString(glyph, font, brush, new RectangleF(0, 0, size, size), sf);
+            return bmp;
+        }
+
     }
 }

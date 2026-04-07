@@ -7,6 +7,7 @@ using QuestPDF.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace AccessControlConfigurator
@@ -23,6 +24,7 @@ namespace AccessControlConfigurator
         private DateTime? _startDate;
         private DateTime? _endDate;
         private List<string> _cardNumbers = new List<string>();
+        private bool _syncingEventTypes = false;   // suppress reload while populating the list
         private string _timeDisplayMode = "UTC";
         private ComboBox cmbTimeDisplay;
         private Label lblTimeDisplay;
@@ -70,12 +72,31 @@ namespace AccessControlConfigurator
 
         private void InitializeColumnsChooser()
         {
-            chkColEventTime.CheckedChanged += (_, __) => ApplyColumnVisibility();
-            chkColCardNumber.CheckedChanged += (_, __) => ApplyColumnVisibility();
-            chkColControllerName.CheckedChanged += (_, __) => ApplyColumnVisibility();
-            chkColScpId.CheckedChanged += (_, __) => ApplyColumnVisibility();
+            chkColEventTime.CheckedChanged        += (_, __) => ApplyColumnVisibility();
+            chkColCardNumber.CheckedChanged       += (_, __) => ApplyColumnVisibility();
+            chkColControllerName.CheckedChanged   += (_, __) => ApplyColumnVisibility();
+            chkColScpId.CheckedChanged            += (_, __) => ApplyColumnVisibility();
             chkColEventDescription.CheckedChanged += (_, __) => ApplyColumnVisibility();
-            chkColCreatedAt.CheckedChanged += (_, __) => ApplyColumnVisibility();
+            chkColEventDetails.CheckedChanged     += (_, __) => ApplyColumnVisibility();
+            chkColCreatedAt.CheckedChanged        += (_, __) => ApplyColumnVisibility();
+
+            // Event-type toggle
+            btnToggleEventTypes.Click += (_, __) =>
+            {
+                panelEventTypeFilter.Visible = !panelEventTypeFilter.Visible;
+                btnToggleEventTypes.Text = panelEventTypeFilter.Visible
+                    ? "Event Types \u25B2"
+                    : "Event Types \u25BC";
+                AlignHeaderControls();
+            };
+
+            // Re-apply filter whenever an event-type checkbox changes
+            clbEventTypes.ItemCheck += (s, e) =>
+            {
+                if (_syncingEventTypes) return;
+                // ItemCheck fires before the state actually changes, so defer one tick
+                BeginInvoke(new Action(() => _ = LoadEventsAsync()));
+            };
 
             ApplyColumnVisibility();
         }
@@ -112,7 +133,18 @@ namespace AccessControlConfigurator
                 var response = await _apiService.GetEventReportAsync(request);
                 _allRows = response.data ?? new List<EventReportItem>();
 
-                BindGrid(_allRows);
+                SyncEventTypesToList(_allRows);
+
+                // Apply multi-select event-type filter
+                var checkedTypes = GetCheckedEventTypes();
+                var filtered = checkedTypes.Count > 0
+                    ? _allRows.Where(r => {
+                        var t = ExtractEventType(r.eventDetails);
+                        return t != null && checkedTypes.Contains(t);
+                      }).ToList()
+                    : (IEnumerable<EventReportItem>)_allRows;
+
+                BindGrid(filtered);
                 UpdatePagination(response.pagination);
             }
             catch (Exception ex)
@@ -158,12 +190,71 @@ namespace AccessControlConfigurator
 
         private void ApplyColumnVisibility()
         {
-            SetColumnVisible("EventDateTime", chkColEventTime.Checked);
-            SetColumnVisible("CardNumber", chkColCardNumber.Checked);
-            SetColumnVisible("ControllerName", chkColControllerName.Checked);
-            SetColumnVisible("ScpId", chkColScpId.Checked);
+            SetColumnVisible("EventDateTime",    chkColEventTime.Checked);
+            SetColumnVisible("CardNumber",       chkColCardNumber.Checked);
+            SetColumnVisible("ControllerName",   chkColControllerName.Checked);
+            SetColumnVisible("ScpId",            chkColScpId.Checked);
             SetColumnVisible("EventDescription", chkColEventDescription.Checked);
-            SetColumnVisible("CreatedAt", chkColCreatedAt.Checked);
+            SetColumnVisible("EventDetails",     chkColEventDetails.Checked);
+            SetColumnVisible("CreatedAt",        chkColCreatedAt.Checked);
+        }
+
+        // Returns the set of event-type names that are checked in the multi-select list.
+        // Empty set = no filter applied (show all).
+        private HashSet<string> GetCheckedEventTypes()
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in clbEventTypes.CheckedItems)
+                result.Add(item.ToString());
+            return result;
+        }
+
+        // Parses the text between the first pair of ** markers in eventDetails.
+        // e.g. "**TypeSys** Controller restart" → "TypeSys"
+        private static readonly Regex _eventTypeRegex = new Regex(@"\*\*(.+?)\*\*", RegexOptions.Compiled);
+
+        private static string ExtractEventType(string eventDetails)
+        {
+            if (string.IsNullOrWhiteSpace(eventDetails))
+                return null;
+            var m = _eventTypeRegex.Match(eventDetails);
+            return m.Success ? m.Groups[1].Value.Trim() : null;
+        }
+
+        // Adds any event types discovered in this data batch that aren't already in the list.
+        // New items are added UNCHECKED so they don't auto-activate the filter.
+        // Empty checked set = no filter (show all rows).
+        private void SyncEventTypesToList(IEnumerable<EventReportItem> data)
+        {
+            var newTypes = data
+                .Select(r => ExtractEventType(r.eventDetails))
+                .Where(t => t != null)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(t => t, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (newTypes.Count == 0)
+                return;
+
+            var existing = clbEventTypes.Items.Cast<string>()
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            _syncingEventTypes = true;
+            try
+            {
+                foreach (var type in newTypes)
+                {
+                    if (!existing.Contains(type))
+                    {
+                        clbEventTypes.Items.Add(type, false);   // unchecked — opt-in filter
+                        existing.Add(type);
+                    }
+                }
+            }
+            finally
+            {
+                _syncingEventTypes = false;
+            }
         }
 
         private void SetColumnVisible(string columnName, bool visible)
@@ -460,7 +551,7 @@ namespace AccessControlConfigurator
             panelActions.Width = Math.Max(200, maxActionsWidth);
 
             int rowHeight = 28;
-            int baseFiltersTop = 120;
+            int baseFiltersTop = 144;   // below column chooser (y=42, h=52) + panelActions (h=36)
             int filtersTop = baseFiltersTop;
             int rowRight = panelHeader.ClientSize.Width - rightPadding;
 
@@ -518,7 +609,21 @@ namespace AccessControlConfigurator
             lblCardNumbers.Top = rightGroupTop + 4;
 
             int bottom = rightGroupTop + rowHeight + 8;
-            panelHeader.Height = Math.Max(156, bottom);
+
+            // Place toggle button and (optionally) the drop-down panel below the filter row
+            btnToggleEventTypes.Top  = bottom + 4;
+            btnToggleEventTypes.Left = 14;
+            bottom = btnToggleEventTypes.Bottom + 4;
+
+            if (panelEventTypeFilter.Visible)
+            {
+                panelEventTypeFilter.Top   = bottom;
+                panelEventTypeFilter.Left  = 14;
+                panelEventTypeFilter.Width = panelHeader.ClientSize.Width - 28;
+                bottom = panelEventTypeFilter.Bottom + 6;
+            }
+
+            panelHeader.Height = Math.Max(180, bottom);
         }
 
         private async System.Threading.Tasks.Task ApplyDateFiltersAsync()

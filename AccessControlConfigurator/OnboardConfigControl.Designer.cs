@@ -32,10 +32,30 @@ namespace AccessControlConfigurator
         private TextBox txt1Rname;
         private ComboBox cb1RT;
         private TextBox tb1Acr;
+        private Label lblR1DefaultMode;
+        private TextBox txtDefaultMode1;
+        private Label lblR1Position;
+        private TextBox txtReaderPosition1;
+        private Label lblR1Strike;
+        private TextBox txtStrikeNumber1;
+        private Label lblR1Door;
+        private TextBox txtDoorNumber1;
+        private Label lblR1Rex;
+        private TextBox txtRexNumber1;
 
         private TextBox txt2Rname;
         private ComboBox cb2RT;
         private TextBox tb2Acr;
+        private Label lblR2DefaultMode;
+        private TextBox txtDefaultMode2;
+        private Label lblR2Position;
+        private TextBox txtReaderPosition2;
+        private Label lblR2Strike;
+        private TextBox txtStrikeNumber2;
+        private Label lblR2Door;
+        private TextBox txtDoorNumber2;
+        private Label lblR2Rex;
+        private TextBox txtRexNumber2;
 
 
         private ComboBox cb1Direction;
@@ -53,6 +73,26 @@ namespace AccessControlConfigurator
         {
             lblR2Direction = new Label();
             cb2Direction = new ComboBox();
+            lblR1DefaultMode = new Label();
+            txtDefaultMode1 = new TextBox();
+            lblR1Position = new Label();
+            txtReaderPosition1 = new TextBox();
+            lblR1Strike = new Label();
+            txtStrikeNumber1 = new TextBox();
+            lblR1Door = new Label();
+            txtDoorNumber1 = new TextBox();
+            lblR1Rex = new Label();
+            txtRexNumber1 = new TextBox();
+            lblR2DefaultMode = new Label();
+            txtDefaultMode2 = new TextBox();
+            lblR2Position = new Label();
+            txtReaderPosition2 = new TextBox();
+            lblR2Strike = new Label();
+            txtStrikeNumber2 = new TextBox();
+            lblR2Door = new Label();
+            txtDoorNumber2 = new TextBox();
+            lblR2Rex = new Label();
+            txtRexNumber2 = new TextBox();
             panelHeader = new Panel();
             lblSioNumber = new Label();
             lblControllerName = new Label();
@@ -180,7 +220,7 @@ namespace AccessControlConfigurator
             panelReader1.Controls.Add(tblReader1);
             panelReader1.Location = new Point(20, 200);
             panelReader1.Name = "panelReader1";
-            panelReader1.Size = new Size(550, 250);
+            panelReader1.Size = new Size(550, 390);
             panelReader1.TabIndex = 2;
             // 
             // lblR1Header
@@ -204,22 +244,37 @@ namespace AccessControlConfigurator
             tblReader1.ColumnCount = 2;
             tblReader1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
             tblReader1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tblReader1.Controls.Add(cbRdir1, 1, 2);
-            tblReader1.Controls.Add(lblRdir1, 0, 2);
             tblReader1.Controls.Add(lblR1Name, 0, 0);
-            tblReader1.Controls.Add(lblR1Type, 0, 1);
             tblReader1.Controls.Add(txt1Rname, 1, 0);
+            tblReader1.Controls.Add(lblR1Type, 0, 1);
             tblReader1.Controls.Add(cb1RT, 1, 1);
-            tblReader1.Controls.Add(tb1Acr, 1, 3);
+            tblReader1.Controls.Add(lblRdir1, 0, 2);
+            tblReader1.Controls.Add(cbRdir1, 1, 2);
             tblReader1.Controls.Add(lblR1Acr, 0, 3);
+            tblReader1.Controls.Add(tb1Acr, 1, 3);
+            tblReader1.Controls.Add(lblR1DefaultMode, 0, 4);
+            tblReader1.Controls.Add(txtDefaultMode1, 1, 4);
+            tblReader1.Controls.Add(lblR1Position, 0, 5);
+            tblReader1.Controls.Add(txtReaderPosition1, 1, 5);
+            tblReader1.Controls.Add(lblR1Strike, 0, 6);
+            tblReader1.Controls.Add(txtStrikeNumber1, 1, 6);
+            tblReader1.Controls.Add(lblR1Door, 0, 7);
+            tblReader1.Controls.Add(txtDoorNumber1, 1, 7);
+            tblReader1.Controls.Add(lblR1Rex, 0, 8);
+            tblReader1.Controls.Add(txtRexNumber1, 1, 8);
             tblReader1.Location = new Point(20, 50);
             tblReader1.Name = "tblReader1";
-            tblReader1.RowCount = 4;
+            tblReader1.RowCount = 9;
             tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
             tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
             tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
             tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
-            tblReader1.Size = new Size(500, 162);
+            tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader1.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader1.Size = new Size(500, 320);
             tblReader1.TabIndex = 2;
             // 
             // cbRdir1
@@ -275,13 +330,58 @@ namespace AccessControlConfigurator
             tb1Acr.TabIndex = 5;
             // 
             // lblR1Acr
-            // 
+            //
             lblR1Acr.Location = new Point(3, 105);
             lblR1Acr.Name = "lblR1Acr";
             lblR1Acr.Size = new Size(100, 23);
             lblR1Acr.TabIndex = 2;
             lblR1Acr.Text = "ACR Number";
-            // 
+            // lblR1DefaultMode
+            lblR1DefaultMode.Name = "lblR1DefaultMode";
+            lblR1DefaultMode.Size = new Size(144, 23);
+            lblR1DefaultMode.Text = "Default Mode";
+            // txtDefaultMode1
+            txtDefaultMode1.Name = "txtDefaultMode1";
+            txtDefaultMode1.Size = new Size(200, 27);
+            txtDefaultMode1.Enabled = false;
+            txtDefaultMode1.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR1Position
+            lblR1Position.Name = "lblR1Position";
+            lblR1Position.Size = new Size(144, 23);
+            lblR1Position.Text = "Reader Position";
+            // txtReaderPosition1
+            txtReaderPosition1.Name = "txtReaderPosition1";
+            txtReaderPosition1.Size = new Size(200, 27);
+            txtReaderPosition1.Enabled = false;
+            txtReaderPosition1.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR1Strike
+            lblR1Strike.Name = "lblR1Strike";
+            lblR1Strike.Size = new Size(144, 23);
+            lblR1Strike.Text = "Strike Number";
+            // txtStrikeNumber1
+            txtStrikeNumber1.Name = "txtStrikeNumber1";
+            txtStrikeNumber1.Size = new Size(200, 27);
+            txtStrikeNumber1.Enabled = false;
+            txtStrikeNumber1.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR1Door
+            lblR1Door.Name = "lblR1Door";
+            lblR1Door.Size = new Size(144, 23);
+            lblR1Door.Text = "Door Number";
+            // txtDoorNumber1
+            txtDoorNumber1.Name = "txtDoorNumber1";
+            txtDoorNumber1.Size = new Size(200, 27);
+            txtDoorNumber1.Enabled = false;
+            txtDoorNumber1.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR1Rex
+            lblR1Rex.Name = "lblR1Rex";
+            lblR1Rex.Size = new Size(144, 23);
+            lblR1Rex.Text = "REX Number";
+            // txtRexNumber1
+            txtRexNumber1.Name = "txtRexNumber1";
+            txtRexNumber1.Size = new Size(200, 27);
+            txtRexNumber1.Enabled = false;
+            txtRexNumber1.BackColor = System.Drawing.Color.WhiteSmoke;
+            //
             // panelReader2
             // 
             panelReader2.BorderStyle = BorderStyle.FixedSingle;
@@ -290,7 +390,7 @@ namespace AccessControlConfigurator
             panelReader2.Controls.Add(tblReader2);
             panelReader2.Location = new Point(600, 200);
             panelReader2.Name = "panelReader2";
-            panelReader2.Size = new Size(550, 250);
+            panelReader2.Size = new Size(550, 390);
             panelReader2.TabIndex = 3;
             // 
             // lblR2Header
@@ -314,22 +414,37 @@ namespace AccessControlConfigurator
             tblReader2.ColumnCount = 2;
             tblReader2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
             tblReader2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tblReader2.Controls.Add(lblRdir2, 0, 2);
             tblReader2.Controls.Add(lblR2Name, 0, 0);
-            tblReader2.Controls.Add(lblR2Type, 0, 1);
             tblReader2.Controls.Add(txt2Rname, 1, 0);
+            tblReader2.Controls.Add(lblR2Type, 0, 1);
             tblReader2.Controls.Add(cb2RT, 1, 1);
+            tblReader2.Controls.Add(lblRdir2, 0, 2);
+            tblReader2.Controls.Add(cbRdir2, 1, 2);
             tblReader2.Controls.Add(lblR2Acr, 0, 3);
             tblReader2.Controls.Add(tb2Acr, 1, 3);
-            tblReader2.Controls.Add(cbRdir2, 1, 2);
+            tblReader2.Controls.Add(lblR2DefaultMode, 0, 4);
+            tblReader2.Controls.Add(txtDefaultMode2, 1, 4);
+            tblReader2.Controls.Add(lblR2Position, 0, 5);
+            tblReader2.Controls.Add(txtReaderPosition2, 1, 5);
+            tblReader2.Controls.Add(lblR2Strike, 0, 6);
+            tblReader2.Controls.Add(txtStrikeNumber2, 1, 6);
+            tblReader2.Controls.Add(lblR2Door, 0, 7);
+            tblReader2.Controls.Add(txtDoorNumber2, 1, 7);
+            tblReader2.Controls.Add(lblR2Rex, 0, 8);
+            tblReader2.Controls.Add(txtRexNumber2, 1, 8);
             tblReader2.Location = new Point(20, 50);
             tblReader2.Name = "tblReader2";
-            tblReader2.RowCount = 4;
+            tblReader2.RowCount = 9;
             tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
             tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
             tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
-            tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tblReader2.Size = new Size(500, 162);
+            tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader2.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            tblReader2.Size = new Size(500, 320);
             tblReader2.TabIndex = 2;
             // 
             // lblRdir2
@@ -386,12 +501,57 @@ namespace AccessControlConfigurator
             tb2Acr.TabIndex = 5;
             // 
             // cbRdir2
-            // 
+            //
             cbRdir2.Location = new Point(153, 73);
             cbRdir2.Name = "cbRdir2";
             cbRdir2.Size = new Size(200, 28);
             cbRdir2.TabIndex = 8;
-            // 
+            // lblR2DefaultMode
+            lblR2DefaultMode.Name = "lblR2DefaultMode";
+            lblR2DefaultMode.Size = new Size(144, 23);
+            lblR2DefaultMode.Text = "Default Mode";
+            // txtDefaultMode2
+            txtDefaultMode2.Name = "txtDefaultMode2";
+            txtDefaultMode2.Size = new Size(200, 27);
+            txtDefaultMode2.Enabled = false;
+            txtDefaultMode2.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR2Position
+            lblR2Position.Name = "lblR2Position";
+            lblR2Position.Size = new Size(144, 23);
+            lblR2Position.Text = "Reader Position";
+            // txtReaderPosition2
+            txtReaderPosition2.Name = "txtReaderPosition2";
+            txtReaderPosition2.Size = new Size(200, 27);
+            txtReaderPosition2.Enabled = false;
+            txtReaderPosition2.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR2Strike
+            lblR2Strike.Name = "lblR2Strike";
+            lblR2Strike.Size = new Size(144, 23);
+            lblR2Strike.Text = "Strike Number";
+            // txtStrikeNumber2
+            txtStrikeNumber2.Name = "txtStrikeNumber2";
+            txtStrikeNumber2.Size = new Size(200, 27);
+            txtStrikeNumber2.Enabled = false;
+            txtStrikeNumber2.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR2Door
+            lblR2Door.Name = "lblR2Door";
+            lblR2Door.Size = new Size(144, 23);
+            lblR2Door.Text = "Door Number";
+            // txtDoorNumber2
+            txtDoorNumber2.Name = "txtDoorNumber2";
+            txtDoorNumber2.Size = new Size(200, 27);
+            txtDoorNumber2.Enabled = false;
+            txtDoorNumber2.BackColor = System.Drawing.Color.WhiteSmoke;
+            // lblR2Rex
+            lblR2Rex.Name = "lblR2Rex";
+            lblR2Rex.Size = new Size(144, 23);
+            lblR2Rex.Text = "REX Number";
+            // txtRexNumber2
+            txtRexNumber2.Name = "txtRexNumber2";
+            txtRexNumber2.Size = new Size(200, 27);
+            txtRexNumber2.Enabled = false;
+            txtRexNumber2.BackColor = System.Drawing.Color.WhiteSmoke;
+            //
             // lblR1Direction
             // 
             lblR1Direction.Location = new Point(3, 105);

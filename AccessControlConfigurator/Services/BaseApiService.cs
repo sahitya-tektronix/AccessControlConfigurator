@@ -1,4 +1,5 @@
 using AccessControlConfigurator.Helpers;
+using AccessControlSystem.ApiClient;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,9 +12,13 @@ namespace AccessControlConfigurator.Services
 
         static BaseApiService()
         {
+            string baseUrl = AppConfig.ApiBaseUrl;
+            if (string.IsNullOrWhiteSpace(baseUrl))
+                baseUrl = "https://teksmartsolutions.com/TekHIDApi/";
+
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5000/")
+                BaseAddress = new Uri(baseUrl)
             };
         }
 

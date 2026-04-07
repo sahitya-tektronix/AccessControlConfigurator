@@ -55,6 +55,7 @@ namespace AccessControlConfigurator.Forms
             contentPanel.BackColor = Color.WhiteSmoke;
             contentPanel.Controls.Add(dgvControllers);
             contentPanel.Controls.Add(topPanel);
+            contentPanel.Controls.Add(labelC);
             contentPanel.Dock = DockStyle.Fill;
             contentPanel.Location = new Point(0, 0);
             contentPanel.Name = "contentPanel";
@@ -149,7 +150,7 @@ namespace AccessControlConfigurator.Forms
             colEdit.HeaderText = "";
             colEdit.MinimumWidth = 6;
             colEdit.Name = "colEdit";
-            colEdit.Text = "✏";
+            colEdit.Text = "\u270E";
             colEdit.UseColumnTextForButtonValue = true;
             // 
             // colReset
@@ -159,17 +160,19 @@ namespace AccessControlConfigurator.Forms
             colReset.Name = "colReset";
             colReset.Text = "⟲";
             colReset.UseColumnTextForButtonValue = true;
+            colReset.DefaultCellStyle.ForeColor = Color.FromArgb(196, 43, 28);
+            colReset.DefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             // 
             // colDelete
             // 
             colDelete.HeaderText = "";
             colDelete.MinimumWidth = 6;
             colDelete.Name = "colDelete";
-            colDelete.Text = "🗑";
+            colDelete.Text = "\u2715";
             colDelete.UseColumnTextForButtonValue = true;
-            // 
+            //
             // topPanel
-            // 
+            //
             topPanel.BackColor = Color.White;
             topPanel.Controls.Add(btnClearfillter);
             topPanel.Controls.Add(btnAdd);
@@ -177,7 +180,6 @@ namespace AccessControlConfigurator.Forms
             topPanel.Controls.Add(lblSearchRight);
             topPanel.Controls.Add(txtSearch);
             topPanel.Controls.Add(btnback);
-            topPanel.Controls.Add(labelC);
             topPanel.Controls.Add(btnSyncOnline);
             topPanel.Controls.Add(btnSync);
             topPanel.Controls.Add(btnDiscover);
@@ -200,7 +202,7 @@ namespace AccessControlConfigurator.Forms
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(163, 19);
+            btnAdd.Location = new Point(10, 19);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(94, 35);
             btnAdd.TabIndex = 9;
@@ -238,28 +240,31 @@ namespace AccessControlConfigurator.Forms
             // btnback
             // 
             btnback.FlatStyle = FlatStyle.Flat;
-            btnback.Location = new Point(665, 20);
+            btnback.Location = new Point(520, 20);
             btnback.Margin = new Padding(5);
             btnback.Name = "btnback";
             btnback.Size = new Size(90, 32);
             btnback.TabIndex = 3;
             btnback.Text = "Back";
+            btnback.Visible = false;
             btnback.Click += btnback_Click;
-            // 
-            // labelC
-            // 
-            labelC.AutoSize = true;
+            //
+            // labelC — heading row above buttons
+            //
+            labelC.AutoSize = false;
+            labelC.Dock = DockStyle.Top;
+            labelC.Height = 40;
             labelC.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            labelC.Location = new Point(13, 17);
             labelC.Name = "labelC";
-            labelC.Size = new Size(133, 31);
+            labelC.Padding = new Padding(10, 0, 0, 0);
             labelC.TabIndex = 1;
             labelC.Text = "Controllers";
+            labelC.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // btnSyncOnline
             // 
             btnSyncOnline.FlatStyle = FlatStyle.Flat;
-            btnSyncOnline.Location = new Point(485, 20);
+            btnSyncOnline.Location = new Point(350, 20);
             btnSyncOnline.Margin = new Padding(5);
             btnSyncOnline.Name = "btnSyncOnline";
             btnSyncOnline.Size = new Size(170, 32);
@@ -270,7 +275,7 @@ namespace AccessControlConfigurator.Forms
             // btnSync
             // 
             btnSync.FlatStyle = FlatStyle.Flat;
-            btnSync.Location = new Point(385, 20);
+            btnSync.Location = new Point(250, 20);
             btnSync.Margin = new Padding(5);
             btnSync.Name = "btnSync";
             btnSync.Size = new Size(90, 32);
@@ -281,7 +286,7 @@ namespace AccessControlConfigurator.Forms
             // btnDiscover
             // 
             btnDiscover.FlatStyle = FlatStyle.Flat;
-            btnDiscover.Location = new Point(265, 20);
+            btnDiscover.Location = new Point(120, 20);
             btnDiscover.Margin = new Padding(5);
             btnDiscover.Name = "btnDiscover";
             btnDiscover.Size = new Size(110, 32);

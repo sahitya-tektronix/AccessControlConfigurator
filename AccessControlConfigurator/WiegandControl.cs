@@ -64,15 +64,15 @@ namespace AccessControlConfigurator
             {
                 searchPanel.Location = new Point(
                     topPanel.ClientSize.Width - searchPanel.Width - rightPadding,
-                    btnAdd.Bottom + 6);
-                topPanel.Height = btnAdd.Bottom + searchPanel.Height + 8;
+                    btnAdd.Bottom + 8);
+                topPanel.Height = btnAdd.Bottom + searchPanel.Height + 16;
             }
             else
             {
                 searchPanel.Location = new Point(
                     topPanel.ClientSize.Width - searchPanel.Width - rightPadding,
-                    0);
-                topPanel.Height = 50;
+                    (btnAdd.Height - searchPanel.Height) / 2);   // vertically centre search row
+                topPanel.Height = btnAdd.Bottom + 14;            // always derived from button height
             }
         }
         private void InitializeGrid()
@@ -365,7 +365,8 @@ namespace AccessControlConfigurator
                 MaximizeBox = false,
                 MinimizeBox = false,
                 Width = 520,
-                Height = 520
+                Height = 580,
+                BackColor = Color.White
             };
 
             var layout = new TableLayoutPanel
@@ -427,8 +428,28 @@ namespace AccessControlConfigurator
             buttons.Controls.Add(ok);
             buttons.Controls.Add(cancel);
 
+            // Header panel — added last so it docks to top first
+            var headerText = isEdit ? "EDIT WIEGAND FORMAT" : "ADD WIEGAND FORMAT";
+            var dlgHeader = new Panel
+            {
+                BackColor = Helpers.UIStyleHelper.StandardColors.HeaderBackground,
+                Dock = DockStyle.Top,
+                Height = 60
+            };
+            var dlgHeaderLabel = new Label
+            {
+                AutoSize = false,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = Helpers.UIStyleHelper.StandardFonts.HeaderFont,
+                ForeColor = Helpers.UIStyleHelper.StandardColors.HeaderForeground,
+                Text = headerText
+            };
+            dlgHeader.Controls.Add(dlgHeaderLabel);
+
             dialog.Controls.Add(layout);
             dialog.Controls.Add(buttons);
+            dialog.Controls.Add(dlgHeader);   // Top — must be added last for correct dock order
             dialog.AcceptButton = ok;
             dialog.CancelButton = cancel;
 
@@ -649,10 +670,17 @@ namespace AccessControlConfigurator
 
         private void ApplyButtonStyles()
         {
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StylePrimaryToolbarButton(btnAdd, 100);
+            btnAdd.Text = "+ Add";
+
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
+            btnEdit.Text = "\u270E Edit";
+
+            Helpers.UIStyleHelper.StyleDangerToolbarButton(btnDelete, 100);
+            btnDelete.Text = "\u2715 Delete";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 100);
+            btnRefresh.Text = "\u21BA Refresh";
         }
 
         private static void DigitsOnly_KeyPress(object sender, KeyPressEventArgs e)
@@ -664,7 +692,7 @@ namespace AccessControlConfigurator
         private void AlignActionButtons(int spacing)
         {
             int top = 10;
-            btnAdd.Location = new Point(220, top);
+            btnAdd.Location = new Point(10, top);
             btnEdit.Location = new Point(btnAdd.Right + spacing, top);
             btnDelete.Location = new Point(btnEdit.Right + spacing, top);
             btnRefresh.Location = new Point(btnDelete.Right + spacing, top);

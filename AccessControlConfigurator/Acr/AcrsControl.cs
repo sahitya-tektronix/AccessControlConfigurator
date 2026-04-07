@@ -57,7 +57,7 @@ namespace AccessControlConfigurator
             btnSearch.BackColor = Color.FromArgb(0, 120, 215);
             btnSearch.ForeColor = Color.White;
             btnSearch.Click += btnSearch_Click;
-            //txtSearch.TextChanged += txtSearch_TextChanged;
+            txtSearch.TextChanged += (s, e) => ApplyFilters();
 
             ConfigureGrid();
             Resize += (s, e) => AlignToolbar();
@@ -368,10 +368,12 @@ namespace AccessControlConfigurator
             if (_allData == null || _allData.Count == 0)
                 return;
 
-            // Controller
+            // Controller — show Name instead of ID
             var controllers = _allData
-                .Select(x => x.controllerID.ToString())
-                .Distinct()
+                .Select(x => x.controllerName ?? string.Empty)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x)
                 .ToList();
 
             controllers.Insert(0, "All");
@@ -386,9 +388,9 @@ namespace AccessControlConfigurator
             sioList.Insert(0, "All");
             cmbSioNumber.DataSource = sioList;
 
-            // Reader
+            // Reader — map 0 → Left, 1 → Right
             var readers = _allData
-                .Select(x => $"Reader {x.readerNumber}")
+                .Select(x => x.readerNumber == 0 ? "Reader Left" : x.readerNumber == 1 ? "Reader Right" : $"Reader {x.readerNumber}")
                 .Distinct()
                 .ToList();
 
@@ -440,13 +442,19 @@ namespace AccessControlConfigurator
             string sioName = cmbSioName.SelectedItem?.ToString();
 
             if (!string.IsNullOrEmpty(controller) && controller != "All")
-                filtered = filtered.Where(x => x.controllerID.ToString() == controller);
+                filtered = filtered.Where(x => string.Equals(x.controllerName ?? string.Empty, controller, StringComparison.OrdinalIgnoreCase));
 
             if (!string.IsNullOrEmpty(sio) && sio != "All")
                 filtered = filtered.Where(x => x.sioNumber.ToString() == sio);
 
             if (!string.IsNullOrEmpty(reader) && reader != "All")
-                filtered = filtered.Where(x => $"Reader {x.readerNumber}" == reader);
+            {
+                filtered = filtered.Where(x =>
+                {
+                    var label = x.readerNumber == 0 ? "Reader Left" : x.readerNumber == 1 ? "Reader Right" : $"Reader {x.readerNumber}";
+                    return label == reader;
+                });
+            }
 
             if (!string.IsNullOrEmpty(acrName) && acrName != "All")
                 filtered = filtered.Where(x => string.Equals(x.name ?? string.Empty, acrName, StringComparison.OrdinalIgnoreCase));
@@ -468,8 +476,13 @@ namespace AccessControlConfigurator
         private void ApplyButtonStyles()
         {
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnBack, 90);
+            btnEdit.Text = "\u270E Edit";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 100);
+            btnRefresh.Text = "\u21BA Refresh";
+
+            Helpers.UIStyleHelper.StyleNeutralToolbarButton(btnBack, 90);
+            btnBack.Text = "\u2190 Back";
         }
 
         private void AlignToolbar()
@@ -525,9 +538,11 @@ namespace AccessControlConfigurator
                 }
             }
 
+            // Buttons (36 px at y=8) need at least btnEdit.Bottom + padding in the panel.
+            int btnMinHeight = btnEdit.Bottom + 12;
             topPanel.Height = showAdvancedFilters
-                ? Math.Max(50, cmbControllerName.Bottom + 10)
-                : Math.Max(50, cmbReader.Bottom + 10);
+                ? Math.Max(btnMinHeight, cmbControllerName.Bottom + 10)
+                : Math.Max(btnMinHeight, cmbReader.Bottom + 10);
 
             int searchTop = topPanel.Bottom + 8;
             btnClearFilters.Location = new Point(Width - btnClearFilters.Width - 10, searchTop);

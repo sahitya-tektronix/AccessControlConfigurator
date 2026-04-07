@@ -49,7 +49,7 @@ namespace AccessControlConfigurator
 
             // btnSearch click handler is wired in the designer.
 
-            //txtSearch.TextChanged += txtSearch_TextChanged;
+            txtSearch.TextChanged += (s, e) => ApplyCardFilter();
 
             // Button style
 
@@ -127,7 +127,7 @@ namespace AccessControlConfigurator
 
         private void dgvCards_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (e.RowIndex < 0)
+            if (e.RowIndex < 0 || e.Value == null)
                 return;
 
             var columnName = dgvCards.Columns[e.ColumnIndex].Name;
@@ -135,9 +135,6 @@ namespace AccessControlConfigurator
                 !string.Equals(columnName, "dactTime", StringComparison.OrdinalIgnoreCase) &&
                 !string.Equals(columnName, "actTimeLocal", StringComparison.OrdinalIgnoreCase) &&
                 !string.Equals(columnName, "dactTimeLocal", StringComparison.OrdinalIgnoreCase))
-                return;
-
-            if (e.Value == null)
                 return;
 
             if (long.TryParse(e.Value.ToString(), out var value))
@@ -649,25 +646,15 @@ namespace AccessControlConfigurator
                 allowColumnResize: false,
                 allowColumnOrder: false);
 
-            dgvCards.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-
-            dgvCards.ScrollBars = ScrollBars.Both;
-
+            dgvCards.ScrollBars = ScrollBars.Vertical;
             dgvCards.AllowUserToResizeColumns = false;
-
             dgvCards.AllowUserToOrderColumns = false;
 
             foreach (DataGridViewColumn col in dgvCards.Columns)
-
             {
-
-                col.Width = 130;
                 col.Resizable = DataGridViewTriState.False;
                 col.SortMode = DataGridViewColumnSortMode.NotSortable;
-
             }
-
-            EnsureLocalTimeColumns();
 
             void Hide(string col)
 
@@ -712,52 +699,31 @@ namespace AccessControlConfigurator
             Hide("lastModified");
 
             var headerMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-
             {
-
-                ["id"] = "ID",
-
-                ["cardNumber"] = "Card Number",
-
-                ["accessLevelId"] = "Access Level ID",
-                ["accessLevelName"] = "Access Level Name",
-
-                ["issueCode"] = "Issue Code",
-
-                ["status"] = "Status",
-
-                ["actTime"] = "Activation Time",
-
-                ["dactTime"] = "Deactivation Time",
-
-                ["vacDate"] = "Vacation Date",
-
-                ["vacDays"] = "Vacation Days",
-
-                ["tmpDate"] = "Temporary Date",
-
-                ["tmpDays"] = "Temporary Days",
-
-                ["createdAt"] = "Created",
-
-                ["lastModified"] = "Last Modified",
-
-                ["updatedAt"] = "Updated",
-
-                ["startDateTime"] = "Start Date/Time",
-
-                ["endDateTime"] = "End Date/Time",
-
-                ["assignCardholder"] = "Cardholder ID",
-
-                ["user_Level_MAX_ULVL"] = "User Level",
-
-                ["alvl_Prec_MAX_ACR_PER_SCP"] = "Access Level Prec",
-
-                ["acrNumbers"] = "ACR Numbers",
-
-                ["acrScpIds"] = "ACR SCP IDs"
-
+                ["id"]                        = "ID",
+                ["cardNumber"]                = "Card\nNumber",
+                ["accessLevelId"]             = "Access Level\nID",
+                ["accessLevelName"]           = "Access Level\nName",
+                ["issueCode"]                 = "Issue\nCode",
+                ["status"]                    = "Status",
+                ["actTime"]                   = "Activation\nTime",
+                ["dactTime"]                  = "Deactivation\nTime",
+                ["actTimeLocal"]              = "Activation Time\n(Local)",
+                ["dactTimeLocal"]             = "Deactivation Time\n(Local)",
+                ["vacDate"]                   = "Vacation\nDate",
+                ["vacDays"]                   = "Vacation\nDays",
+                ["tmpDate"]                   = "Temporary\nDate",
+                ["tmpDays"]                   = "Temporary\nDays",
+                ["createdAt"]                 = "Created",
+                ["lastModified"]              = "Last\nModified",
+                ["updatedAt"]                 = "Updated",
+                ["startDateTime"]             = "Start\nDate/Time",
+                ["endDateTime"]               = "End\nDate/Time",
+                ["assignCardholder"]          = "Cardholder\nID",
+                ["user_Level_MAX_ULVL"]       = "User\nLevel",
+                ["alvl_Prec_MAX_ACR_PER_SCP"] = "Access Level\nPrec",
+                ["acrNumbers"]                = "ACR\nNumbers",
+                ["acrScpIds"]                 = "ACR\nSCP IDs"
             };
 
             foreach (DataGridViewColumn col in dgvCards.Columns)
@@ -784,85 +750,81 @@ namespace AccessControlConfigurator
             }
 
             dgvCards.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            ApplyColumnWidths();
+            dgvCards.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgvCards.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvCards.ColumnHeadersHeight = 50;
+
+            EnsureLocalTimeColumns();
+
+            // Move Cardholder ID column to appear just before Created
+            if (dgvCards.Columns.Contains("assignCardholder") && dgvCards.Columns.Contains("createdAt"))
+            {
+                int createdIdx = dgvCards.Columns["createdAt"].DisplayIndex;
+                if (dgvCards.Columns["assignCardholder"].DisplayIndex > createdIdx)
+                    dgvCards.Columns["assignCardholder"].DisplayIndex = createdIdx;
+            }
+
+            // Auto-size all visible columns to fill available width (no horizontal scroll)
+            dgvCards.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // Give ID column a smaller fixed share, Card Number a bit more
+            if (dgvCards.Columns.Contains("id"))
+                dgvCards.Columns["id"].FillWeight = 40;
+            if (dgvCards.Columns.Contains("cardNumber"))
+                dgvCards.Columns["cardNumber"].FillWeight = 80;
+            if (dgvCards.Columns.Contains("accessLevelId"))
+                dgvCards.Columns["accessLevelId"].FillWeight = 60;
+            if (dgvCards.Columns.Contains("accessLevelName"))
+                dgvCards.Columns["accessLevelName"].FillWeight = 100;
+            if (dgvCards.Columns.Contains("actTime"))
+                dgvCards.Columns["actTime"].FillWeight = 100;
+            if (dgvCards.Columns.Contains("dactTime"))
+                dgvCards.Columns["dactTime"].FillWeight = 100;
+            if (dgvCards.Columns.Contains("assignCardholder"))
+                dgvCards.Columns["assignCardholder"].FillWeight = 70;
+            if (dgvCards.Columns.Contains("createdAt"))
+                dgvCards.Columns["createdAt"].FillWeight = 100;
+            if (dgvCards.Columns.Contains("updatedAt"))
+                dgvCards.Columns["updatedAt"].FillWeight = 100;
 
         }
 
         private void EnsureLocalTimeColumns()
-
         {
-
             if (!dgvCards.Columns.Contains("actTimeLocal"))
-
             {
-
                 dgvCards.Columns.Add(new DataGridViewTextBoxColumn
-
                 {
-
                     Name = "actTimeLocal",
-
                     HeaderText = "Activation Time (Local)",
-
                     ReadOnly = true
-
                 });
-
             }
 
             if (!dgvCards.Columns.Contains("dactTimeLocal"))
-
             {
-
                 dgvCards.Columns.Add(new DataGridViewTextBoxColumn
-
                 {
-
                     Name = "dactTimeLocal",
-
                     HeaderText = "Deactivation Time (Local)",
-
                     ReadOnly = true
-
                 });
-
             }
 
             if (dgvCards.Columns.Contains("actTime") && dgvCards.Columns.Contains("actTimeLocal"))
-
-            {
-
-                dgvCards.Columns["actTimeLocal"].DisplayIndex =
-
-                    dgvCards.Columns["actTime"].DisplayIndex + 1;
-
-            }
+                dgvCards.Columns["actTimeLocal"].DisplayIndex = dgvCards.Columns["actTime"].DisplayIndex + 1;
 
             if (dgvCards.Columns.Contains("dactTime") && dgvCards.Columns.Contains("dactTimeLocal"))
-
-            {
-
-                dgvCards.Columns["dactTimeLocal"].DisplayIndex =
-
-                    dgvCards.Columns["dactTime"].DisplayIndex + 1;
-
-            }
+                dgvCards.Columns["dactTimeLocal"].DisplayIndex = dgvCards.Columns["dactTime"].DisplayIndex + 1;
 
             foreach (DataGridViewRow row in dgvCards.Rows)
-
             {
-
                 if (row.DataBoundItem is CardDto card)
-
                 {
-
                     row.Cells["actTimeLocal"].Value = FormatUnixTime(card.actTime);
                     row.Cells["dactTimeLocal"].Value = FormatUnixTime(card.dactTime);
-
                 }
-
             }
-
         }
 
         private string FormatUnixTime(long unixSeconds)
@@ -921,7 +883,7 @@ namespace AccessControlConfigurator
         {
 
             int top = 12;
-            int left = 158;
+            int left = 10;
             int spacing = 10;
             int rightPadding = 12;
 
@@ -954,9 +916,9 @@ namespace AccessControlConfigurator
             txtSearch.Location = new Point(btnSearch.Left - txtSearch.Width - 8, searchTop + 1);
             lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 5);
 
-            if (mainLayout != null && mainLayout.RowStyles.Count > 0)
+            if (headerPanel != null && !headerPanel.IsDisposed)
             {
-                mainLayout.RowStyles[0].Height = wrapSearch ? 96F : 60F;
+                headerPanel.Height = wrapSearch ? 96 : 55;
             }
 
         }
@@ -1013,12 +975,23 @@ namespace AccessControlConfigurator
 
         private void ApplyButtonStyles()
         {
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StylePrimaryToolbarButton(btnAdd, 100);
+            btnAdd.Text = "+ Add";
+
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 90);
+            btnEdit.Text = "\u270E Edit";
+
+            Helpers.UIStyleHelper.StyleDangerToolbarButton(btnDelete, 100);
+            btnDelete.Text = "\u2715 Delete";
+
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnBack, 90);
+            btnSync.Text = "\u21BA Sync";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 100);
+            btnRefresh.Text = "\u21BA Refresh";
+
+            Helpers.UIStyleHelper.StyleNeutralToolbarButton(btnBack, 90);
+            btnBack.Text = "\u2190 Back";
         }
 
     }

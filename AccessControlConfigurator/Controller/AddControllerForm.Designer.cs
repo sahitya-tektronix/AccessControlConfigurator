@@ -1,11 +1,13 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using AccessControlConfigurator.Helpers;
 
 namespace AccessControlConfigurator.Forms
 {
     public partial class AddControllerForm : Form
     {
-        private Label lblTitle;
+        private Panel headerPanel;
+        private Label lblHeader;
         private Label lblName, lblMac, lblIp, lblTimeZone;
         private TextBox txtName, txtMac, txtIp;
         private ComboBox cmbTimeZone;
@@ -13,7 +15,8 @@ namespace AccessControlConfigurator.Forms
 
         private void InitializeComponent()
         {
-            lblTitle = new Label();
+            headerPanel = new Panel();
+            lblHeader = new Label();
             lblName = new Label();
             txtName = new TextBox();
             lblMac = new Label();
@@ -24,16 +27,19 @@ namespace AccessControlConfigurator.Forms
             cmbTimeZone = new ComboBox();
             btnSave = new Button();
             btnCancel = new Button();
+            headerPanel.SuspendLayout();
             SuspendLayout();
 
-            // lblTitle
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblTitle.Location = new Point(110, 15);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(184, 32);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "Add Controller";
+            // headerPanel + lblHeader
+            UIStyleHelper.StyleHeaderPanel(headerPanel);
+            headerPanel.Controls.Add(lblHeader);
+
+            lblHeader.Text = "ADD CONTROLLER";
+            lblHeader.AutoSize = false;
+            lblHeader.Dock = DockStyle.Fill;
+            lblHeader.TextAlign = ContentAlignment.MiddleCenter;
+            lblHeader.Font = UIStyleHelper.StandardFonts.HeaderFont;
+            lblHeader.ForeColor = UIStyleHelper.StandardColors.HeaderForeground;
 
             // lblName
             lblName.AutoSize = true;
@@ -117,7 +123,7 @@ namespace AccessControlConfigurator.Forms
             // AddControllerForm
             BackColor = Color.White;
             ClientSize = new Size(382, 360);
-            Controls.Add(lblTitle);
+            Controls.Add(headerPanel);
             Controls.Add(lblName);
             Controls.Add(txtName);
             Controls.Add(lblMac);
@@ -131,6 +137,7 @@ namespace AccessControlConfigurator.Forms
             Name = "AddControllerForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Add Controller";
+            headerPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }

@@ -15,26 +15,26 @@ namespace AccessControlConfigurator
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Check for saved token (Remember Me feature)
-            string savedToken = TokenFileManager.GetToken();
-            if (!string.IsNullOrWhiteSpace(savedToken))
-            {
-                TokenManager.Token = savedToken;
+            // TODO: Re-enable token verification once the auth API is stable.
+            // --- SAVED TOKEN CHECK (commented out) ---
+            //string savedToken = TokenFileManager.GetToken();
+            //if (!string.IsNullOrWhiteSpace(savedToken))
+            //{
+            //    TokenManager.Token = savedToken;
+            //    if (VerifyToken())
+            //    {
+            //        Application.Run(new MainForm());
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        TokenFileManager.DeleteToken();
+            //        TokenManager.Token = null;
+            //    }
+            //}
+            // --- END SAVED TOKEN CHECK ---
 
-                // Try to verify token by calling a protected API
-                if (VerifyToken())
-                {
-                    Application.Run(new MainForm());
-                    return;
-                }
-                else
-                {
-                    TokenFileManager.DeleteToken();
-                    TokenManager.Token = null;
-                }
-            }
-
-            // Show login form
+            // Show login form (hardcoded admin/123 while API is unavailable)
             using (LoginForm login = new LoginForm())
             {
                 if (login.ShowDialog() == DialogResult.OK)

@@ -29,6 +29,8 @@
             btnLogin = new Button();
             btnExit = new Button();
             btnForgotPassword = new Button();
+            btnLicense = new Button();
+            btnSettings = new Button();
             pnlMain.SuspendLayout();
             pnlBanner.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picBanner).BeginInit();
@@ -80,6 +82,8 @@
             pnlLogin.Controls.Add(btnForgotPassword);
             pnlLogin.Controls.Add(btnLogin);
             pnlLogin.Controls.Add(btnExit);
+            pnlLogin.Controls.Add(btnLicense);
+            pnlLogin.Controls.Add(btnSettings);
             pnlLogin.Dock = DockStyle.Right;
             pnlLogin.Location = new Point(740, 0);
             pnlLogin.Name = "pnlLogin";
@@ -139,9 +143,10 @@
             chkRememberMe.TabIndex = 5;
             chkRememberMe.Text = "Remember Me";
             chkRememberMe.UseVisualStyleBackColor = true;
-            // 
+            chkRememberMe.Visible = false;
+            //
             // lnkForgot
-            // 
+            //
             lnkForgot.AutoSize = true;
             lnkForgot.Location = new Point(220, 260);
             lnkForgot.Name = "lnkForgot";
@@ -149,43 +154,78 @@
             lnkForgot.TabIndex = 6;
             lnkForgot.TabStop = true;
             lnkForgot.Text = "Forgot Password?";
+            lnkForgot.Visible = false;
             lnkForgot.LinkClicked += new LinkLabelLinkClickedEventHandler(lnkForgot_LinkClicked);
-            // 
-            // btnForgotPassword
-            // 
-            btnForgotPassword.Location = new Point(40, 290);
-            btnForgotPassword.Name = "btnForgotPassword";
-            btnForgotPassword.Size = new Size(280, 35);
-            btnForgotPassword.TabIndex = 7;
-            btnForgotPassword.Text = "Reset Password";
-            btnForgotPassword.UseVisualStyleBackColor = true;
-            btnForgotPassword.Click += new System.EventHandler(btnForgotPassword_Click);
-            // 
+            //
             // btnLogin
-            // 
+            //
             btnLogin.BackColor = Color.FromArgb(243, 134, 48);
             btnLogin.FlatAppearance.BorderSize = 0;
             btnLogin.FlatStyle = FlatStyle.Flat;
             btnLogin.ForeColor = Color.White;
-            btnLogin.Location = new Point(40, 340);
+            btnLogin.Location = new Point(40, 260);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(280, 42);
-            btnLogin.TabIndex = 8;
+            btnLogin.TabIndex = 7;
             btnLogin.Text = "Login";
             btnLogin.UseVisualStyleBackColor = false;
             btnLogin.Click += btnLogin_Click;
-            // 
+            //
+            // btnForgotPassword (Reset Password — below Login)
+            //
+            btnForgotPassword.FlatStyle = FlatStyle.Flat;
+            btnForgotPassword.FlatAppearance.BorderColor = Color.FromArgb(243, 134, 48);
+            btnForgotPassword.FlatAppearance.BorderSize = 1;
+            btnForgotPassword.BackColor = Color.White;
+            btnForgotPassword.ForeColor = Color.FromArgb(243, 134, 48);
+            btnForgotPassword.Location = new Point(40, 314);
+            btnForgotPassword.Name = "btnForgotPassword";
+            btnForgotPassword.Size = new Size(280, 35);
+            btnForgotPassword.TabIndex = 8;
+            btnForgotPassword.Text = "Reset Password";
+            btnForgotPassword.UseVisualStyleBackColor = false;
+            btnForgotPassword.Visible = false;
+            btnForgotPassword.Click += new System.EventHandler(btnForgotPassword_Click);
+            //
             // btnExit
-            // 
-            btnExit.Location = new Point(40, 400);
+            //
+            btnExit.Location = new Point(40, 314);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(280, 35);
             btnExit.TabIndex = 9;
             btnExit.Text = "Exit";
             btnExit.Click += btnExit_Click;
-            // 
+            //
+            // btnLicense
+            //
+            btnLicense.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnLicense.FlatAppearance.BorderSize = 0;
+            btnLicense.FlatStyle = FlatStyle.Flat;
+            btnLicense.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            btnLicense.Location = new Point(223, 544);
+            btnLicense.Name = "btnLicense";
+            btnLicense.Size = new Size(75, 36);
+            btnLicense.TabIndex = 10;
+            btnLicense.Text = "License";
+            btnLicense.UseVisualStyleBackColor = true;
+            btnLicense.Click += btnLicense_Click;
+            //
+            // btnSettings
+            //
+            btnSettings.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnSettings.FlatAppearance.BorderSize = 0;
+            btnSettings.FlatStyle = FlatStyle.Flat;
+            btnSettings.Font = new Font("Segoe UI Symbol", 12F, FontStyle.Bold);
+            btnSettings.Location = new Point(304, 544);
+            btnSettings.Name = "btnSettings";
+            btnSettings.Size = new Size(36, 36);
+            btnSettings.TabIndex = 11;
+            btnSettings.Text = "\u2699";
+            btnSettings.UseVisualStyleBackColor = true;
+            btnSettings.Click += btnSettings_Click;
+            //
             // LoginForm
-            // 
+            //
             ClientSize = new Size(1100, 600);
             Controls.Add(pnlMain);
             FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -218,5 +258,7 @@
         private Button btnExit;
         private Button btnForgotPassword;
         private LinkLabel lnkForgot;
+        private Button btnLicense;
+        private Button btnSettings;
     }
 }

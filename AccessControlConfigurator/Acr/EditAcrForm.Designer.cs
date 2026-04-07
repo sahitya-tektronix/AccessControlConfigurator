@@ -8,7 +8,8 @@ namespace AccessControlConfigurator.Forms
     {
         private System.ComponentModel.IContainer components = null;
 
-        private Label lblTitle;
+        private Panel headerPanel;
+        private Label lblHeader;
         private Label lblName;
         private TextBox txtName;
         private Label lblAcrNumber;
@@ -43,7 +44,8 @@ namespace AccessControlConfigurator.Forms
 
         private void InitializeComponent()
         {
-            lblTitle = new Label();
+            headerPanel = new Panel();
+            lblHeader = new Label();
             lblName = new Label();
             txtName = new TextBox();
             lblAcrNumber = new Label();
@@ -71,18 +73,22 @@ namespace AccessControlConfigurator.Forms
             ((System.ComponentModel.ISupportInitialize)numStrikeNumber).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numDoorNumber).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numRexNumber).BeginInit();
+            headerPanel.SuspendLayout();
             bottomPanel.SuspendLayout();
             SuspendLayout();
-            // 
-            // lblTitle
-            // 
-            lblTitle.AutoSize = true;
-            lblTitle.Location = new Point(24, 20);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(124, 20);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "Edit ACR Settings";
-            // 
+            //
+            // headerPanel + lblHeader
+            //
+            Helpers.UIStyleHelper.StyleHeaderPanel(headerPanel);
+            headerPanel.Controls.Add(lblHeader);
+
+            lblHeader.Text = "EDIT ACR SETTINGS";
+            lblHeader.AutoSize = false;
+            lblHeader.Dock = DockStyle.Fill;
+            lblHeader.TextAlign = ContentAlignment.MiddleCenter;
+            lblHeader.Font = Helpers.UIStyleHelper.StandardFonts.HeaderFont;
+            lblHeader.ForeColor = Helpers.UIStyleHelper.StandardColors.HeaderForeground;
+            //
             // lblName
             // 
             lblName.Location = new Point(24, 70);
@@ -188,6 +194,7 @@ namespace AccessControlConfigurator.Forms
             // 
             // numStrikeNumber
             // 
+            numStrikeNumber.Enabled = false;
             numStrikeNumber.Location = new Point(170, 294);
             numStrikeNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numStrikeNumber.Name = "numStrikeNumber";
@@ -204,7 +211,7 @@ namespace AccessControlConfigurator.Forms
             // 
             // numDoorNumber
             // 
-            numDoorNumber.Enabled =true;
+            numDoorNumber.Enabled = false;
             numDoorNumber.Location = new Point(170, 332);
             numDoorNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numDoorNumber.Name = "numDoorNumber";
@@ -221,6 +228,7 @@ namespace AccessControlConfigurator.Forms
             // 
             // numRexNumber
             // 
+            numRexNumber.Enabled = false;
             numRexNumber.Location = new Point(170, 370);
             numRexNumber.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             numRexNumber.Name = "numRexNumber";
@@ -283,7 +291,7 @@ namespace AccessControlConfigurator.Forms
             Controls.Add(lblAcrNumber);
             Controls.Add(txtName);
             Controls.Add(lblName);
-            Controls.Add(lblTitle);
+            Controls.Add(headerPanel);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -296,6 +304,7 @@ namespace AccessControlConfigurator.Forms
             ((System.ComponentModel.ISupportInitialize)numStrikeNumber).EndInit();
             ((System.ComponentModel.ISupportInitialize)numDoorNumber).EndInit();
             ((System.ComponentModel.ISupportInitialize)numRexNumber).EndInit();
+            headerPanel.ResumeLayout(false);
             bottomPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();

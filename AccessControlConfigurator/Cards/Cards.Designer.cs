@@ -63,20 +63,22 @@
             headerPanel.SuspendLayout();
             filterPanel.SuspendLayout();
             SuspendLayout();
-            // 
-            // lblTitle
-            // 
-            lblTitle.AutoSize = true;
+            //
+            // lblTitle — heading row above buttons
+            //
+            lblTitle.AutoSize = false;
+            lblTitle.Dock = DockStyle.Top;
+            lblTitle.Height = 40;
             lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblTitle.Location = new Point(10, 15);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(78, 32);
+            lblTitle.Padding = new Padding(10, 0, 0, 0);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Cards";
+            lblTitle.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(158, 12);
+            btnAdd.Location = new Point(10, 12);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(80, 30);
             btnAdd.TabIndex = 1;
@@ -85,7 +87,7 @@
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(244, 12);
+            btnEdit.Location = new Point(96, 12);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(80, 30);
             btnEdit.TabIndex = 2;
@@ -94,7 +96,7 @@
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(330, 12);
+            btnDelete.Location = new Point(182, 12);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(80, 30);
             btnDelete.TabIndex = 3;
@@ -103,7 +105,7 @@
             // 
             // btnSync
             // 
-            btnSync.Location = new Point(420, 12);
+            btnSync.Location = new Point(268, 12);
             btnSync.Name = "btnSync";
             btnSync.Size = new Size(80, 30);
             btnSync.TabIndex = 4;
@@ -112,7 +114,7 @@
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(510, 12);
+            btnRefresh.Location = new Point(354, 12);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(80, 30);
             btnRefresh.TabIndex = 5;
@@ -121,11 +123,12 @@
             // 
             // btnBack
             // 
-            btnBack.Location = new Point(600, 12);
+            btnBack.Location = new Point(440, 12);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(80, 30);
             btnBack.TabIndex = 6;
             btnBack.Text = "Back";
+            btnBack.Visible = false;
             btnBack.Click += btnBack_Click;
             // 
             // dgvCards
@@ -147,26 +150,24 @@
             // mainLayout
             // 
             mainLayout.ColumnCount = 1;
-            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            mainLayout.Controls.Add(headerPanel, 0, 0);
-            mainLayout.Controls.Add(filterPanel, 0, 1);
-            mainLayout.Controls.Add(dgvCards, 0, 2);
+            mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            mainLayout.Controls.Add(filterPanel, 0, 0);
+            mainLayout.Controls.Add(dgvCards, 0, 1);
             mainLayout.Dock = DockStyle.Fill;
             mainLayout.Location = new Point(0, 0);
             mainLayout.Name = "mainLayout";
-            mainLayout.RowCount = 3;
-            mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            mainLayout.RowCount = 2;
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
             mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             mainLayout.Size = new Size(1100, 650);
             mainLayout.TabIndex = 0;
-            // 
-            // headerPanel
-            // 
+            //
+            // headerPanel — DockStyle.Top buttons row (sibling of lblTitle)
+            //
+            headerPanel.BackColor = Color.White;
             headerPanel.Controls.Add(btnSearch);
             headerPanel.Controls.Add(txtSearch);
             headerPanel.Controls.Add(lblSearchRight);
-            headerPanel.Controls.Add(lblTitle);
             headerPanel.Controls.Add(btnAdd);
             headerPanel.Controls.Add(btnEdit);
             headerPanel.Controls.Add(btnClearFilters);
@@ -174,11 +175,10 @@
             headerPanel.Controls.Add(btnSync);
             headerPanel.Controls.Add(btnRefresh);
             headerPanel.Controls.Add(btnBack);
-            headerPanel.Dock = DockStyle.Fill;
-            headerPanel.Location = new Point(3, 3);
+            headerPanel.Dock = DockStyle.Top;
+            headerPanel.Height = 55;
             headerPanel.Name = "headerPanel";
-            headerPanel.Padding = new Padding(10);
-            headerPanel.Size = new Size(1094, 54);
+            headerPanel.Padding = new Padding(10, 0, 10, 0);
             headerPanel.TabIndex = 0;
             // 
             // btnSearch
@@ -286,6 +286,8 @@
             // Cards
             // 
             Controls.Add(mainLayout);
+            Controls.Add(headerPanel);   // DockStyle.Top, below lblTitle, contains buttons
+            Controls.Add(lblTitle);      // DockStyle.Top, added LAST → at very top
             Name = "Cards";
             Size = new Size(1100, 650);
             ((System.ComponentModel.ISupportInitialize)dgvCards).EndInit();

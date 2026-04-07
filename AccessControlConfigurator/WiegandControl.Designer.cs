@@ -49,11 +49,10 @@
             flowRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvFormats).BeginInit();
             SuspendLayout();
-            // 
+            //
             // topPanel
-            // 
+            //
             topPanel.BackColor = Color.WhiteSmoke;
-            topPanel.Controls.Add(lblTitle);
             topPanel.Controls.Add(btnAdd);
             topPanel.Controls.Add(btnEdit);
             topPanel.Controls.Add(btnDelete);
@@ -64,20 +63,22 @@
             topPanel.Name = "topPanel";
             topPanel.Size = new Size(1032, 50);
             topPanel.TabIndex = 2;
-            // 
-            // lblTitle
-            // 
-            lblTitle.AutoSize = true;
+            //
+            // lblTitle — heading row above buttons
+            //
+            lblTitle.AutoSize = false;
+            lblTitle.Dock = DockStyle.Top;
+            lblTitle.Height = 40;
             lblTitle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            lblTitle.Location = new Point(10, 12);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(169, 25);
+            lblTitle.Padding = new Padding(10, 0, 0, 0);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Wiegand Formats";
+            lblTitle.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(220, 10);
+            btnAdd.Location = new Point(10, 10);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(80, 28);
             btnAdd.TabIndex = 1;
@@ -85,7 +86,7 @@
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(310, 10);
+            btnEdit.Location = new Point(100, 10);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(80, 28);
             btnEdit.TabIndex = 2;
@@ -93,7 +94,7 @@
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(400, 10);
+            btnDelete.Location = new Point(190, 10);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(80, 28);
             btnDelete.TabIndex = 3;
@@ -101,7 +102,7 @@
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(490, 10);
+            btnRefresh.Location = new Point(280, 10);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(80, 28);
             btnRefresh.TabIndex = 4;
@@ -259,6 +260,7 @@
             Controls.Add(dgvFormats);
             Controls.Add(filterPanel);
             Controls.Add(topPanel);
+            Controls.Add(lblTitle);      // DockStyle.Top, added after topPanel → appears above topPanel
             Name = "WiegandControl";
             Size = new Size(1032, 453);
             topPanel.ResumeLayout(false);

@@ -46,9 +46,12 @@ namespace AccessControlConfigurator
 
             _ = LoadAccessLevels();
 
+            ApplyButtonStyles();
+            Helpers.GridStyleHelper.ApplyStandardStyle(dgvAccessLevels);
+
             btnSearch.Click += btnSearch_Click;
 
-            //txtSearch.TextChanged += txtSearch_TextChanged;
+            txtSearch.TextChanged += (s, e) => ApplyFilter();
 
             // Button style
 
@@ -514,6 +517,27 @@ namespace AccessControlConfigurator
 
         }
 
+        private void ApplyButtonStyles()
+        {
+            Helpers.UIStyleHelper.StylePrimaryToolbarButton(btnAdd, 100);
+            btnAdd.Text = "+ Add";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
+            btnEdit.Text = "\u270E Edit";
+
+            Helpers.UIStyleHelper.StyleDangerToolbarButton(btnDelete, 100);
+            btnDelete.Text = "\u2715 Delete";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 80);
+            btnSync.Text = "\u21C4 Sync";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 100);
+            btnRefresh.Text = "\u21BA Refresh";
+
+            Helpers.UIStyleHelper.StyleNeutralToolbarButton(btnBack, 90);
+            btnBack.Text = "\u2190 Back";
+        }
+
         private void AlignHeaderControls()
 
         {
@@ -574,7 +598,9 @@ namespace AccessControlConfigurator
             cmbNameFilter.Location = new Point(availableRight - cmbNameFilter.Width, filterTop);
             lblNameFilter.Location = new Point(cmbNameFilter.Left - lblNameFilter.Width - 8, filterTop + 3);
 
-            panelFilter.Height = wrapFilter ? (filterTop + cmbNameFilter.Height + 6) : 36;
+            // Buttons are 36 px tall at y=5 → Bottom=41; panel must be taller than that.
+            int singleRowH = btnAdd.Bottom + 12;
+            panelFilter.Height = wrapFilter ? (filterTop + btnAdd.Height + 10) : singleRowH;
 
         }
 
