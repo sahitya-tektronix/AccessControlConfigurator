@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using AccessControlConfigurator.Helpers;
 
 namespace AccessControlConfigurator.Forms
 {
@@ -40,12 +41,30 @@ namespace AccessControlConfigurator.Forms
 
             this.Text = "Add ACR";
             this.Width = 420;
-            this.Height = 420;
+            this.Height = 480;
             this.StartPosition = FormStartPosition.CenterParent;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+
+            // Header panel
+            var headerPanel = new Panel();
+            UIStyleHelper.StyleHeaderPanel(headerPanel);
+            var lblHeader = new Label
+            {
+                AutoSize = false,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = UIStyleHelper.StandardFonts.HeaderFont,
+                ForeColor = UIStyleHelper.StandardColors.HeaderForeground,
+                Text = "ADD ACR"
+            };
+            headerPanel.Controls.Add(lblHeader);
+            Controls.Add(headerPanel);
 
             int labelX = 20;
             int controlX = 160;
-            int y = 20;
+            int y = 80;  // shifted down 60px to clear the header
 
             // Name
             Controls.Add(new Label() { Text = "Name", Left = labelX, Top = y + 5, Width = 120 });

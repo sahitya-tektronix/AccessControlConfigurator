@@ -17,7 +17,14 @@ namespace AccessControlConfigurator
         private CheckBox chkColControllerName;
         private CheckBox chkColScpId;
         private CheckBox chkColEventDescription;
+        private CheckBox chkColEventDetails;
         private CheckBox chkColCreatedAt;
+
+        // Advanced event-type filter
+        private Label lblEventTypeFilter;
+        private CheckedListBox clbEventTypes;
+        private Button btnToggleEventTypes;
+        private Panel panelEventTypeFilter;
 
         // Row 2: action buttons
         private FlowLayoutPanel panelActions;
@@ -68,7 +75,13 @@ namespace AccessControlConfigurator
             chkColControllerName = new CheckBox();
             chkColScpId = new CheckBox();
             chkColEventDescription = new CheckBox();
+            chkColEventDetails = new CheckBox();
             chkColCreatedAt = new CheckBox();
+
+            lblEventTypeFilter = new Label();
+            clbEventTypes = new CheckedListBox();
+            btnToggleEventTypes = new Button();
+            panelEventTypeFilter = new Panel();
             panelActions = new FlowLayoutPanel();
             btnExportPdf = new Button();
             btnExportExcel = new Button();
@@ -103,7 +116,7 @@ namespace AccessControlConfigurator
             // ════════════════════════════════════════════════════════════════
             panelHeader.BackColor = Color.FromArgb(245, 246, 248);
             panelHeader.Dock = DockStyle.Top;
-            panelHeader.Height = 156;
+            panelHeader.Height = 180;
             panelHeader.Padding = new Padding(14, 8, 14, 8);
             panelHeader.Controls.Add(lblTitle);
             panelHeader.Controls.Add(lblChooseColumns);
@@ -140,14 +153,15 @@ namespace AccessControlConfigurator
             panelColumnChooser.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panelColumnChooser.AutoSize = false;
             panelColumnChooser.FlowDirection = FlowDirection.LeftToRight;
-            panelColumnChooser.WrapContents = false;
+            panelColumnChooser.WrapContents = true;
             panelColumnChooser.Location = new Point(130, 42);   // offset right of the label
-            panelColumnChooser.Size = new Size(760, 26);
+            panelColumnChooser.Size = new Size(760, 52);        // tall enough for two rows if needed
             panelColumnChooser.Controls.Add(chkColEventTime);
             panelColumnChooser.Controls.Add(chkColCardNumber);
             panelColumnChooser.Controls.Add(chkColControllerName);
             panelColumnChooser.Controls.Add(chkColScpId);
             panelColumnChooser.Controls.Add(chkColEventDescription);
+            panelColumnChooser.Controls.Add(chkColEventDetails);
             panelColumnChooser.Controls.Add(chkColCreatedAt);
 
             // helper: shared checkbox style
@@ -166,14 +180,61 @@ namespace AccessControlConfigurator
             StyleCheckBox(chkColControllerName, "Controller Name");
             StyleCheckBox(chkColScpId, "SCP ID");
             StyleCheckBox(chkColEventDescription, "Event Description");
+            StyleCheckBox(chkColEventDetails, "Event Details");
             StyleCheckBox(chkColCreatedAt, "Created At");
+
+            // ── Event-Type advanced filter panel ──────────────────────────────
+            // Toggle button that sits inline with other filter controls
+            btnToggleEventTypes.Text = "Event Types \u25BC";
+            btnToggleEventTypes.AutoSize = false;
+            btnToggleEventTypes.Size = new Size(120, 26);
+            btnToggleEventTypes.FlatStyle = FlatStyle.Flat;
+            btnToggleEventTypes.FlatAppearance.BorderColor = Color.FromArgb(0, 120, 215);
+            btnToggleEventTypes.BackColor = Color.White;
+            btnToggleEventTypes.ForeColor = Color.FromArgb(0, 120, 215);
+            btnToggleEventTypes.Font = new Font("Segoe UI", 8.5F);
+            btnToggleEventTypes.Cursor = Cursors.Hand;
+            btnToggleEventTypes.Location = new Point(14, 144);
+
+            // Drop-down panel that appears/disappears on toggle
+            panelEventTypeFilter.BorderStyle = BorderStyle.FixedSingle;
+            panelEventTypeFilter.BackColor = Color.White;
+            panelEventTypeFilter.Size = new Size(480, 76);
+            panelEventTypeFilter.Location = new Point(14, 150);
+            panelEventTypeFilter.Visible = false;
+
+            //lblEventTypeFilter.Text = "Filter Event Types (multi-select, OR logic):";
+            lblEventTypeFilter.Text = "Filter Event Types (multi-select" +
+                "" +
+                "):";
+
+            lblEventTypeFilter.AutoSize = true;
+            lblEventTypeFilter.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            lblEventTypeFilter.ForeColor = Color.FromArgb(40, 40, 80);
+            lblEventTypeFilter.Location = new Point(4, 4);
+
+            clbEventTypes.CheckOnClick = true;
+            clbEventTypes.MultiColumn = true;
+            clbEventTypes.ColumnWidth = 200;
+            clbEventTypes.BorderStyle = BorderStyle.None;
+            clbEventTypes.Font = new Font("Segoe UI", 9F);
+            clbEventTypes.Location = new Point(4, 22);
+            clbEventTypes.Size = new Size(470, 48);
+            clbEventTypes.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+
+            // Event types are discovered dynamically from loaded data — no hardcoded items
+
+            panelEventTypeFilter.Controls.Add(lblEventTypeFilter);
+            panelEventTypeFilter.Controls.Add(clbEventTypes);
+            panelHeader.Controls.Add(btnToggleEventTypes);
+            panelHeader.Controls.Add(panelEventTypeFilter);
 
             // ── panelActions ────────────────────────────────────────────────
             panelActions.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             panelActions.AutoSize = false;
             panelActions.FlowDirection = FlowDirection.LeftToRight;
             panelActions.WrapContents = false;
-            panelActions.Location = new Point(14, 76);
+            panelActions.Location = new Point(14, 100);
             panelActions.Size = new Size(876, 36);
             panelActions.Controls.Add(btnExportPdf);
             panelActions.Controls.Add(btnExportExcel);
@@ -202,7 +263,7 @@ namespace AccessControlConfigurator
 
             // ── panelPagination ────────────────────────────────────────────
             panelPagination.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            panelPagination.Location = new Point(540, 76);
+            panelPagination.Location = new Point(540, 100);
             panelPagination.Size = new Size(350, 36);
 
             btnPrevPage.Text = "Prev";
@@ -239,51 +300,51 @@ namespace AccessControlConfigurator
 
             // ── Filters row ────────────────────────────────────────────────
             chkFilterByCreatedDate.AutoSize = true;
-            chkFilterByCreatedDate.Location = new Point(14, 120);
+            chkFilterByCreatedDate.Location = new Point(14, 144);
             chkFilterByCreatedDate.Text = "Filter by Created Date";
 
             lblStartDate.AutoSize = true;
-            lblStartDate.Location = new Point(190, 121);
+            lblStartDate.Location = new Point(190, 145);
             lblStartDate.Text = "Start";
 
             dtStartDate.Format = DateTimePickerFormat.Custom;
             dtStartDate.CustomFormat = "yyyy-MM-dd HH:mm";
             dtStartDate.ShowUpDown = true;
-            dtStartDate.Location = new Point(230, 118);
+            dtStartDate.Location = new Point(230, 142);
             dtStartDate.Size = new Size(150, 27);
 
             lblEndDate.AutoSize = true;
-            lblEndDate.Location = new Point(390, 121);
+            lblEndDate.Location = new Point(390, 145);
             lblEndDate.Text = "End";
 
             dtEndDate.Format = DateTimePickerFormat.Custom;
             dtEndDate.CustomFormat = "yyyy-MM-dd HH:mm";
             dtEndDate.ShowUpDown = true;
-            dtEndDate.Location = new Point(425, 118);
+            dtEndDate.Location = new Point(425, 142);
             dtEndDate.Size = new Size(150, 27);
 
             btnApplyFilters.Text = "Apply";
             btnApplyFilters.Size = new Size(70, 28);
-            btnApplyFilters.Location = new Point(585, 118);
+            btnApplyFilters.Location = new Point(585, 142);
             btnApplyFilters.FlatStyle = FlatStyle.Flat;
             btnApplyFilters.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
 
             lblCardNumbers.AutoSize = true;
-            lblCardNumbers.Location = new Point(665, 121);
+            lblCardNumbers.Location = new Point(665, 145);
             lblCardNumbers.Text = "Card Number";
 
-            txtCardNumbers.Location = new Point(715, 118);
+            txtCardNumbers.Location = new Point(715, 142);
             txtCardNumbers.Size = new Size(180, 27);
 
             btnSearchCardNumbers.Text = "🔍";
             btnSearchCardNumbers.Size = new Size(34, 28);
-            btnSearchCardNumbers.Location = new Point(900, 118);
+            btnSearchCardNumbers.Location = new Point(900, 142);
             btnSearchCardNumbers.FlatStyle = FlatStyle.Flat;
             btnSearchCardNumbers.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
 
             btnClearFilters.Text = "Clear";
             btnClearFilters.Size = new Size(60, 28);
-            btnClearFilters.Location = new Point(940, 118);
+            btnClearFilters.Location = new Point(940, 142);
             btnClearFilters.FlatStyle = FlatStyle.Flat;
             btnClearFilters.FlatAppearance.BorderColor = Color.FromArgb(180, 180, 220);
 

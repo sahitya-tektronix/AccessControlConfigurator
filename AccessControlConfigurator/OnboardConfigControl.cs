@@ -40,6 +40,7 @@ namespace AccessControlConfigurator
             lblSioNumber.Text = $"SIO No: {_selectedSio.SioNumber}";
 
             InitializeDropdowns();
+            SetReaderDefaults();
 
             ToggleReader(tblReader1, false);
             ToggleReader(tblReader2, false);
@@ -51,6 +52,24 @@ namespace AccessControlConfigurator
             tb2Acr.KeyPress += tb2Acr_KeyPress;
 
             LoadSioData();
+        }
+
+        // ================= DEFAULTS =================
+        private void SetReaderDefaults()
+        {
+            // Reader 1 defaults (Address 0)
+            txtDefaultMode1.Text    = "5";
+            txtReaderPosition1.Text = "0";
+            txtStrikeNumber1.Text   = "0";
+            txtDoorNumber1.Text     = "0";
+            txtRexNumber1.Text      = "1";
+
+            // Reader 2 defaults (Address 1)
+            txtDefaultMode2.Text    = "5";
+            txtReaderPosition2.Text = "1";
+            txtStrikeNumber2.Text   = "2";
+            txtDoorNumber2.Text     = "2";
+            txtRexNumber2.Text      = "3";
         }
 
         // ================= DROPDOWNS =================
@@ -126,6 +145,11 @@ namespace AccessControlConfigurator
                     3 => "In/Out",
                     _ => "In"
                 };
+                txtDefaultMode1.Text = item.defaultMode.ToString();
+                txtReaderPosition1.Text = item.readerNumber.ToString();
+                txtStrikeNumber1.Text = item.strikeNumber.ToString();
+                txtDoorNumber1.Text = item.doorNumber.ToString();
+                txtRexNumber1.Text = item.rex0Number.ToString();
                 leftAcrId = item.id;
             }
             else
@@ -141,6 +165,11 @@ namespace AccessControlConfigurator
                     3 => "In/Out",
                     _ => "In"
                 };
+                txtDefaultMode2.Text = item.defaultMode.ToString();
+                txtReaderPosition2.Text = item.readerNumber.ToString();
+                txtStrikeNumber2.Text = item.strikeNumber.ToString();
+                txtDoorNumber2.Text = item.doorNumber.ToString();
+                txtRexNumber2.Text = item.rex0Number.ToString();
                 rightAcrId = item.id;
             }
         }
@@ -220,14 +249,29 @@ namespace AccessControlConfigurator
 
         private void ToggleReader(TableLayoutPanel table, bool enabled)
         {
+            // Names of read-only default fields — always stay disabled
+            var alwaysDisabled = new HashSet<string>
+            {
+                "txtDefaultMode1", "txtReaderPosition1", "txtStrikeNumber1", "txtDoorNumber1", "txtRexNumber1",
+                "txtDefaultMode2", "txtReaderPosition2", "txtStrikeNumber2", "txtDoorNumber2", "txtRexNumber2"
+            };
+
             foreach (Control c in table.Controls)
             {
                 if (c is Label) continue;
 
-                c.Enabled = enabled;
-                c.BackColor = enabled
-                    ? System.Drawing.Color.White
-                    : System.Drawing.Color.Gainsboro;
+                if (alwaysDisabled.Contains(c.Name))
+                {
+                    c.Enabled = false;
+                    c.BackColor = System.Drawing.Color.WhiteSmoke;
+                }
+                else
+                {
+                    c.Enabled = enabled;
+                    c.BackColor = enabled
+                        ? System.Drawing.Color.White
+                        : System.Drawing.Color.Gainsboro;
+                }
             }
         }
 

@@ -2,6 +2,7 @@
 using AccessControlConfigurator.Forms;
 using AccessControlConfigurator.Helpers;
 using AccessControlConfigurator.Services;
+using AccessControlSystem.ApiClient;
 using System;
 using System.Net.Http;
 using System.Windows.Forms;
@@ -45,29 +46,80 @@ namespace AccessControlConfigurator
             btnLogin.Text = "Logging in...";
             this.Cursor = Cursors.WaitCursor;
 
-            var request = new LoginRequestDto
-            {
-                Username = username,
-                Password = password
-            };
+            // TODO: Re-enable API login once the auth API is stable.
+            // --- API LOGIN (commented out) ---
+            //var request = new LoginRequestDto
+            //{
+            //    Username = username,
+            //    Password = password
+            //};
+            //try
+            //{
+            //    var result = await _authService.Login(request);
+            //    if (result != null && !string.IsNullOrWhiteSpace(result.Token))
+            //    {
+            //        TokenManager.Token = result.Token;
+            //        UserSession.UserId = result.Id;
+            //        UserSession.Username = result.Username;
+            //        UserSession.Role = result.Role;
+            //        if (chkRememberMe.Checked)
+            //            TokenFileManager.SaveToken(result.Token);
+            //        MessageBox.Show("Login Successful", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //        this.DialogResult = DialogResult.OK;
+            //        this.Close();
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("Invalid username or password", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //        txtPassword.Clear();
+            //        txtPassword.Focus();
+            //    }
+            //}
+            //catch (UnauthorizedAccessException ex)
+            //{
+            //    MessageBox.Show(ex.Message, "Unauthorized", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    txtPassword.Clear();
+            //    txtPassword.Focus();
+            //}
+            //catch (HttpRequestException ex)
+            //{
+            //    MessageBox.Show($"Cannot connect to server: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Login failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+            // --- END API LOGIN ---
 
+            // Check that a connection URL has been configured
+            if (string.IsNullOrWhiteSpace(AccessControlSystem.ApiClient.AppConfig.ApiBaseUrl))
+            {
+                btnLogin.Enabled = true;
+                btnLogin.Text = "Login";
+                this.Cursor = Cursors.Default;
+
+                MessageBox.Show(
+                    "Please configure the API URL before logging in.",
+                    "Configuration Required",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                using (var frm = new ConnectionSettingsForm())
+                    frm.ShowDialog(this);
+
+                return;
+            }
+
+            // Temporary hardcoded login — remove when API is ready
             try
             {
-                var result = await _authService.Login(request);
-
-                if (result != null && !string.IsNullOrWhiteSpace(result.Token))
+                if (username == "admin" && password == "123")
                 {
-                    TokenManager.Token = result.Token;
-                    UserSession.UserId = result.Id;
-                    UserSession.Username = result.Username;
-                    UserSession.Role = result.Role;
-
-                    if (chkRememberMe.Checked)
-                    {
-                        TokenFileManager.SaveToken(result.Token);
-                    }
-
-                    MessageBox.Show("Login Successful", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    TokenManager.Token = "local-dev-token";
+                    AccessControlSystem.ApiClient.AppConfig.Token = "local-dev-token";
+                    UserSession.UserId = 1;
+                    UserSession.Username = "admin";
+                    UserSession.Role = "Admin";
 
                     this.DialogResult = DialogResult.OK;
                     this.Close();
@@ -78,20 +130,6 @@ namespace AccessControlConfigurator
                     txtPassword.Clear();
                     txtPassword.Focus();
                 }
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                MessageBox.Show(ex.Message, "Unauthorized", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtPassword.Clear();
-                txtPassword.Focus();
-            }
-            catch (HttpRequestException ex)
-            {
-                MessageBox.Show($"Cannot connect to server: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Login failed: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -123,6 +161,18 @@ namespace AccessControlConfigurator
         {
             if (e.KeyCode == Keys.Enter)
                 btnLogin.PerformClick();
+        }
+
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            using (var frm = new ConnectionSettingsForm())
+                frm.ShowDialog(this);
+        }
+
+        private void btnLicense_Click(object sender, EventArgs e)
+        {
+            using (var frm = new LicenseForm())
+                frm.ShowDialog(this);
         }
 
         private void LoginForm_Load_1(object sender, EventArgs e)

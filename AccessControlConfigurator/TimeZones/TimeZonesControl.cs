@@ -488,12 +488,23 @@ namespace AccessControlConfigurator
 
         private void ApplyButtonStyles()
         {
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
+            Helpers.UIStyleHelper.StylePrimaryToolbarButton(btnAdd, 100);
+            btnAdd.Text = "+ Add";
+
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 90);
+            btnEdit.Text = "\u270E Edit";
+
+            Helpers.UIStyleHelper.StyleDangerToolbarButton(btnDelete, 100);
+            btnDelete.Text = "\u2715 Delete";
+
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnback, 90);
+            btnSync.Text = "\u21BA Sync";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 100);
+            btnRefresh.Text = "\u21BA Refresh";
+
+            Helpers.UIStyleHelper.StyleNeutralToolbarButton(btnback, 90);
+            btnback.Text = "\u2190 Back";
         }
     }
 }

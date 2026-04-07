@@ -1,10 +1,13 @@
-﻿namespace AccessControlConfigurator
+﻿using AccessControlConfigurator.Helpers;
+
+namespace AccessControlConfigurator
 {
     partial class EditCardForm
     {
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Panel headerPanel;
+        private System.Windows.Forms.Label lblHeader;
         private System.Windows.Forms.Label lblCardNumber;
         private System.Windows.Forms.Label lblAccessLevel;
         private System.Windows.Forms.Label lblCardholder;
@@ -24,7 +27,8 @@
 
         private void InitializeComponent()
         {
-            lblTitle = new Label();
+            headerPanel = new System.Windows.Forms.Panel();
+            lblHeader = new System.Windows.Forms.Label();
             lblCardNumber = new Label();
             lblAccessLevel = new Label();
             lblCardholder = new Label();
@@ -39,18 +43,21 @@
             btnUpdate = new Button();
             btnCancel = new Button();
             cbAccessLevel = new ComboBox();
+            headerPanel.SuspendLayout();
             SuspendLayout();
-            // 
-            // lblTitle
-            // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblTitle.Location = new Point(140, 10);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(118, 32);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "Edit Card";
-            // 
+            //
+            // headerPanel + lblHeader
+            //
+            UIStyleHelper.StyleHeaderPanel(headerPanel);
+            headerPanel.Controls.Add(lblHeader);
+
+            lblHeader.Text = "EDIT CARD";
+            lblHeader.AutoSize = false;
+            lblHeader.Dock = DockStyle.Fill;
+            lblHeader.TextAlign = ContentAlignment.MiddleCenter;
+            lblHeader.Font = UIStyleHelper.StandardFonts.HeaderFont;
+            lblHeader.ForeColor = UIStyleHelper.StandardColors.HeaderForeground;
+            //
             // lblCardNumber
             // 
             lblCardNumber.Location = new Point(30, 60);
@@ -174,7 +181,7 @@
             // 
             ClientSize = new Size(400, 330);
             Controls.Add(cbAccessLevel);
-            Controls.Add(lblTitle);
+            Controls.Add(headerPanel);
             Controls.Add(lblCardNumber);
             Controls.Add(txtCardNumber);
             Controls.Add(lblAccessLevel);
@@ -191,6 +198,7 @@
             Name = "EditCardForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Edit Card";
+            headerPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }

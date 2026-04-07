@@ -114,6 +114,7 @@
             mTools.Name = "mTools";
             mTools.Size = new Size(58, 24);
             mTools.Text = "Tools";
+            mTools.Visible = false;
             // 
             // toolBar
             // 
@@ -165,6 +166,7 @@
             btnLogout.Text = "Logout";
             btnLogout.DisplayStyle = ToolStripItemDisplayStyle.Text;
             btnLogout.Alignment = ToolStripItemAlignment.Right;
+            btnLogout.ForeColor = Color.FromArgb(196, 43, 28);
             // 
             // splitMain
             // 
@@ -180,12 +182,12 @@
             // 
             splitMain.Panel2.Controls.Add(pnlPageContainer);
             splitMain.Size = new Size(900, 449);
-            splitMain.SplitterDistance = 120;
+            splitMain.SplitterDistance = 185;
             splitMain.TabIndex = 0;
             // 
             // sidebar
             // 
-            sidebar.BackColor = Color.FromArgb(45, 60, 80);
+            sidebar.BackColor = Color.FromArgb(30, 48, 70);
             sidebar.Controls.Add(tabEvents);
             sidebar.Controls.Add(tabControllers);
             sidebar.Controls.Add(tabAcrs);

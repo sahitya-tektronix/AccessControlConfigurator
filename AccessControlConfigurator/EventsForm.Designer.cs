@@ -46,14 +46,17 @@
             topPanel.Dock = DockStyle.Top;
             topPanel.Height = 56;
 
-            // Title
+            // Title — now a separate DockStyle.Top label above topPanel
             lblTitle.Text = "Live Controller Events";
             lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            lblTitle.AutoSize = true;
-            lblTitle.Location = new Point(14, 16);
+            lblTitle.AutoSize = false;
+            lblTitle.Dock = DockStyle.Top;
+            lblTitle.Height = 40;
+            lblTitle.Padding = new Padding(14, 0, 0, 0);
+            lblTitle.TextAlign = ContentAlignment.MiddleLeft;
 
             actionPanel.AutoSize = true;
-            actionPanel.Location = new Point(240, 11);
+            actionPanel.Location = new Point(10, 11);
             actionPanel.Margin = new Padding(0);
             actionPanel.Name = "actionPanel";
             actionPanel.Size = new Size(410, 34);
@@ -69,9 +72,10 @@
             btnDelete.Text = "Delete";
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDelete, 80);
 
-            btnBack.Text = "Back";
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnBack, 80);
+            btnBack.Text = "\u2190 Back";
+            Helpers.UIStyleHelper.StyleNeutralToolbarButton(btnBack, 90);
             btnBack.Margin = new Padding(0);
+            btnBack.Visible = false;
 
             actionPanel.Controls.Add(btnclr);
             actionPanel.Controls.Add(btnrefresh);
@@ -106,8 +110,7 @@
             searchPanel.Controls.Add(txtSearch);
             searchPanel.Controls.Add(lblSearchRight);
 
-            // Add to topPanel
-            topPanel.Controls.Add(lblTitle);
+            // Add to topPanel (title is now separate above topPanel)
             topPanel.Controls.Add(actionPanel);
             topPanel.Controls.Add(searchPanel);
 
@@ -182,11 +185,31 @@
             dgvEvents.AllowUserToResizeRows = false;
 
             // =========================
+            // WebSocket status bar (bottom-left)
+            // =========================
+            pnlWsStatus = new Panel();
+            pnlWsStatus.Dock      = DockStyle.Bottom;
+            pnlWsStatus.Height    = 26;
+            pnlWsStatus.BackColor = Color.FromArgb(240, 244, 250);
+
+            lblWsStatus = new Label();
+            lblWsStatus.AutoSize  = false;
+            lblWsStatus.Dock      = DockStyle.Fill;
+            lblWsStatus.Font      = new Font("Segoe UI", 8.5F);
+            lblWsStatus.ForeColor = Color.FromArgb(60, 90, 140);
+            lblWsStatus.TextAlign = ContentAlignment.MiddleLeft;
+            lblWsStatus.Padding   = new Padding(10, 0, 0, 0);
+            lblWsStatus.Text      = "WebSocket: not connected";
+            pnlWsStatus.Controls.Add(lblWsStatus);
+
+            // =========================
             // FINAL ADD
             // =========================
             Controls.Add(dgvEvents);
             Controls.Add(filterPanel);
             Controls.Add(topPanel);
+            Controls.Add(lblTitle);      // DockStyle.Top, added after topPanel → appears above topPanel
+            Controls.Add(pnlWsStatus);   // DockStyle.Bottom must be added last so it sits below Fill
 
             BackColor = Color.White;
             Size = new Size(1200, 700);
@@ -207,6 +230,8 @@
         private Button btnClearFilters;
         private Label lblTimeDisplay;
         private ComboBox cmbTimeDisplay;
+        private Panel pnlWsStatus;
+        private Label lblWsStatus;
     }
 }
 

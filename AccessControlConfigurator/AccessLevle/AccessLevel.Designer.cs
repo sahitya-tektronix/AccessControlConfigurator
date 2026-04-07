@@ -167,6 +167,7 @@ namespace AccessControlConfigurator
             btnBack.Size = new Size(70, 28);
             btnBack.TabIndex = 6;
             btnBack.Text = "Back";
+            btnBack.Visible = false;
             btnBack.Click += btnBack_Click;
             // 
             // panelFilter

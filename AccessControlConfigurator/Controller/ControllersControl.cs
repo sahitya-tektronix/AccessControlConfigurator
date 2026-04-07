@@ -35,6 +35,7 @@ namespace AccessControlConfigurator.Forms
             btnAdd.FlatAppearance.BorderColor = Color.FromArgb(45, 62, 80);
             btnAdd.FlatAppearance.BorderSize = 1;
 
+            txtSearch.TextChanged += (s, e) => ApplySearch();
             txtSearch.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
@@ -53,6 +54,7 @@ namespace AccessControlConfigurator.Forms
             Resize += (s, e) => AlignSearchControls();
             topPanel.SizeChanged += (s, e) => AlignSearchControls();
             dgvControllers.CellContentClick += dgvControllers_CellContentClick;
+            dgvControllers.CellPainting += dgvControllers_CellPainting;
 
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnSearch.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -79,7 +81,7 @@ namespace AccessControlConfigurator.Forms
             int minSearchWidth = 90;
             int maxSearchWidth = 220;
 
-            int leftGroupRight = new Control[] { btnAdd, btnDiscover, btnSync, btnSyncOnline, btnback, labelC }
+            int leftGroupRight = new Control[] { btnAdd, btnDiscover, btnSync, btnSyncOnline, btnback }
                 .Where(c => c != null && !c.IsDisposed && c.Visible)
                 .Select(c => c.Right)
                 .DefaultIfEmpty(leftPadding)
@@ -163,11 +165,20 @@ namespace AccessControlConfigurator.Forms
 
         private void ApplyButtonStyles()
         {
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnAdd, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDiscover, 110);
+            Helpers.UIStyleHelper.StylePrimaryToolbarButton(btnAdd, 100);
+            btnAdd.Text = "+ Add";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnDiscover, 120);
+            btnDiscover.Text = "\u2295 Discover";
+
             Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSync, 90);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSyncOnline, 170);
-            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnback, 90);
+            btnSync.Text = "\u21BA Sync";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnSyncOnline, 160);
+            btnSyncOnline.Text = "\u21C5 Sync Online/Offline";
+
+            Helpers.UIStyleHelper.StyleNeutralToolbarButton(btnback, 90);
+            btnback.Text = "\u2190 Back";
         }
 
         private async void ControllersControl_Load(object sender, EventArgs e)
@@ -312,6 +323,56 @@ namespace AccessControlConfigurator.Forms
             await LoadControllersFromApi();
         }
 
+        private void dgvControllers_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
+            var colName = dgvControllers.Columns[e.ColumnIndex].Name;
+            if (colName != "colEdit" && colName != "colReset" && colName != "colDelete")
+                return;
+
+            string icon;
+            Color iconColor;
+            switch (colName)
+            {
+                case "colEdit":
+                    icon = "\u270E";  // ✎ pencil
+                    iconColor = Color.FromArgb(0, 120, 215);
+                    break;
+                case "colReset":
+                    icon = "\u27F2";  // ⟲ rotate
+                    iconColor = Color.FromArgb(196, 43, 28);
+                    break;
+                default: // colDelete
+                    icon = "\u2715";  // ✕ cross
+                    iconColor = Color.FromArgb(196, 43, 28);
+                    break;
+            }
+
+            // Paint row selection background
+            e.Paint(e.ClipBounds, DataGridViewPaintParts.Background | DataGridViewPaintParts.SelectionBackground);
+
+            // Button rect with consistent padding
+            var btnRect = Rectangle.Inflate(e.CellBounds, -4, -4);
+            using var bgBrush = new SolidBrush(Color.White);
+            using var borderPen = new Pen(iconColor);
+            e.Graphics.FillRectangle(bgBrush, btnRect);
+            e.Graphics.DrawRectangle(borderPen, btnRect);
+
+            // Icon — fixed size for all three
+            using var font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            using var textBrush = new SolidBrush(iconColor);
+            var fmt = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+            e.Graphics.DrawString(icon, font, textBrush, e.CellBounds, fmt);
+
+            e.Handled = true;
+        }
+
         private async void dgvControllers_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
@@ -373,13 +434,33 @@ namespace AccessControlConfigurator.Forms
                 if (controller == null)
                     return;
 
+                // Step 1: prompt for MAC address
+                string enteredMac = ShowInputDialog(
+                    "Enter MAC Address",
+                    $"Enter the MAC address for controller '{controller.Name}' to confirm reset:");
+
+                if (enteredMac == null)   // user cancelled
+                    return;
+
+                // Step 2: validate against row's MAC
+                if (!string.Equals(enteredMac.Trim(), controller.MacAddress?.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show(
+                        "MAC address does not match. Reset cancelled.",
+                        "Validation Failed",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Step 3: confirm reset
                 var confirm = MessageBox.Show(
-                    "Are you sure you want to reset this controller?",
+                    "MAC address correct. Do you want to reset?",
                     "Confirm Reset",
-                    MessageBoxButtons.YesNo,
+                    MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Warning);
 
-                if (confirm != DialogResult.Yes)
+                if (confirm != DialogResult.OK)
                     return;
 
                 try
@@ -447,6 +528,71 @@ namespace AccessControlConfigurator.Forms
             }
         }
 
+        // Returns the entered text, or null if the user cancelled.
+        private static string ShowInputDialog(string title, string prompt)
+        {
+            using var form = new Form
+            {
+                Text = title,
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                Width = 420,
+                Height = 175,
+                BackColor = Color.White
+            };
+
+            var lbl = new Label
+            {
+                Text = prompt,
+                Left = 16,
+                Top = 16,
+                Width = 376,
+                Height = 40,
+                Font = new Font("Segoe UI", 9.5F)
+            };
+
+            var txt = new TextBox
+            {
+                Left = 16,
+                Top = 62,
+                Width = 376,
+                Font = new Font("Segoe UI", 10F)
+            };
+
+            var btnOk = new Button
+            {
+                Text = "OK",
+                DialogResult = DialogResult.OK,
+                Left = 216,
+                Top = 98,
+                Width = 85,
+                Height = 30,
+                BackColor = Color.FromArgb(0, 120, 215),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnOk.FlatAppearance.BorderSize = 0;
+
+            var btnCancel = new Button
+            {
+                Text = "Cancel",
+                DialogResult = DialogResult.Cancel,
+                Left = 310,
+                Top = 98,
+                Width = 82,
+                Height = 30,
+                FlatStyle = FlatStyle.Flat
+            };
+
+            form.Controls.AddRange(new Control[] { lbl, txt, btnOk, btnCancel });
+            form.AcceptButton = btnOk;
+            form.CancelButton = btnCancel;
+
+            return form.ShowDialog() == DialogResult.OK ? txt.Text : null;
+        }
+
         private void ApplyColumnWidths()
         {
             colId.FillWeight = 8;
@@ -461,6 +607,10 @@ namespace AccessControlConfigurator.Forms
             colEdit.FillWeight = 6;
             colReset.FillWeight = 6;
             colDelete.FillWeight = 6;
+
+            // Reset button — red text so it stands out as a destructive action
+            colReset.DefaultCellStyle.ForeColor = Color.FromArgb(196, 43, 28);
+            colReset.DefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
         }
 
         private void SetReadOnlyColumns()

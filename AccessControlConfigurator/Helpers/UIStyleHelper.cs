@@ -78,21 +78,105 @@ namespace AccessControlConfigurator.Helpers
             ApplyButtonColorScheme(btn, style);
         }
 
-        public static void StyleOutlineToolbarButton(Button btn, int width = 90)
+        // -------------------------------------------------------
+        // Module toolbar button — unified style for Add/Edit/Delete/Back/Refresh/Sync
+        // All buttons same height, consistent font, flat outline look
+        // -------------------------------------------------------
+        public static void StyleOutlineToolbarButton(Button btn, int width = 100)
         {
             if (btn == null) return;
 
-            btn.Font = StandardFonts.ButtonFont;
-            btn.Height = 34;
+            btn.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            btn.Height = 36;
             btn.Width = width;
             btn.FlatStyle = FlatStyle.Flat;
-            btn.FlatAppearance.BorderSize = 2;
-            btn.FlatAppearance.BorderColor = Color.FromArgb(160, 160, 160);
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(0, 120, 215);
             btn.BackColor = Color.White;
-            btn.ForeColor = Color.Black;
+            btn.ForeColor = Color.FromArgb(0, 120, 215);
             btn.Cursor = Cursors.Hand;
             btn.UseVisualStyleBackColor = false;
-            btn.Margin = new Padding(0, 0, 12, 0);
+            btn.Margin = new Padding(0, 0, 10, 0);
+
+            AddHoverEffect(btn,
+                hoverBack: Color.FromArgb(0, 120, 215), hoverFore: Color.White,
+                normalBack: Color.White, normalFore: Color.FromArgb(0, 120, 215));
+        }
+
+        // Primary filled button (e.g. Add)
+        public static void StylePrimaryToolbarButton(Button btn, int width = 100)
+        {
+            if (btn == null) return;
+
+            btn.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            btn.Height = 36;
+            btn.Width = width;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(0, 90, 170);
+            btn.BackColor = Color.FromArgb(0, 120, 215);
+            btn.ForeColor = Color.White;
+            btn.Cursor = Cursors.Hand;
+            btn.UseVisualStyleBackColor = false;
+            btn.Margin = new Padding(0, 0, 10, 0);
+
+            AddHoverEffect(btn,
+                hoverBack: Color.FromArgb(0, 100, 190), hoverFore: Color.White,
+                normalBack: Color.FromArgb(0, 120, 215), normalFore: Color.White);
+        }
+
+        // Danger outline button (Delete)
+        public static void StyleDangerToolbarButton(Button btn, int width = 100)
+        {
+            if (btn == null) return;
+
+            btn.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            btn.Height = 36;
+            btn.Width = width;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(196, 43, 28);
+            btn.BackColor = Color.White;
+            btn.ForeColor = Color.FromArgb(196, 43, 28);
+            btn.Cursor = Cursors.Hand;
+            btn.UseVisualStyleBackColor = false;
+            btn.Margin = new Padding(0, 0, 10, 0);
+
+            AddHoverEffect(btn,
+                hoverBack: Color.FromArgb(196, 43, 28), hoverFore: Color.White,
+                normalBack: Color.White, normalFore: Color.FromArgb(196, 43, 28));
+        }
+
+        // Neutral button (Back, ClearFilter)
+        public static void StyleNeutralToolbarButton(Button btn, int width = 100)
+        {
+            if (btn == null) return;
+
+            btn.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            btn.Height = 36;
+            btn.Width = width;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 1;
+            btn.FlatAppearance.BorderColor = Color.FromArgb(160, 160, 160);
+            btn.BackColor = Color.White;
+            btn.ForeColor = Color.FromArgb(60, 60, 60);
+            btn.Cursor = Cursors.Hand;
+            btn.UseVisualStyleBackColor = false;
+            btn.Margin = new Padding(0, 0, 10, 0);
+
+            AddHoverEffect(btn,
+                hoverBack: Color.FromArgb(230, 230, 230), hoverFore: Color.FromArgb(30, 30, 30),
+                normalBack: Color.White, normalFore: Color.FromArgb(60, 60, 60));
+        }
+
+        // Adds hover enter/leave colour toggle. Guards against double-registration.
+        private static void AddHoverEffect(Button btn, Color hoverBack, Color hoverFore, Color normalBack, Color normalFore)
+        {
+            if (btn.Tag is string tag && tag.Contains("hover-styled")) return;
+            btn.Tag = (btn.Tag?.ToString() ?? "") + "hover-styled";
+
+            btn.MouseEnter += (s, _) => { ((Button)s).BackColor = hoverBack; ((Button)s).ForeColor = hoverFore; };
+            btn.MouseLeave += (s, _) => { ((Button)s).BackColor = normalBack; ((Button)s).ForeColor = normalFore; };
         }
 
         private static void ApplyButtonColorScheme(Button btn, ButtonStyle style)

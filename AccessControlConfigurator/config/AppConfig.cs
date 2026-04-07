@@ -13,7 +13,8 @@ namespace AccessControlConfigurator.Config
         private static string LiveServerUrl = "https://teksmartsolutions.com/TekHIDApi/";
 
         // Local Development Server
-        private static string LocalServerUrl = "http://localhost:5000/api/";
+        //private static string LocalServerUrl = "http://localhost:5001/api/";
+        private static string LocalServerUrl = "https://teksmartsolutions.com/TekHIDApi/";
 
         // Final Base URL (used everywhere)
         public static string BaseUrl

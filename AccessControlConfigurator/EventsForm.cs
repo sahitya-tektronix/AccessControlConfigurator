@@ -27,6 +27,7 @@ namespace AccessControlConfigurator
             InitializeComponent();
             InitializeEventGrid();
             btnSearch.Click += btnSearch_Click;
+            txtSearch.TextChanged += (s, e) => ApplyFilters();
             Load += EventsControl_Load;
             VisibleChanged += EventsControl_VisibleChanged;
 
@@ -53,7 +54,7 @@ namespace AccessControlConfigurator
             StyleToolbarButton(btnrefresh);
             StyleToolbarButton(btnDelete);
             StyleToolbarButton(btnclr);
-            StyleToolbarButton(btnBack);
+            // btnBack is styled via StyleNeutralToolbarButton in the Designer — do not override here
             btnBack.Click += btnBack_Click_1;
             btnrefresh.Click += btnrefresh_Click;
             btnDelete.Click += btnDelete_Click;
@@ -147,10 +148,14 @@ namespace AccessControlConfigurator
                 _ws.OnError += HandleWebSocketError;
                 _ws.OnMessageReceived += HandleWebSocketMessage;
 
-                bool connected = await _ws.ConnectAsync("wss://teksmartsolutions.com/TekHIDApi/ws");
+                string wsUrl = AccessControlSystem.ApiClient.AppConfig.WebSocketUrl;
+                if (string.IsNullOrWhiteSpace(wsUrl))
+                    wsUrl = "wss://teksmartsolutions.com/TekHIDApi/ws";
+
+                bool connected = await _ws.ConnectAsync(wsUrl);
 
                 _isWebSocketConnected = connected;
-                AddEvent(connected ? "WebSocket Connected" : "WebSocket Connection Failed");
+                SetWsStatus(connected ? "WebSocket: Connected \u2714" : "WebSocket: Connection Failed \u2718", connected);
             }
             finally
             {
@@ -181,7 +186,22 @@ namespace AccessControlConfigurator
 
         private void HandleWebSocketError(string error)
         {
-            AddEvent("WebSocket Error: " + error);
+            SetWsStatus("WebSocket Error: " + error, false);
+        }
+
+        // Shows connection status in the bottom status bar — never adds it to the event grid.
+        private void SetWsStatus(string message, bool isOk)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => SetWsStatus(message, isOk)));
+                return;
+            }
+
+            lblWsStatus.Text      = message;
+            lblWsStatus.ForeColor = isOk
+                ? Color.FromArgb(0, 128, 0)          // green when connected
+                : Color.FromArgb(196, 43, 28);        // red when error/failed
         }
 
         public void AddEvent(string rawMessage)

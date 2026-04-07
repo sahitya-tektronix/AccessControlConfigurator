@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using Font = System.Drawing.Font;
+using AccessControlConfigurator.Helpers;
 
 namespace AccessControlConfigurator
 {
@@ -9,7 +10,8 @@ namespace AccessControlConfigurator
     {
         private System.ComponentModel.IContainer components = null;
 
-        private Label lblTitle;
+        private Panel headerPanel;
+        private Label lblHeader;
         private Label lblCardNumber;
         private Label lblAccessLevel;
         private Label lblStartDate;
@@ -37,7 +39,8 @@ namespace AccessControlConfigurator
 
         private void InitializeComponent()
         {
-            lblTitle = new Label();
+            headerPanel = new Panel();
+            lblHeader = new Label();
             lblCardNumber = new Label();
             lblAccessLevel = new Label();
             lblStartDate = new Label();
@@ -51,18 +54,21 @@ namespace AccessControlConfigurator
             btnClearEnd = new Button();
             btnSave = new Button();
             btnCancel = new Button();
+            headerPanel.SuspendLayout();
             SuspendLayout();
-            // 
-            // lblTitle
-            // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblTitle.Location = new Point(30, 20);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(121, 32);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "Add Card";
-            // 
+            //
+            // headerPanel + lblHeader
+            //
+            UIStyleHelper.StyleHeaderPanel(headerPanel);
+            headerPanel.Controls.Add(lblHeader);
+
+            lblHeader.Text = "ADD CARD";
+            lblHeader.AutoSize = false;
+            lblHeader.Dock = DockStyle.Fill;
+            lblHeader.TextAlign = ContentAlignment.MiddleCenter;
+            lblHeader.Font = UIStyleHelper.StandardFonts.HeaderFont;
+            lblHeader.ForeColor = UIStyleHelper.StandardColors.HeaderForeground;
+            //
             // lblCardNumber
             // 
             lblCardNumber.AutoSize = true;
@@ -184,7 +190,7 @@ namespace AccessControlConfigurator
             // 
             ClientSize = new Size(470, 400);
             Controls.Add(btnCancel);
-            Controls.Add(lblTitle);
+            Controls.Add(headerPanel);
             Controls.Add(lblCardNumber);
             Controls.Add(txtCardNumber);
             Controls.Add(lblAccessLevel);
@@ -199,6 +205,8 @@ namespace AccessControlConfigurator
             Controls.Add(btnSave);
             Name = "AddCardForm";
             Text = "Add Card";
+            StartPosition = FormStartPosition.CenterParent;
+            headerPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }

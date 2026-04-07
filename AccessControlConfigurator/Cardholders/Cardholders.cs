@@ -34,7 +34,10 @@ namespace AccessControlConfigurator.Controls
 
             _ = LoadCardholders();
 
+            ApplyButtonStyles();
+
             btnSearch.Click += btnSearch_Click;
+            txtSearch.TextChanged += (s, e) => ApplyFilters();
 
             btnSearch.FlatStyle = FlatStyle.Flat;
 
@@ -402,6 +405,24 @@ namespace AccessControlConfigurator.Controls
 
         }
 
+        private void ApplyButtonStyles()
+        {
+            Helpers.UIStyleHelper.StylePrimaryToolbarButton(btnAdd, 100);
+            btnAdd.Text = "+ Add";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnEdit, 90);
+            btnEdit.Text = "\u270E Edit";
+
+            Helpers.UIStyleHelper.StyleDangerToolbarButton(btnDelete, 100);
+            btnDelete.Text = "\u2715 Delete";
+
+            Helpers.UIStyleHelper.StyleOutlineToolbarButton(btnRefresh, 100);
+            btnRefresh.Text = "\u21BA Refresh";
+
+            Helpers.UIStyleHelper.StyleNeutralToolbarButton(btnBack, 90);
+            btnBack.Text = "\u2190 Back";
+        }
+
         private void AlignLayout()
 
         {
@@ -438,7 +459,7 @@ namespace AccessControlConfigurator.Controls
 
             bool wrapSearch = (btnBack.Right + spacing + searchGroupWidth) > availableRight;
 
-            int searchTop = wrapSearch ? (top + btnAdd.Height + 6) : top;
+            int searchTop = wrapSearch ? (top + btnAdd.Height + 8) : top;
 
             btnClearFilters.Location = new Point(availableRight - btnClearFilters.Width, searchTop + 3);
 
@@ -449,8 +470,13 @@ namespace AccessControlConfigurator.Controls
             lblSearchRight.Location = new Point(txtSearch.Left - lblSearchRight.Width - 8, searchTop + 7);
 
             if (topPanel != null)
-
-                topPanel.Height = wrapSearch ? 72 : 36;
+            {
+                // Panel must be tall enough for the buttons (36 px) at y=top plus bottom padding.
+                // Wrap row: action buttons row height + gap + search row height + bottom padding.
+                int minSingle = top + btnAdd.Height + 14;
+                int minDouble = searchTop + Math.Max(btnSearch.Height, 29) + 14;
+                topPanel.Height = wrapSearch ? minDouble : minSingle;
+            }
 
             txtEmailFilter.Location = new Point(filterPanel.ClientSize.Width - txtEmailFilter.Width - 12, 4);
 
